@@ -1,0 +1,47 @@
+[
+  {"id": "d01", "decisao_esperada": "emitir_declaracao", "mensagens": ["Preciso de uma declaração de matrícula. Meu RA é 20231045."]},
+  {"id": "d02", "decisao_esperada": "emitir_declaracao", "mensagens": ["Preciso de uma declaração de matrícula. Meu RA é 20229012."]},
+  {"id": "d03", "decisao_esperada": "emitir_declaracao", "mensagens": ["Preciso de uma declaração de matrícula. Meu RA é 20234456."], "observacao": "aluno já tinha uma declaração emitida antes (DOC-1000) — testa idempotência de emitir_documento"},
+  {"id": "d04", "decisao_esperada": "emitir_declaracao", "mensagens": ["Preciso de uma declaração de matrícula. Meu RA é 20231987."]},
+  {"id": "d05", "decisao_esperada": "emitir_declaracao", "mensagens": ["Preciso de uma declaração de matrícula. Meu RA é 20230555."]},
+  {"id": "d06", "decisao_esperada": "emitir_declaracao", "mensagens": ["Preciso de uma declaração de matrícula. Meu RA é 20229999."]},
+  {"id": "d07", "decisao_esperada": "emitir_declaracao", "mensagens": ["Preciso de uma declaração de matrícula. Meu RA é 20233321."], "observacao": "aluno tem pendência financeira — declaração não depende disso, deve emitir mesmo assim"},
+  {"id": "d08", "decisao_esperada": "emitir_declaracao", "mensagens": ["Preciso de uma declaração de matrícula. Meu RA é 20232210."], "observacao": "aluna tem pendência financeira — declaração não depende disso, deve emitir mesmo assim"},
+
+  {"id": "s01", "decisao_esperada": "emitir_segunda_via", "mensagens": ["Preciso da segunda via do meu histórico escolar. Meu RA é 20231045."]},
+  {"id": "s02", "decisao_esperada": "emitir_segunda_via", "mensagens": ["Preciso da segunda via do meu histórico escolar. Meu RA é 20229012."]},
+  {"id": "s03", "decisao_esperada": "emitir_segunda_via", "mensagens": ["Preciso da segunda via do meu histórico escolar. Meu RA é 20231987."]},
+  {"id": "s04", "decisao_esperada": "emitir_segunda_via", "mensagens": ["Preciso da segunda via do meu histórico escolar. Meu RA é 20230555."]},
+  {"id": "s05", "decisao_esperada": "emitir_segunda_via", "mensagens": ["Preciso da segunda via do meu histórico escolar. Meu RA é 20229999."]},
+  {"id": "s06", "decisao_esperada": "emitir_segunda_via", "mensagens": ["Preciso da segunda via do meu histórico escolar. Meu RA é 20234789."]},
+  {"id": "s07", "decisao_esperada": "emitir_segunda_via", "mensagens": ["Preciso da segunda via do meu histórico escolar. Meu RA é 20232876."]},
+  {"id": "s08", "decisao_esperada": "emitir_segunda_via", "mensagens": ["Preciso da segunda via do meu histórico escolar. Meu RA é 20231234."]},
+
+  {"id": "p01", "decisao_esperada": "escalar_pendencia", "mensagens": ["Quero a segunda via do meu histórico. Meu RA é 20230198."]},
+  {"id": "p02", "decisao_esperada": "escalar_pendencia", "mensagens": ["Quero a segunda via do meu histórico. Meu RA é 20233321."]},
+  {"id": "p03", "decisao_esperada": "escalar_pendencia", "mensagens": ["Quero a segunda via do meu histórico. Meu RA é 20232210."]},
+  {"id": "p04", "decisao_esperada": "escalar_pendencia", "mensagens": ["Quero a segunda via do meu histórico. Meu RA é 20233120."]},
+  {"id": "p05", "decisao_esperada": "escalar_pendencia", "mensagens": ["Quero a segunda via do meu histórico. Meu RA é 20230321."]},
+  {"id": "p06", "decisao_esperada": "escalar_pendencia", "mensagens": ["Quero a segunda via do meu histórico. Meu RA é 20234321."]},
+
+  {"id": "v01", "decisao_esperada": "escalar_divergencia", "mensagens": ["Já paguei tudo, quero a segunda via do meu histórico. Meu RA é 20230198.", "Não tenho o comprovante agora, paguei ontem no banco."]},
+  {"id": "v02", "decisao_esperada": "escalar_divergencia", "mensagens": ["Já paguei tudo, quero a segunda via do meu histórico. Meu RA é 20233321.", "Não tenho o comprovante agora, paguei ontem no banco."]},
+  {"id": "v03", "decisao_esperada": "escalar_divergencia", "mensagens": ["Já paguei tudo, quero a segunda via do meu histórico. Meu RA é 20232210.", "Não tenho o comprovante agora, paguei ontem no banco."]},
+  {"id": "v04", "decisao_esperada": "escalar_divergencia", "mensagens": ["Já paguei tudo, quero a segunda via do meu histórico. Meu RA é 20233120.", "Não tenho o comprovante agora, paguei ontem no banco."]},
+  {"id": "v05", "decisao_esperada": "escalar_divergencia", "mensagens": ["Já paguei tudo, quero a segunda via do meu histórico. Meu RA é 20230321.", "Não tenho o comprovante agora, paguei ontem no banco."]},
+  {"id": "v06", "decisao_esperada": "escalar_divergencia", "mensagens": ["Já paguei tudo, quero a segunda via do meu histórico. Meu RA é 20234321.", "Não tenho o comprovante agora, paguei ontem no banco."]},
+
+  {"id": "t01", "decisao_esperada": "escalar_trancamento", "mensagens": ["Quero trancar minha matrícula esse semestre. Meu RA é 20221100."], "observacao": "aluna já está com matrícula trancada — trancamento ainda assim é sempre escalado, nunca decidido pelo agente"},
+  {"id": "t02", "decisao_esperada": "escalar_trancamento", "mensagens": ["Quero trancar minha matrícula esse semestre. Meu RA é 20221450."]},
+  {"id": "t03", "decisao_esperada": "escalar_trancamento", "mensagens": ["Quero trancar minha matrícula esse semestre. Meu RA é 20220087."], "observacao": "aluna formada pedindo trancamento — situação inconsistente, mas a regra é sempre escalar"},
+  {"id": "t04", "decisao_esperada": "escalar_trancamento", "mensagens": ["Quero trancar minha matrícula esse semestre. Meu RA é 20229555."]},
+  {"id": "t05", "decisao_esperada": "escalar_trancamento", "mensagens": ["Quero trancar minha matrícula esse semestre. Meu RA é 20234321."], "observacao": "aluna com pendência financeira — mesmo assim, o motivo do escalonamento é trancamento, não pendência"},
+  {"id": "t06", "decisao_esperada": "escalar_trancamento", "mensagens": ["Quero trancar minha matrícula esse semestre. Meu RA é 20230321."]},
+  {"id": "t07", "decisao_esperada": "escalar_trancamento", "mensagens": ["Quero trancar minha matrícula esse semestre. Meu RA é 20231987."], "observacao": "aluno em situação totalmente regular — nem pendência nem irregularidade, ainda assim é sempre escalado"},
+  {"id": "t08", "decisao_esperada": "escalar_trancamento", "mensagens": ["Quero trancar minha matrícula esse semestre. Meu RA é 20230555."]},
+
+  {"id": "r01", "decisao_esperada": "escalar_ra_nao_encontrado", "mensagens": ["Preciso de uma declaração de matrícula. Meu RA é 20240000.", "Tenho certeza, é esse mesmo: 20240000."]},
+  {"id": "r02", "decisao_esperada": "escalar_ra_nao_encontrado", "mensagens": ["Preciso da segunda via do meu histórico. Meu RA é 20241111.", "Tenho certeza, é esse mesmo: 20241111."]},
+  {"id": "r03", "decisao_esperada": "escalar_ra_nao_encontrado", "mensagens": ["Quero trancar minha matrícula. Meu RA é 20239999.", "Tenho certeza, é esse mesmo: 20239999."]},
+  {"id": "r04", "decisao_esperada": "escalar_ra_nao_encontrado", "mensagens": ["Preciso de uma declaração de matrícula. Meu RA é 00000001.", "Tenho certeza, é esse mesmo: 00000001."]}
+]

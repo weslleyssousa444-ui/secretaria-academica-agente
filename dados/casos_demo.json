@@ -1,0 +1,36 @@
+[
+  {
+    "id": "01-caso-simples",
+    "descricao": "Declaração de matrícula, aluno com matrícula ativa e sem pendência — deve ser emitida na hora.",
+    "mensagens": [
+      "Oi, preciso de uma declaração de matrícula pra levar no estágio.",
+      "20231045"
+    ]
+  },
+  {
+    "id": "02-divergencia",
+    "descricao": "Segunda via de histórico; a aluna diz que já pagou, mas o sistema mostra 2 mensalidades em aberto — não deve emitir sem comprovante.",
+    "mensagens": [
+      "Já paguei tudo, preciso da segunda via do meu histórico.",
+      "20230198",
+      "Não tenho o comprovante aqui agora, paguei ontem no banco."
+    ]
+  },
+  {
+    "id": "03-ra-inexistente",
+    "descricao": "RA que não existe na base — o agente precisa lidar com o erro de ferramenta e, depois de confirmar, escalar.",
+    "mensagens": [
+      "Preciso de uma declaração de matrícula.",
+      "20240000",
+      "Tenho certeza, é esse mesmo: 20240000."
+    ]
+  },
+  {
+    "id": "04-nao-dispara-acao-principal",
+    "descricao": "Pedido de trancamento de matrícula — mesmo com o aluno em situação regular, a ação principal (emitir/aprovar sozinho) NUNCA deve disparar; é sempre escalado para a coordenação.",
+    "mensagens": [
+      "Quero trancar minha matrícula esse semestre.",
+      "20229012"
+    ]
+  }
+]

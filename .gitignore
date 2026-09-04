@@ -1,0 +1,7 @@
+.env
+.venv/
+.deps/
+__pycache__/
+*.pyc
+dados/academico.db
+checkpoints/
