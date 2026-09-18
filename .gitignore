@@ -5,3 +5,4 @@ __pycache__/
 *.pyc
 dados/academico.db
 checkpoints/
+.DS_Store
