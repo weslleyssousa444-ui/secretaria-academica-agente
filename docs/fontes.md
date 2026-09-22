@@ -4,7 +4,7 @@
 - Código de referência para o padrão de estado/orçamento/laço do agente: `aula05-agentes/agente.py` do repositório de laboratórios da disciplina (`senac-llm-code-main`).
 - Código de referência para o padrão de benchmark próprio de modelos: `aula02-modelos-e-parametros/06-benchmark-modelos.py` do mesmo repositório — reaproveitamos o trio de modelos (`ministral-3b-latest`, `mistral-small-latest`, `mistral-large-latest`) e os preços documentados ali.
 - [Documentação da API Mistral](https://docs.mistral.ai/) — endpoint compatível com OpenAI, `chat/completions`, `tools`, `response_format`.
-- [Mistral — página de preços](https://mistral.ai/pricing) — consultada para conferência de preços; a página carrega a tabela de forma dinâmica e não foi possível extrair todos os valores automaticamente nesta sessão, então os preços usados em `docs/modelos.md` vêm do material da disciplina. **Ação pendente do grupo:** reconfirmar os valores diretamente no site antes da entrega final e anotar a data da consulta.
+- [Mistral — página de preços](https://mistral.ai/pricing/api) — **reconfirmada em 22/09/2026**: os três preços usados em `docs/modelos.md` (§3.1) batem exatamente com o material da disciplina. Pendência anterior resolvida.
 - [Mistral — Admin Console (criação de chave de API)](https://admin.mistral.ai/).
 
 ## O que ainda falta consultar

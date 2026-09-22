@@ -81,5 +81,5 @@ logs/                   as execuções gravadas (geradas ao rodar os scripts aci
 
 - [ ] **Ativar o plano de uso na conta Mistral.** Uma chave já foi testada e é válida, mas a conta está com cota de requisições **zerada** (`x-ratelimit-limit-req-minute: 0` na resposta da API — ver `logs/README.md` para o diagnóstico completo). É preciso ativar o plano em admin.mistral.ai antes de qualquer chamada de chat funcionar.
 - [ ] Depois disso, rodar `src/demo.py`, `src/verificador.py` e `src/comparar_modelos.py` e substituir os placeholders em `docs/modelos.md` §3.3 e neste README pelos resultados reais.
-- [ ] Reconfirmar os preços da Mistral em `docs/modelos.md` (a página de preços carrega dinamicamente e não pôde ser lida por completo automaticamente).
-- [ ] Substituir a linha de base **estimada** de `docs/case.md` §2.5 por uma medição real, cronometrando casos com a secretaria (a disciplina cobra isso explicitamente).
+- [x] ~~Reconfirmar os preços da Mistral em `docs/modelos.md`~~ — feito em 22/09/2026, valores confirmados sem mudança (ver `docs/fontes.md`).
+- [x] ~~Substituir a linha de base estimada de `docs/case.md` §2.5 por uma medição real~~ — decisão do grupo em 22/09/2026: sem acesso a uma secretaria real para cronometrar, a linha de base continua como **estimativa declarada** (a ressalva já está escrita em `case.md` §2.5, que é a resposta válida quando a medição real não é possível). Se o grupo conseguir acesso real depois, atualizar com a fonte da medição.

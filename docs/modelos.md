@@ -21,7 +21,7 @@ Não comparamos suporte a multimídia porque o caso não usa imagem, áudio nem 
 | `mistral-small-latest` | 128k | sim | intermediário — já resolve o passo de ANÁLISE com uma boa taxa de acerto | 0.15 | 0.60 | baixa |
 | `mistral-large-latest` | 128k | sim | mais forte — sobra para este caso, que não tem passos de inferência longos | 0.50 | 1.50 | mais alta |
 
-> Preços conforme documentados no material da disciplina (`aula02-modelos-e-parametros/06-benchmark-modelos.py`). **Preço de LLM muda** — antes de fechar a decisão final, reconfirme em `https://mistral.ai/pricing` e anote a data da consulta aqui.
+> Preços conforme documentados no material da disciplina (`aula02-modelos-e-parametros/06-benchmark-modelos.py`), **reconfirmados em `https://mistral.ai/pricing/api` em 22/09/2026** — os três valores batem exatamente com os do material da disciplina. Nota: a página nomeia os modelos atuais como "Ministral 3 (3B)", "Mistral Small 4" e "Mistral Large 3"; os aliases `*-latest` usados no `.env` deste projeto continuam válidos e apontam para essas versões. **Preço de LLM muda** — reconfirme de novo se a decisão for revisitada bem mais adiante no semestre.
 
 Todos os três suportam `response_format` com JSON Schema e `tools` na API — não há candidato eliminado nesse pré-requisito.
 
