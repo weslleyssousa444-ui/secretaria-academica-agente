@@ -28,17 +28,23 @@ import dados
 load_dotenv()
 
 client = OpenAI(
-    base_url=os.environ.get("LLM_BASE_URL", "https://api.mistral.ai/v1"),
+    base_url=os.environ.get("LLM_BASE_URL", "https://api.groq.com/openai/v1"),
     api_key=os.environ.get("OPENAI_API_KEY"),
 )
-MODELO = os.environ.get("LLM_MODELO", "mistral-small-latest")
+MODELO = os.environ.get("LLM_MODELO", "llama-3.3-70b-versatile")
 
 PROMPT_PATH = Path(__file__).parent.parent / "prompts" / "triagem-v1.txt"
 SYSTEM = PROMPT_PATH.read_text(encoding="utf-8")
 
-# Preços documentados em docs/modelos.md §3.1 (US$ por 1M de tokens).
-# Reconfirme em https://mistral.ai/pricing antes de usar em produção.
+# Preços documentados em docs/modelos.md §3.1/§3.5 (US$ por 1M de tokens).
+# Candidatos Groq (free tier, 22/09/2026): custo US$ 0 — mantido no dicionário
+# só para o cálculo de orçamento continuar funcionando sem mudar código.
+# Candidatos Mistral (análise original, §3.1): reconfirme em
+# https://mistral.ai/pricing/api antes de voltar a usar em produção.
 PRECOS = {
+    "llama-3.1-8b-instant": {"entrada": 0.0, "saida": 0.0},
+    "llama-3.3-70b-versatile": {"entrada": 0.0, "saida": 0.0},
+    "openai/gpt-oss-20b": {"entrada": 0.0, "saida": 0.0},
     "ministral-3b-latest": {"entrada": 0.10, "saida": 0.10},
     "mistral-small-latest": {"entrada": 0.15, "saida": 0.60},
     "mistral-large-latest": {"entrada": 0.50, "saida": 1.50},

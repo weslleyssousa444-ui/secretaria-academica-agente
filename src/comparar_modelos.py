@@ -20,7 +20,7 @@ import dados
 from agente import Estado, Orcamento, conversar
 from verificador import classificar_decisao
 
-MODELOS = ["ministral-3b-latest", "mistral-small-latest", "mistral-large-latest"]
+MODELOS = ["llama-3.1-8b-instant", "llama-3.3-70b-versatile", "openai/gpt-oss-20b"]
 
 # Os mesmos 5 casos listados em docs/modelos.md §3.3.
 CASOS = [

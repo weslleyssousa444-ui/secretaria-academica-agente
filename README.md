@@ -22,8 +22,8 @@ source .venv/bin/activate        # Windows: .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 
 cp .env.example .env
-# edite .env e cole sua chave da Mistral em OPENAI_API_KEY
-# (crie a chave em https://admin.mistral.ai/, menu API Keys)
+# edite .env e cole sua chave da Groq em OPENAI_API_KEY
+# (crie a chave em https://console.groq.com/keys — free tier, sem cartão)
 ```
 
 Crie e semeie o banco simulado (idempotente — pode rodar de novo sem duplicar dados):
@@ -40,7 +40,9 @@ O agente conversa em texto livre, em português, como o widget de chat do portal
 |---|---|
 | `python src/demo.py` | roda os **4 casos de demonstração** exigidos (§4.5): simples, divergência, RA inexistente, trancamento — e grava o log de cada um em `logs/` |
 | `python src/verificador.py` | roda os **40 casos rotulados** (`dados/casos_verificador.json`) e reporta a taxa de acerto contra o critério de sucesso (`docs/case.md` §2.7) |
-| `python src/comparar_modelos.py` | roda 5 casos nos 3 modelos candidatos, para preencher `docs/modelos.md` §3.3 |
+| `python src/comparar_modelos.py` | roda 5 casos nos 3 modelos candidatos, para preencher `docs/modelos.md` §3.5 |
+
+> O agente roda por padrão na **Groq** (free tier, `docs/modelos.md` §3.5) — a análise original comparando os três modelos Mistral (§3.1-3.4) continua no repositório e pode ser reativada trocando as três variáveis comentadas no fim do `.env.example`.
 
 **O que a pessoa digita:** uma mensagem em português descrevendo o pedido — com ou sem o RA já incluído. Exemplo: *"Preciso de uma declaração de matrícula. Meu RA é 20231045."* ou, em partes, *"Oi, preciso de uma declaração de matrícula pra levar no estágio."* seguido de *"20231045"* quando o agente perguntar.
 
@@ -79,7 +81,7 @@ logs/                   as execuções gravadas (geradas ao rodar os scripts aci
 
 ## Pendências antes da entrega final
 
-- [ ] **Ativar o plano de uso na conta Mistral.** Uma chave já foi testada e é válida, mas a conta está com cota de requisições **zerada** (`x-ratelimit-limit-req-minute: 0` na resposta da API — ver `logs/README.md` para o diagnóstico completo). É preciso ativar o plano em admin.mistral.ai antes de qualquer chamada de chat funcionar.
-- [ ] Depois disso, rodar `src/demo.py`, `src/verificador.py` e `src/comparar_modelos.py` e substituir os placeholders em `docs/modelos.md` §3.3 e neste README pelos resultados reais.
+- [x] ~~Ativar o plano de uso na conta Mistral~~ — a conta Mistral ficou com cota zerada (diagnóstico em `logs/README.md`) e ativar exigia cadastrar pagamento; o grupo trocou o provedor padrão para **Groq** (free tier, sem cartão — ver `docs/modelos.md` §3.5), que resolve o mesmo requisito de tool calling sem esse bloqueio.
+- [ ] **Criar uma chave gratuita em [console.groq.com/keys](https://console.groq.com/keys)**, colar em `.env` e rodar `src/demo.py`, `src/verificador.py` e `src/comparar_modelos.py`, substituindo os placeholders em `docs/modelos.md` §3.5 e neste README pelos resultados reais.
 - [x] ~~Reconfirmar os preços da Mistral em `docs/modelos.md`~~ — feito em 22/09/2026, valores confirmados sem mudança (ver `docs/fontes.md`).
 - [x] ~~Substituir a linha de base estimada de `docs/case.md` §2.5 por uma medição real~~ — decisão do grupo em 22/09/2026: sem acesso a uma secretaria real para cronometrar, a linha de base continua como **estimativa declarada** (a ressalva já está escrita em `case.md` §2.5, que é a resposta válida quando a medição real não é possível). Se o grupo conseguir acesso real depois, atualizar com a fonte da medição.

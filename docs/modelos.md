@@ -77,3 +77,23 @@ Razão: é o menor modelo do trio com raciocínio suficiente, no julgamento obse
 
 - Se a verificação mínima (§3.3), depois de rodada de verdade, mostrar que `ministral-3b-latest` acerta os 5 casos — principalmente o caso 2 (divergência) e o caso 4 (trancamento) — trocamos para ele: é 4x mais barato e o caso não teria motivo para pagar mais.
 - Se `mistral-small-latest` errar qualquer caso de trancamento (caso 4) na verificação, ou no verificador de 40 casos (`docs/case.md` §2.6-2.7), subimos para `mistral-large-latest` sem hesitar — o custo de um trancamento decidido errado é maior que a diferença de preço entre os dois modelos.
+
+## 3.5 Troca de provedor: Mistral → Groq (22/09/2026)
+
+**O que mudou:** a conta Mistral usada para os testes (§3.3) ficou com a cota de requisições de inferência zerada (`x-ratelimit-limit-req-minute: 0`, diagnóstico completo em `logs/README.md`) — o workspace exige ativar um plano de uso em `admin.mistral.ai`, o que não foi feito a tempo da entrega. Em vez de atrasar a demonstração exigida em 4.5 esperando essa ativação, o grupo trocou de provedor para a **Groq** (`https://api.groq.com/openai/v1`), que oferece camada gratuita sem cartão de crédito e mantém os dois pré-requisitos não-negociáveis da §3.1: endpoint compatível com a API da OpenAI e tool calling confiável (confirmado na documentação oficial — todos os modelos hospedados na Groq suportam tool use).
+
+**Isto não invalida a análise das §3.1-3.4** — o raciocínio sobre os eixos que importam para o caso continua o mesmo, e a Mistral continua como candidata válida se/quando a conta tiver plano ativo (ver `.env.example`, comentado). O que mudou foi só a disponibilidade prática de uma das opções, não o critério de escolha.
+
+**Os três candidatos Groq**, nos mesmos eixos da §3.1:
+
+| Modelo | Janela de contexto | Tool calling | Raciocínio | Preço (free tier) | Latência |
+|---|---|---|---|---|---|
+| `llama-3.1-8b-instant` | 131k | sim | básico — mesmo papel do `ministral-3b-latest` na análise original | US$ 0 | mais baixa |
+| `llama-3.3-70b-versatile` | 131k | sim | intermediário/forte — mesmo papel do `mistral-small-latest` | US$ 0 | baixa |
+| `openai/gpt-oss-20b` | 131k | sim | intermediário, arquitetura diferente (MoE aberto da OpenAI, servido pela Groq) — candidato de comparação fora da família Llama | US$ 0 | baixa (modelo menor, ~1000 tps documentado) |
+
+> Fonte: `console.groq.com/docs/models` e `console.groq.com/docs/tool-use`, consultadas em 22/09/2026. Os limites exatos do free tier (requisições/minuto e por dia) variam por modelo e devem ser conferidos no painel da conta antes de rodar o verificador de 40 casos em lote — se o volume esbarrar no limite, o comparar_modelos.py e o verificador.py aceitam retry com backoff, não paralelizam.
+
+**A decisão:** `llama-3.3-70b-versatile` como modelo padrão do agente (mesmo papel que `mistral-small-latest` tinha) — é o candidato com raciocínio suficiente para o passo de ANÁLISE (julgar divergência aluno-vs-sistema) sem custo, dado que os três candidatos aqui custam US$ 0. **Em que condições mudaríamos de ideia:** se a verificação mínima (§3.3, a repetir com estes três candidatos via `python src/comparar_modelos.py`) mostrar que `llama-3.1-8b-instant` acerta os casos de divergência e trancamento, trocamos para ele por ser mais rápido, sem motivo para pagar latência que o caso não precisa; se algum dos três falhar num caso de trancamento no verificador de 40 casos, isso pesa mais que qualquer economia e volta a discussão para a Mistral com plano ativo ou para um modelo maior.
+
+**Pendência:** a tabela da §3.3 foi feita com os candidatos Mistral, mas nunca chegou a ser executada (todas as células ficaram "pendente" por falta de cota). Ela deve ser refeita com os três candidatos Groq acima antes da entrega — é o mesmo script (`src/comparar_modelos.py`), só a lista `MODELOS` mudou.

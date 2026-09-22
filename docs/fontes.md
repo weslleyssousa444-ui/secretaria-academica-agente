@@ -6,6 +6,7 @@
 - [Documentação da API Mistral](https://docs.mistral.ai/) — endpoint compatível com OpenAI, `chat/completions`, `tools`, `response_format`.
 - [Mistral — página de preços](https://mistral.ai/pricing/api) — **reconfirmada em 22/09/2026**: os três preços usados em `docs/modelos.md` (§3.1) batem exatamente com o material da disciplina. Pendência anterior resolvida.
 - [Mistral — Admin Console (criação de chave de API)](https://admin.mistral.ai/).
+- [Groq — modelos disponíveis](https://console.groq.com/docs/models) e [Groq — tool use](https://console.groq.com/docs/tool-use), consultadas em 22/09/2026 — confirmação de que todos os modelos hospedados suportam tool calling e dos IDs exatos dos três candidatos usados em `docs/modelos.md` §3.5, após a troca de provedor (conta Mistral com cota zerada, ver `logs/README.md`).
 
 ## O que ainda falta consultar
 
