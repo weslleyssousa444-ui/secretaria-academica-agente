@@ -1,0 +1,72 @@
+{
+  "execucao_id": "695426dc",
+  "caso": "01-caso-simples",
+  "passos": [
+    {
+      "indice": 0,
+      "ferramenta": "buscar_aluno",
+      "argumentos": {
+        "ra": "20231045"
+      },
+      "resultado": {
+        "ra": "20231045",
+        "nome": "Weslley Sousa",
+        "curso": "ADS",
+        "situacao_matricula": "ativa"
+      },
+      "erro": null
+    },
+    {
+      "indice": 1,
+      "ferramenta": "emitir_documento",
+      "argumentos": {
+        "ra": "20231045",
+        "tipo_documento": "declaracao_matricula"
+      },
+      "resultado": {
+        "protocolo": "DOC-1002",
+        "ra": "20231045",
+        "tipo_documento": "declaracao_matricula",
+        "data_emissao": "2026-09-22",
+        "ja_existia": false
+      },
+      "erro": null
+    }
+  ],
+  "tokens_gastos": 4263,
+  "custo_estimado": 0.0,
+  "termino": "respondeu",
+  "motivo": null,
+  "historico": [
+    {
+      "role": "user",
+      "content": "Oi, preciso de uma declaração de matrícula pra levar no estágio."
+    },
+    {
+      "role": "assistant",
+      "content": "Olá! Para emitir a declaração de matrícula, preciso confirmar seu número de RA. Poderia me informar, por favor?"
+    },
+    {
+      "role": "user",
+      "content": "20231045"
+    },
+    "ChatCompletionMessage(content=None, refusal=None, role='assistant', annotations=None, audio=None, function_call=None, tool_calls=[ChatCompletionMessageFunctionToolCall(id='fc_f0e979bd-34ff-4d13-865c-f42298d7b68c', function=Function(arguments='{\"ra\":\"20231045\"}', name='buscar_aluno'), type='function')], reasoning='We have RA. Need to call buscar_aluno.')",
+    {
+      "role": "tool",
+      "tool_call_id": "fc_f0e979bd-34ff-4d13-865c-f42298d7b68c",
+      "name": "buscar_aluno",
+      "content": "{\"ra\": \"20231045\", \"nome\": \"Weslley Sousa\", \"curso\": \"ADS\", \"situacao_matricula\": \"ativa\"}"
+    },
+    "ChatCompletionMessage(content=None, refusal=None, role='assistant', annotations=None, audio=None, function_call=None, tool_calls=[ChatCompletionMessageFunctionToolCall(id='fc_d9ae734f-e713-4756-89f1-3e9670c64851', function=Function(arguments='{\"ra\":\"20231045\",\"tipo_documento\":\"declaracao_matricula\"}', name='emitir_documento'), type='function')], reasoning='Now we can emit documento.')",
+    {
+      "role": "tool",
+      "tool_call_id": "fc_d9ae734f-e713-4756-89f1-3e9670c64851",
+      "name": "emitir_documento",
+      "content": "{\"protocolo\": \"DOC-1002\", \"ra\": \"20231045\", \"tipo_documento\": \"declaracao_matricula\", \"data_emissao\": \"2026-09-22\", \"ja_existia\": false}"
+    },
+    {
+      "role": "assistant",
+      "content": "**Protocolo:** DOC‑1002  \n**Documento emitido:** Declaração de Matrícula  \n\n> *Declaração de Matrícula*  \n>  \n> Eu, responsável pela Secretaria Acadêmica, certifico que o aluno Weslley Sousa, RA 20231045, está regularmente matriculado no curso de Análise e Desenvolvimento de Sistemas (ADS) e encontra-se em situação ativa.  \n>  \n> Esta declaração é válida para fins de comprovação de matrícula em estágio.  \n\nCaso precise de mais alguma coisa, estou à disposição."
+    }
+  ]
+}

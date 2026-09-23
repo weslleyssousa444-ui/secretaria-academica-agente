@@ -1,0 +1,54 @@
+{
+  "execucao_id": "100512d1",
+  "caso": "04-nao-dispara-acao-principal",
+  "passos": [
+    {
+      "indice": 0,
+      "ferramenta": "escalar_para_humano",
+      "argumentos": {
+        "chave": "20229012:trancamento_matricula:trancamento_matricula",
+        "motivo": "trancamento_matricula",
+        "ra": "20229012",
+        "tipo_pedido": "trancamento_matricula"
+      },
+      "resultado": {
+        "protocolo": "CASO-3003",
+        "ra": "20229012",
+        "tipo_pedido": "trancamento_matricula",
+        "motivo": "trancamento_matricula",
+        "prazo": "48h",
+        "ja_existia": false
+      },
+      "erro": null
+    }
+  ],
+  "tokens_gastos": 3567,
+  "custo_estimado": 0.0,
+  "termino": "respondeu",
+  "motivo": null,
+  "historico": [
+    {
+      "role": "user",
+      "content": "Quero trancar minha matrícula esse semestre."
+    },
+    {
+      "role": "assistant",
+      "content": "Para que possamos encaminhar seu pedido de trancamento de matrícula, preciso confirmar seu número de RA. Poderia informar, por favor?"
+    },
+    {
+      "role": "user",
+      "content": "20229012"
+    },
+    "ChatCompletionMessage(content=None, refusal=None, role='assistant', annotations=None, audio=None, function_call=None, tool_calls=[ChatCompletionMessageFunctionToolCall(id='fc_c59eec87-c28c-455a-a295-148f7954bfd4', function=Function(arguments='{\"chave\":\"20229012:trancamento_matricula:trancamento_matricula\",\"motivo\":\"trancamento_matricula\",\"ra\":\"20229012\",\"tipo_pedido\":\"trancamento_matricula\"}', name='escalar_para_humano'), type='function')], reasoning='We have a user request: \"Quero trancar minha matrícula esse semestre.\" They provided RA: 20229012. According to rules: trancamento_matricula always escalated to human, regardless of situation. So we need to call escalar_para_humano with chave: ra:tipo_pedido:motivo. The motivo: \"trancamento_matricula\". The RA is known. So we call escalar_para_humano with chave \"20229012:trancamento_matricula:trancamento_matricula\" maybe. The motivo: \"trancamento_matricula\". The RA: \"20229012\". tipo_pedido: \"trancamento_matricula\". Then we respond: \"Seu caso foi encaminhado, protocolo X, prazo 48h.\" We need to get a protocol from the function. The function returns something. We need to call the function.')",
+    {
+      "role": "tool",
+      "tool_call_id": "fc_c59eec87-c28c-455a-a295-148f7954bfd4",
+      "name": "escalar_para_humano",
+      "content": "{\"protocolo\": \"CASO-3003\", \"ra\": \"20229012\", \"tipo_pedido\": \"trancamento_matricula\", \"motivo\": \"trancamento_matricula\", \"prazo\": \"48h\", \"ja_existia\": false}"
+    },
+    {
+      "role": "assistant",
+      "content": "Seu pedido de trancamento de matrícula foi encaminhado para a equipe responsável.  \n**Protocolo:** CASO-3003  \n**Prazo de resposta:** 48 horas."
+    }
+  ]
+}

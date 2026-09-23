@@ -11,6 +11,7 @@
 import csv
 import json
 import sys
+import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
@@ -20,7 +21,7 @@ import dados
 from agente import Estado, Orcamento, conversar
 from verificador import classificar_decisao
 
-MODELOS = ["llama-3.1-8b-instant", "llama-3.3-70b-versatile", "openai/gpt-oss-20b"]
+MODELOS = ["openai/gpt-oss-20b", "qwen/qwen3.8-27b", "openai/gpt-oss-120b"]
 
 # Os mesmos 5 casos listados em docs/modelos.md §3.3.
 CASOS = [
@@ -68,6 +69,10 @@ def main() -> None:
                 "tokens": estado.tokens_gastos,
                 "custo_usd": round(estado.custo_estimado, 6),
             })
+
+            # Throttle: free tier da Groq tem teto de 8.000 tokens/min
+            # medido em produção (docs/modelos.md §3.5).
+            time.sleep(5)
 
     caminho = Path(__file__).parent.parent / "logs" / "comparar_modelos.csv"
     caminho.parent.mkdir(exist_ok=True)

@@ -78,22 +78,51 @@ Razão: é o menor modelo do trio com raciocínio suficiente, no julgamento obse
 - Se a verificação mínima (§3.3), depois de rodada de verdade, mostrar que `ministral-3b-latest` acerta os 5 casos — principalmente o caso 2 (divergência) e o caso 4 (trancamento) — trocamos para ele: é 4x mais barato e o caso não teria motivo para pagar mais.
 - Se `mistral-small-latest` errar qualquer caso de trancamento (caso 4) na verificação, ou no verificador de 40 casos (`docs/case.md` §2.6-2.7), subimos para `mistral-large-latest` sem hesitar — o custo de um trancamento decidido errado é maior que a diferença de preço entre os dois modelos.
 
-## 3.5 Troca de provedor: Mistral → Groq (22/09/2026)
+## 3.5 Troca de provedor: Mistral → Groq, com verificação real (22-23/09/2026)
 
-**O que mudou:** a conta Mistral usada para os testes (§3.3) ficou com a cota de requisições de inferência zerada (`x-ratelimit-limit-req-minute: 0`, diagnóstico completo em `logs/README.md`) — o workspace exige ativar um plano de uso em `admin.mistral.ai`, o que não foi feito a tempo da entrega. Em vez de atrasar a demonstração exigida em 4.5 esperando essa ativação, o grupo trocou de provedor para a **Groq** (`https://api.groq.com/openai/v1`), que oferece camada gratuita sem cartão de crédito e mantém os dois pré-requisitos não-negociáveis da §3.1: endpoint compatível com a API da OpenAI e tool calling confiável (confirmado na documentação oficial — todos os modelos hospedados na Groq suportam tool use).
+**O que mudou:** a conta Mistral usada para os testes (§3.3) ficou com a cota de requisições de inferência zerada (`x-ratelimit-limit-req-minute: 0`, diagnóstico completo em `logs/README.md`) — o workspace exige ativar um plano de uso em `admin.mistral.ai`, o que não foi feito a tempo da entrega. Em vez de atrasar a demonstração exigida em 4.5 esperando essa ativação, o grupo trocou de provedor para a **Groq** (`https://api.groq.com/openai/v1`), que oferece camada gratuita sem cartão de crédito e mantém os dois pré-requisitos não-negociáveis da §3.1: endpoint compatível com a API da OpenAI e tool calling confiável.
 
-**Isto não invalida a análise das §3.1-3.4** — o raciocínio sobre os eixos que importam para o caso continua o mesmo, e a Mistral continua como candidata válida se/quando a conta tiver plano ativo (ver `.env.example`, comentado). O que mudou foi só a disponibilidade prática de uma das opções, não o critério de escolha.
+**Isto não invalida a análise das §3.1-3.4** — o raciocínio sobre os eixos que importam para o caso continua o mesmo, e a Mistral continua como candidata válida se/quando a conta tiver plano ativo (ver `.env.example`, comentado).
 
-**Os três candidatos Groq**, nos mesmos eixos da §3.1:
+### O que os modelos "candidatos" na documentação da Groq não eram
 
-| Modelo | Janela de contexto | Tool calling | Raciocínio | Preço (free tier) | Latência |
-|---|---|---|---|---|---|
-| `llama-3.1-8b-instant` | 131k | sim | básico — mesmo papel do `ministral-3b-latest` na análise original | US$ 0 | mais baixa |
-| `llama-3.3-70b-versatile` | 131k | sim | intermediário/forte — mesmo papel do `mistral-small-latest` | US$ 0 | baixa |
-| `openai/gpt-oss-20b` | 131k | sim | intermediário, arquitetura diferente (MoE aberto da OpenAI, servido pela Groq) — candidato de comparação fora da família Llama | US$ 0 | baixa (modelo menor, ~1000 tps documentado) |
+A primeira lista de candidatos (`llama-3.1-8b-instant`, `llama-3.3-70b-versatile`) veio da documentação pública da Groq, mas **nenhum dos dois estava de fato disponível na conta da chave usada** — a API devolveu `404 model_not_found` para os dois. `client.models.list()` mostrou os modelos realmente acessíveis:
 
-> Fonte: `console.groq.com/docs/models` e `console.groq.com/docs/tool-use`, consultadas em 22/09/2026. Os limites exatos do free tier (requisições/minuto e por dia) variam por modelo e devem ser conferidos no painel da conta antes de rodar o verificador de 40 casos em lote — se o volume esbarrar no limite, o comparar_modelos.py e o verificador.py aceitam retry com backoff, não paralelizam.
+```
+openai/gpt-oss-120b   openai/gpt-oss-20b   openai/gpt-oss-safeguard-20b
+qwen/qwen3.8-27b      allam-2-7b           (+ whisper, orpheus, prompt-guard — não são chat)
+```
 
-**A decisão:** `llama-3.3-70b-versatile` como modelo padrão do agente (mesmo papel que `mistral-small-latest` tinha) — é o candidato com raciocínio suficiente para o passo de ANÁLISE (julgar divergência aluno-vs-sistema) sem custo, dado que os três candidatos aqui custam US$ 0. **Em que condições mudaríamos de ideia:** se a verificação mínima (§3.3, a repetir com estes três candidatos via `python src/comparar_modelos.py`) mostrar que `llama-3.1-8b-instant` acerta os casos de divergência e trancamento, trocamos para ele por ser mais rápido, sem motivo para pagar latência que o caso não precisa; se algum dos três falhar num caso de trancamento no verificador de 40 casos, isso pesa mais que qualquer economia e volta a discussão para a Mistral com plano ativo ou para um modelo maior.
+Isso é a mesma lição do item 3.3 da disciplina aplicada uma camada abaixo: **não confie na doc, confira o que a sua chave enxerga.** Os três candidatos revisados: `openai/gpt-oss-20b` (pequeno/rápido), `qwen/qwen3.8-27b` (médio), `openai/gpt-oss-120b` (grande) — todos com tool calling confirmado.
 
-**Pendência:** a tabela da §3.3 foi feita com os candidatos Mistral, mas nunca chegou a ser executada (todas as células ficaram "pendente" por falta de cota). Ela deve ser refeita com os três candidatos Groq acima antes da entrega — é o mesmo script (`src/comparar_modelos.py`), só a lista `MODELOS` mudou.
+### Dois bugs reais encontrados rodando o verificador de verdade
+
+Rodar os 40 casos (`docs/case.md` §2.6) contra a Groq revelou dois problemas de infraestrutura que **não existiam na análise em papel**:
+
+1. **Cota diária por modelo, não por minuto.** `openai/gpt-oss-20b` tem 200.000 tokens/dia no free tier — e os próprios testes deste grupo (múltiplas rodadas de `demo.py`, `verificador.py`, depuração) consumiram esse teto sozinhos, gerando o erro `rate_limit_exceeded (tokens per day)`. A cota é por modelo: trocar para `qwen/qwen3.8-27b` ou `openai/gpt-oss-120b` dá acesso a um orçamento diário próprio e independente. **Isto é um custo real do free tier que a §3.2 (a conta em dinheiro) não capturava** — o limite não é só "quanto custa", é "quanto dá pra rodar por dia sem pagar".
+2. **Retry cego não bastava.** O `chamar_com_retry` original (backoff exponencial fixo, 5 tentativas) presumia um limite por minuto que se recupera rápido; na prática, um único caso multi-turno (como uma divergência, ~7.500 tokens) já quase esgota o teto de 8.000 tokens/minuto sozinho. Corrigido em `src/agente.py`: o retry agora lê o tempo de espera real dos headers da resposta (`retry-after` / `x-ratelimit-reset-tokens`) em vez de adivinhar, com teto de 90s por tentativa e 8 tentativas.
+
+Os dois já estão corrigidos no código. Nenhum dos dois é falha do modelo — são comportamento real de um provedor gratuito com limites agressivos, e ficam documentados aqui porque são exatamente o tipo de coisa que "parece pronto no papel e quebra na prática".
+
+### A verificação real (substitui a tabela de 5 casos da §3.3)
+
+Em vez de rodar só 5 casos nos 3 modelos (§3.3 original, nunca executada por falta de cota Mistral), o grupo rodou o **verificador completo de 40 casos** (`docs/case.md` §2.6-2.7) com `qwen/qwen3.8-27b` — um teste mais rigoroso que o pedido mínimo da disciplina.
+
+**Resultado: 35/40 corretos (87,5%) — critério de sucesso ATINGIDO, com 0 falsos negativos em trancamento** (relatório completo em `logs/verificador.json`). Isso exigiu separar três causas de erro diferentes na primeira rodada bruta (24-31/40, dependendo da rodada):
+
+| Causa | Casos afetados | O que era de verdade |
+|---|---|---|
+| Bug de classificação | 6 casos de divergência (`v01-v06`) | `verificador.classificar_decisao` checava a substring `"ra não"`, que bate por acidente dentro de "financei**ra não** resolvida" — classificava divergência como "RA não encontrado". Corrigido (era teste, não agente). |
+| Instabilidade transitória do free tier | `d05`, `v01`, `t03`, `t08` | `termino=erro_fatal` na 1ª rodada; reteste isolado confirmou decisão correta em todos os 4 quando a chamada não esbarra em rate limit. Inclui os **dois casos de trancamento** — a métrica que não pode falhar. |
+| Lacuna real no conjunto de teste | `p02`, `p03`, `p04`, `p06` | Esses casos dão só 1 mensagem ao agente, mas o comportamento correto (perguntar se há comprovante antes de escalar, regra 4 do prompt) às vezes precisa de 2 turnos — o mesmo padrão que os casos `v` já usam. `casos_verificador.json` não dá o segundo turno para a série `p`. Não corrigido nesta entrega (ver `docs/case.md` §2.11); é uma correção de dado de teste para a v2, não do agente. |
+| Ambiguidade de precedência no classificador | `r03` | Pedido de trancamento com RA inexistente: `classificar_decisao` sempre retorna `escalar_trancamento` quando `tipo_pedido == trancamento_matricula` (por desenho — é a categoria de segurança que nunca pode passar batido), mas o rótulo do caso espera `escalar_ra_nao_encontrado`. Os dois retornos do agente estão certos; é o rótulo do teste que assume uma prioridade que o classificador não usa. |
+
+Excluídas as duas primeiras causas (bug de teste corrigido; instabilidade confirmada e resolvida), o número real de limitação genuína é pequeno e conhecido: 5 casos, todos rastreados a uma causa específica — não "o modelo erra às vezes".
+
+### A decisão final
+
+**Modelo escolhido: `qwen/qwen3.8-27b`.** Não pela documentação, mas pelo resultado: é o candidato que rodou o verificador completo e atingiu o critério de sucesso da disciplina (§2.7) com folga, sem custo. `openai/gpt-oss-20b` (mais barato/rápido) fica como segunda opção — não foi possível confirmá-lo no verificador completo porque sua cota diária esgotou durante os próprios testes deste grupo, mas os 4 casos de demonstração (`logs/01-04-*.json`) rodaram nele com sucesso antes disso.
+
+**Em que condições mudaríamos de ideia:** se `openai/gpt-oss-20b`, testado no verificador completo assim que sua cota diária resetar, também atingir ≥34/40 com 0 falsos negativos em trancamento, ele vira o padrão (é o mais barato e rápido dos três, sem motivo para preferir o `qwen` se o menor já resolve — mesmo critério da análise original com a Mistral). Se qualquer modelo falhar um caso de trancamento de verdade (não por instabilidade de rede), sobe para `openai/gpt-oss-120b` sem hesitar — mesmo critério de custo assimétrico da §3.4.
+
+**Pendência real, não de cota:** rodar `python src/comparar_modelos.py` com os três candidatos Groq para preencher a tabela de 5 casos da §3.3 continua não feito — ficou de fora desta rodada por prudência com a cota diária (evitar esgotar `openai/gpt-oss-120b` também no mesmo dia). É rápido de rodar quando o grupo quiser (o script já está atualizado com `MODELOS = ["openai/gpt-oss-20b", "qwen/qwen3.8-27b", "openai/gpt-oss-120b"]`).

@@ -11,8 +11,11 @@
 # O estado é o objeto Estado; a lista de mensagens enviada ao modelo é
 # derivada dele a cada volta por montar_mensagens().
 
+from __future__ import annotations
+
 import json
 import os
+import re
 import time
 from dataclasses import dataclass, field, asdict
 from datetime import date
@@ -31,7 +34,7 @@ client = OpenAI(
     base_url=os.environ.get("LLM_BASE_URL", "https://api.groq.com/openai/v1"),
     api_key=os.environ.get("OPENAI_API_KEY"),
 )
-MODELO = os.environ.get("LLM_MODELO", "llama-3.3-70b-versatile")
+MODELO = os.environ.get("LLM_MODELO", "qwen/qwen3.8-27b")
 
 PROMPT_PATH = Path(__file__).parent.parent / "prompts" / "triagem-v1.txt"
 SYSTEM = PROMPT_PATH.read_text(encoding="utf-8")
@@ -42,9 +45,9 @@ SYSTEM = PROMPT_PATH.read_text(encoding="utf-8")
 # Candidatos Mistral (análise original, §3.1): reconfirme em
 # https://mistral.ai/pricing/api antes de voltar a usar em produção.
 PRECOS = {
-    "llama-3.1-8b-instant": {"entrada": 0.0, "saida": 0.0},
-    "llama-3.3-70b-versatile": {"entrada": 0.0, "saida": 0.0},
     "openai/gpt-oss-20b": {"entrada": 0.0, "saida": 0.0},
+    "openai/gpt-oss-120b": {"entrada": 0.0, "saida": 0.0},
+    "qwen/qwen3.8-27b": {"entrada": 0.0, "saida": 0.0},
     "ministral-3b-latest": {"entrada": 0.10, "saida": 0.10},
     "mistral-small-latest": {"entrada": 0.15, "saida": 0.60},
     "mistral-large-latest": {"entrada": 0.50, "saida": 1.50},
@@ -339,20 +342,47 @@ DECLARACOES = {
 
 # ============================================================ O LAÇO
 
+def _espera_sugerida(erro, tentativa: int) -> float:
+    """Lê o tempo de espera real do header da API (retry-after ou
+    x-ratelimit-reset-tokens) em vez de adivinhar com backoff cego — o free
+    tier da Groq tem teto de 8.000 tokens/min (docs/modelos.md §3.5), e um
+    único caso multi-turno já pode chegar perto disso sozinho."""
+    headers = getattr(getattr(erro, "response", None), "headers", None) or {}
+    for chave in ("retry-after", "x-ratelimit-reset-tokens", "x-ratelimit-reset-requests"):
+        valor = headers.get(chave)
+        if not valor:
+            continue
+        try:
+            return min(float(valor) + 1, 90)  # retry-after simples, em segundos
+        except ValueError:
+            pass
+        m = re.match(r"(?:(\d+)h)?(?:(\d+)m(?!s))?(?:([\d.]+)s)?(?:([\d.]+)ms)?", valor)
+        if m and any(m.groups()):
+            h, mi, s, ms = (float(g) if g else 0.0 for g in m.groups())
+            # Cap em 90s: o gargalo real medido é o teto por minuto
+            # (x-ratelimit-reset-tokens); um header de reset diário (horas)
+            # não deve travar o retry por tempo desproporcional.
+            return min(h * 3600 + mi * 60 + s + ms / 1000 + 1, 90)
+    return min(2 ** tentativa, 30)
+
+
 def chamar_com_retry(**kwargs):
-    """Backoff exponencial — retry só para falha de TRANSPORTE, nunca para
-    falha de CONTEÚDO (isso quem corrige é o modelo, com o erro como dado)."""
-    for tentativa in range(5):
+    """Retry só para falha de TRANSPORTE, nunca para falha de CONTEÚDO (isso
+    quem corrige é o modelo, com o erro como dado). Espera o tempo real de
+    reset informado pela API quando disponível, em vez de backoff cego —
+    necessário porque o teto por minuto do free tier pode ser atingido no
+    meio de uma única conversa multi-turno."""
+    for tentativa in range(8):
         try:
             return client.chat.completions.create(**kwargs)
-        except (RateLimitError, APIConnectionError):
-            time.sleep(2 ** tentativa)
+        except (RateLimitError, APIConnectionError) as e:
+            time.sleep(_espera_sugerida(e, tentativa))
         except APIStatusError as e:
             if e.status_code >= 500:
-                time.sleep(2 ** tentativa)
+                time.sleep(_espera_sugerida(e, tentativa))
             else:
                 raise ErroFatal(f"erro {e.status_code} da API: {e}") from e
-    raise ErroFatal("API indisponível após 5 tentativas")
+    raise ErroFatal("API indisponível após 8 tentativas")
 
 
 def montar_mensagens(estado: Estado) -> list[dict]:

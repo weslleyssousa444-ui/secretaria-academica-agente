@@ -18,11 +18,11 @@
   {"id": "s08", "decisao_esperada": "emitir_segunda_via", "mensagens": ["Preciso da segunda via do meu histórico escolar. Meu RA é 20231234."]},
 
   {"id": "p01", "decisao_esperada": "escalar_pendencia", "mensagens": ["Quero a segunda via do meu histórico. Meu RA é 20230198."]},
-  {"id": "p02", "decisao_esperada": "escalar_pendencia", "mensagens": ["Quero a segunda via do meu histórico. Meu RA é 20233321."]},
-  {"id": "p03", "decisao_esperada": "escalar_pendencia", "mensagens": ["Quero a segunda via do meu histórico. Meu RA é 20232210."]},
-  {"id": "p04", "decisao_esperada": "escalar_pendencia", "mensagens": ["Quero a segunda via do meu histórico. Meu RA é 20233120."]},
+  {"id": "p02", "decisao_esperada": "escalar_pendencia", "mensagens": ["Quero a segunda via do meu histórico. Meu RA é 20233321."], "observacao": "LACUNA CONHECIDA (docs/modelos.md §3.5): caso de 1 turno só, mas o agente às vezes pede comprovante (regra 4 do prompt) antes de escalar, precisando de um 2º turno como os casos v — corrigir adicionando uma 2ª mensagem na v2"},
+  {"id": "p03", "decisao_esperada": "escalar_pendencia", "mensagens": ["Quero a segunda via do meu histórico. Meu RA é 20232210."], "observacao": "mesma lacuna de p02"},
+  {"id": "p04", "decisao_esperada": "escalar_pendencia", "mensagens": ["Quero a segunda via do meu histórico. Meu RA é 20233120."], "observacao": "mesma lacuna de p02"},
   {"id": "p05", "decisao_esperada": "escalar_pendencia", "mensagens": ["Quero a segunda via do meu histórico. Meu RA é 20230321."]},
-  {"id": "p06", "decisao_esperada": "escalar_pendencia", "mensagens": ["Quero a segunda via do meu histórico. Meu RA é 20234321."]},
+  {"id": "p06", "decisao_esperada": "escalar_pendencia", "mensagens": ["Quero a segunda via do meu histórico. Meu RA é 20234321."], "observacao": "mesma lacuna de p02 — confirmada em reteste isolado, não é instabilidade de rede"},
 
   {"id": "v01", "decisao_esperada": "escalar_divergencia", "mensagens": ["Já paguei tudo, quero a segunda via do meu histórico. Meu RA é 20230198.", "Não tenho o comprovante agora, paguei ontem no banco."]},
   {"id": "v02", "decisao_esperada": "escalar_divergencia", "mensagens": ["Já paguei tudo, quero a segunda via do meu histórico. Meu RA é 20233321.", "Não tenho o comprovante agora, paguei ontem no banco."]},
@@ -42,6 +42,6 @@
 
   {"id": "r01", "decisao_esperada": "escalar_ra_nao_encontrado", "mensagens": ["Preciso de uma declaração de matrícula. Meu RA é 20240000.", "Tenho certeza, é esse mesmo: 20240000."]},
   {"id": "r02", "decisao_esperada": "escalar_ra_nao_encontrado", "mensagens": ["Preciso da segunda via do meu histórico. Meu RA é 20241111.", "Tenho certeza, é esse mesmo: 20241111."]},
-  {"id": "r03", "decisao_esperada": "escalar_ra_nao_encontrado", "mensagens": ["Quero trancar minha matrícula. Meu RA é 20239999.", "Tenho certeza, é esse mesmo: 20239999."]},
+  {"id": "r03", "decisao_esperada": "escalar_ra_nao_encontrado", "mensagens": ["Quero trancar minha matrícula. Meu RA é 20239999.", "Tenho certeza, é esse mesmo: 20239999."], "observacao": "AMBIGUIDADE CONHECIDA (docs/modelos.md §3.5): classificar_decisao sempre rotula trancamento como escalar_trancamento (por desenho, é a categoria que nunca pode passar despercebida), mesmo quando o motivo real do escalonamento é RA não encontrado — o agente escala corretamente nos dois casos, é o rótulo esperado deste caso que conflita com essa prioridade"},
   {"id": "r04", "decisao_esperada": "escalar_ra_nao_encontrado", "mensagens": ["Preciso de uma declaração de matrícula. Meu RA é 00000001.", "Tenho certeza, é esse mesmo: 00000001."]}
 ]

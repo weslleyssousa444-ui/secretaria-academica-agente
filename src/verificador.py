@@ -9,8 +9,11 @@
 # Exige OPENAI_API_KEY configurada no .env. Grava um relatório em
 # logs/verificador.json ao final.
 
+from __future__ import annotations
+
 import json
 import sys
+import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
@@ -39,7 +42,11 @@ def classificar_decisao(estado: Estado) -> str | None:
             motivo = (passo.resultado.get("motivo") or "").lower()
             if passo.resultado.get("tipo_pedido") == "trancamento_matricula":
                 return "escalar_trancamento"
-            if "encontrad" in motivo or "ra não" in motivo or "ra nao" in motivo:
+            # "encontrad" cobre "RA não encontrado" (regra 5 do prompt) sem
+            # falso positivo: os checks soltos "ra não"/"ra nao" batiam por
+            # engano dentro de "financeira não resolvida" (fi-NA-NCEI-RA NÃO
+            # resolvida) e classificavam divergência como RA não encontrado.
+            if "encontrad" in motivo:
                 return "escalar_ra_nao_encontrado"
             if "diverg" in motivo:
                 return "escalar_divergencia"
@@ -79,6 +86,11 @@ def main() -> None:
         linhas.append(linha)
         marca = "OK  " if acertou else "ERRO"
         print(f"{marca} {caso['id']:<5} esperado={esperada:<28} obtido={obtida}")
+
+        # Throttle: free tier da Groq tem teto de 8.000 tokens/min medido
+        # em produção (docs/modelos.md §3.5); uma pausa entre casos evita
+        # 429 em sequência que o retry de agente.py nem sempre absorve.
+        time.sleep(8)
 
     total = len(casos)
     print(f"\n{acertos}/{total} corretos ({acertos / total:.0%})")

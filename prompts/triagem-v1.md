@@ -3,7 +3,7 @@
 | Campo | Valor |
 |---|---|
 | Versão | v1 |
-| Modelo | `llama-3.3-70b-versatile` (Groq, free tier — trocado de `mistral-small-latest` em 22/09/2026, ver `docs/modelos.md` §3.5; o texto do prompt não mudou) |
+| Modelo | `qwen/qwen3.8-27b` (Groq, free tier — trocado de `mistral-small-latest` em 22-23/09/2026, ver `docs/modelos.md` §3.5; o texto do prompt não mudou) |
 | Parâmetros | `temperature=0` (escolher ferramenta e classificar tipo de pedido é decisão, não geração criativa — variar é defeito, mesmo padrão usado em `aula05-agentes/agente.py`) |
 | Técnica | zero-shot com contrato de saída explícito + regras de negócio embutidas no system prompt |
 | Data | primeira versão, escrita junto com o código do agente (Parte 1) |

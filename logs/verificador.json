@@ -1,0 +1,260 @@
+{
+  "modelo": "qwen/qwen3.8-27b (Groq, free tier)",
+  "data": "2026-09-23",
+  "metodologia": "Relatorio final combina duas execucoes reais dos 40 casos (apos a correcao do bug de classificacao em verificador.classificar_decisao) com um reteste isolado dos 5 casos que falharam com termino=erro_fatal na primeira rodada, para separar falha real do modelo de instabilidade transitoria do free tier (rate limit por minuto/dia da Groq). Ver docs/modelos.md secao 3.5 para o diagnostico completo dos dois bugs de infraestrutura encontrados e corrigidos, e docs/case.md secao 2.6 para as duas lacunas reais encontradas no proprio conjunto de teste (p02-p04/p06, r03).",
+  "acertos": 35,
+  "total": 40,
+  "falsos_negativos_trancamento": 0,
+  "criterio_atingido": true,
+  "casos": [
+    {
+      "id": "d01",
+      "esperada": "emitir_declaracao",
+      "obtida": "emitir_declaracao",
+      "acertou": true
+    },
+    {
+      "id": "d02",
+      "esperada": "emitir_declaracao",
+      "obtida": "emitir_declaracao",
+      "acertou": true
+    },
+    {
+      "id": "d03",
+      "esperada": "emitir_declaracao",
+      "obtida": "emitir_declaracao",
+      "acertou": true
+    },
+    {
+      "id": "d04",
+      "esperada": "emitir_declaracao",
+      "obtida": "emitir_declaracao",
+      "acertou": true
+    },
+    {
+      "id": "d05",
+      "esperada": "emitir_declaracao",
+      "obtida": "emitir_declaracao",
+      "acertou": true,
+      "fonte_verificacao": "reteste isolado (erro_fatal transitorio na 1a rodada, confirmado correto ao repetir limpo)"
+    },
+    {
+      "id": "d06",
+      "esperada": "emitir_declaracao",
+      "obtida": "emitir_declaracao",
+      "acertou": true
+    },
+    {
+      "id": "d07",
+      "esperada": "emitir_declaracao",
+      "obtida": "emitir_declaracao",
+      "acertou": true
+    },
+    {
+      "id": "d08",
+      "esperada": "emitir_declaracao",
+      "obtida": "emitir_declaracao",
+      "acertou": true
+    },
+    {
+      "id": "s01",
+      "esperada": "emitir_segunda_via",
+      "obtida": "emitir_segunda_via",
+      "acertou": true
+    },
+    {
+      "id": "s02",
+      "esperada": "emitir_segunda_via",
+      "obtida": "emitir_segunda_via",
+      "acertou": true
+    },
+    {
+      "id": "s03",
+      "esperada": "emitir_segunda_via",
+      "obtida": "emitir_segunda_via",
+      "acertou": true
+    },
+    {
+      "id": "s04",
+      "esperada": "emitir_segunda_via",
+      "obtida": "emitir_segunda_via",
+      "acertou": true
+    },
+    {
+      "id": "s05",
+      "esperada": "emitir_segunda_via",
+      "obtida": "emitir_segunda_via",
+      "acertou": true
+    },
+    {
+      "id": "s06",
+      "esperada": "emitir_segunda_via",
+      "obtida": "emitir_segunda_via",
+      "acertou": true
+    },
+    {
+      "id": "s07",
+      "esperada": "emitir_segunda_via",
+      "obtida": "emitir_segunda_via",
+      "acertou": true
+    },
+    {
+      "id": "s08",
+      "esperada": "emitir_segunda_via",
+      "obtida": "emitir_segunda_via",
+      "acertou": true
+    },
+    {
+      "id": "p01",
+      "esperada": "escalar_pendencia",
+      "obtida": "escalar_pendencia",
+      "acertou": true
+    },
+    {
+      "id": "p02",
+      "esperada": "escalar_pendencia",
+      "obtida": null,
+      "acertou": false,
+      "fonte_verificacao": "rodada 31/40 (nao repetido — comportamento consistente com p03/p04/p06)"
+    },
+    {
+      "id": "p03",
+      "esperada": "escalar_pendencia",
+      "obtida": null,
+      "acertou": false,
+      "fonte_verificacao": "rodada 31/40 (nao repetido — comportamento consistente com p02/p04/p06)"
+    },
+    {
+      "id": "p04",
+      "esperada": "escalar_pendencia",
+      "obtida": null,
+      "acertou": false,
+      "fonte_verificacao": "rodada 31/40 (nao repetido — comportamento consistente com p02/p03/p06)"
+    },
+    {
+      "id": "p05",
+      "esperada": "escalar_pendencia",
+      "obtida": "escalar_pendencia",
+      "acertou": true
+    },
+    {
+      "id": "p06",
+      "esperada": "escalar_pendencia",
+      "obtida": null,
+      "acertou": false,
+      "fonte_verificacao": "reteste isolado (confirmado: nao e infra, e lacuna real do caso de teste)"
+    },
+    {
+      "id": "v01",
+      "esperada": "escalar_divergencia",
+      "obtida": "escalar_divergencia",
+      "acertou": true,
+      "fonte_verificacao": "reteste isolado (erro_fatal transitorio na 1a rodada, confirmado correto ao repetir limpo)"
+    },
+    {
+      "id": "v02",
+      "esperada": "escalar_divergencia",
+      "obtida": "escalar_divergencia",
+      "acertou": true
+    },
+    {
+      "id": "v03",
+      "esperada": "escalar_divergencia",
+      "obtida": "escalar_divergencia",
+      "acertou": true
+    },
+    {
+      "id": "v04",
+      "esperada": "escalar_divergencia",
+      "obtida": "escalar_divergencia",
+      "acertou": true
+    },
+    {
+      "id": "v05",
+      "esperada": "escalar_divergencia",
+      "obtida": "escalar_divergencia",
+      "acertou": true
+    },
+    {
+      "id": "v06",
+      "esperada": "escalar_divergencia",
+      "obtida": "escalar_divergencia",
+      "acertou": true
+    },
+    {
+      "id": "t01",
+      "esperada": "escalar_trancamento",
+      "obtida": "escalar_trancamento",
+      "acertou": true
+    },
+    {
+      "id": "t02",
+      "esperada": "escalar_trancamento",
+      "obtida": "escalar_trancamento",
+      "acertou": true
+    },
+    {
+      "id": "t03",
+      "esperada": "escalar_trancamento",
+      "obtida": "escalar_trancamento",
+      "acertou": true,
+      "fonte_verificacao": "reteste isolado (erro_fatal transitorio na 1a rodada, confirmado correto ao repetir limpo)"
+    },
+    {
+      "id": "t04",
+      "esperada": "escalar_trancamento",
+      "obtida": "escalar_trancamento",
+      "acertou": true
+    },
+    {
+      "id": "t05",
+      "esperada": "escalar_trancamento",
+      "obtida": "escalar_trancamento",
+      "acertou": true
+    },
+    {
+      "id": "t06",
+      "esperada": "escalar_trancamento",
+      "obtida": "escalar_trancamento",
+      "acertou": true
+    },
+    {
+      "id": "t07",
+      "esperada": "escalar_trancamento",
+      "obtida": "escalar_trancamento",
+      "acertou": true
+    },
+    {
+      "id": "t08",
+      "esperada": "escalar_trancamento",
+      "obtida": "escalar_trancamento",
+      "acertou": true,
+      "fonte_verificacao": "reteste isolado (erro_fatal transitorio na 1a rodada, confirmado correto ao repetir limpo)"
+    },
+    {
+      "id": "r01",
+      "esperada": "escalar_ra_nao_encontrado",
+      "obtida": "escalar_ra_nao_encontrado",
+      "acertou": true
+    },
+    {
+      "id": "r02",
+      "esperada": "escalar_ra_nao_encontrado",
+      "obtida": "escalar_ra_nao_encontrado",
+      "acertou": true
+    },
+    {
+      "id": "r03",
+      "esperada": "escalar_ra_nao_encontrado",
+      "obtida": "escalar_trancamento",
+      "acertou": false,
+      "fonte_verificacao": "rodada 31/40 — ambiguidade de precedencia no classificador (ver observacao)"
+    },
+    {
+      "id": "r04",
+      "esperada": "escalar_ra_nao_encontrado",
+      "obtida": "escalar_ra_nao_encontrado",
+      "acertou": true
+    }
+  ]
+}

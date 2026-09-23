@@ -1,0 +1,82 @@
+{
+  "execucao_id": "e298b1a6",
+  "caso": "03-ra-inexistente",
+  "passos": [
+    {
+      "indice": 0,
+      "ferramenta": "buscar_aluno",
+      "argumentos": {
+        "ra": "20240000"
+      },
+      "resultado": {
+        "erro": "RA não encontrado no sistema acadêmico",
+        "recebido": "20240000",
+        "sugestao": "peça ao aluno para confirmar o RA uma vez; se não encontrar de novo, use escalar_para_humano com motivo 'RA não encontrado'"
+      },
+      "erro": "RA não encontrado no sistema acadêmico"
+    },
+    {
+      "indice": 1,
+      "ferramenta": "escalar_para_humano",
+      "argumentos": {
+        "chave": "20240000:declaracao_matricula:RA não encontrado",
+        "motivo": "RA não encontrado",
+        "ra": "20240000",
+        "tipo_pedido": "declaracao_matricula"
+      },
+      "resultado": {
+        "protocolo": "CASO-3002",
+        "ra": "20240000",
+        "tipo_pedido": "declaracao_matricula",
+        "motivo": "RA não encontrado",
+        "prazo": "48h",
+        "ja_existia": false
+      },
+      "erro": null
+    }
+  ],
+  "tokens_gastos": 5867,
+  "custo_estimado": 0.0,
+  "termino": "respondeu",
+  "motivo": null,
+  "historico": [
+    {
+      "role": "user",
+      "content": "Preciso de uma declaração de matrícula."
+    },
+    {
+      "role": "assistant",
+      "content": "Olá! Para que eu possa emitir a declaração de matrícula, poderia me informar seu RA (Registro Acadêmico)?"
+    },
+    {
+      "role": "user",
+      "content": "20240000"
+    },
+    "ChatCompletionMessage(content=None, refusal=None, role='assistant', annotations=None, audio=None, function_call=None, tool_calls=[ChatCompletionMessageFunctionToolCall(id='fc_7269746c-e9b7-446f-9633-db7043b51b28', function=Function(arguments='{\"ra\":\"20240000\"}', name='buscar_aluno'), type='function')], reasoning='We need to handle a request for \"declaracao_matricula\". We must first call buscar_aluno with RA. Then check if the student is enrolled. If enrolled, we can emit. If not, we need to scale. Also check if any financial pending? For declaration, no need to check finance. But we must confirm that the student is enrolled. So call buscar_aluno.')",
+    {
+      "role": "tool",
+      "tool_call_id": "fc_7269746c-e9b7-446f-9633-db7043b51b28",
+      "name": "buscar_aluno",
+      "content": "{\"erro\": \"RA não encontrado no sistema acadêmico\", \"recebido\": \"20240000\", \"sugestao\": \"peça ao aluno para confirmar o RA uma vez; se não encontrar de novo, use escalar_para_humano com motivo 'RA não encontrado'\"}"
+    },
+    {
+      "role": "assistant",
+      "content": "Desculpe, não encontrei o RA 20240000 em nosso sistema. Poderia confirmar se o número está correto?"
+    },
+    {
+      "role": "user",
+      "content": "Tenho certeza, é esse mesmo: 20240000."
+    },
+    "ChatCompletionMessage(content=None, refusal=None, role='assistant', annotations=None, audio=None, function_call=None, tool_calls=[ChatCompletionMessageFunctionToolCall(id='fc_e1bb833a-2070-496b-874c-5649f474f237', function=Function(arguments='{\"chave\":\"20240000:declaracao_matricula:RA não encontrado\",\"motivo\":\"RA não encontrado\",\"ra\":\"20240000\",\"tipo_pedido\":\"declaracao_matricula\"}', name='escalar_para_humano'), type='function')], reasoning='We need to call escalar_para_humano with motivo \"RA não encontrado\". The chave should be \"20240000:declaracao_matricula:RA não encontrado\". The ra is 20240000, tipo_pedido declaracao_matricula.')",
+    {
+      "role": "tool",
+      "tool_call_id": "fc_e1bb833a-2070-496b-874c-5649f474f237",
+      "name": "escalar_para_humano",
+      "content": "{\"protocolo\": \"CASO-3002\", \"ra\": \"20240000\", \"tipo_pedido\": \"declaracao_matricula\", \"motivo\": \"RA não encontrado\", \"prazo\": \"48h\", \"ja_existia\": false}"
+    },
+    {
+      "role": "assistant",
+      "content": "Seu pedido foi encaminhado para a equipe responsável.  \n**Protocolo:** CASO-3002  \n**Tipo de pedido:** Declaração de matrícula  \n**Motivo:** RA não encontrado  \n\nA secretaria entrará em contato em até **48 horas**. Se precisar de mais alguma coisa, estou à disposição."
+    }
+  ]
+}
