@@ -1,2 +1,9 @@
 openai==2.48.0
 python-dotenv==1.2.1
+
+# Exercício 7 (RAG): embedding local, sem custo e sem rate limit — a Groq
+# não tem endpoint de embeddings nesta conta (docs/modelos.md §3.5,
+# exercicios/aula-07-resposta-que-cita.md §1).
+numpy==2.0.2
+sentence-transformers==5.1.2
+torch==2.8.0

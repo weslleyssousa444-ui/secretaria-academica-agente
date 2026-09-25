@@ -4,5 +4,6 @@
 __pycache__/
 *.pyc
 dados/academico.db
+dados/embeddings_regimento.npz
 checkpoints/
 .DS_Store

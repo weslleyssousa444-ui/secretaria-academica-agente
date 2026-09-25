@@ -1,0 +1,22 @@
+[
+  {"id": "r01", "tipo": "simples", "pergunta": "Preciso de uma declaração de matrícula, mas tenho pendência financeira. Isso me impede?", "artigos_esperados": ["Art. 3º"]},
+  {"id": "r02", "tipo": "simples", "pergunta": "Que condição financeira é exigida para emitir a segunda via do histórico?", "artigos_esperados": ["Art. 4º"]},
+  {"id": "r03", "tipo": "simples", "pergunta": "Quem decide o trancamento de matrícula: o sistema ou uma pessoa?", "artigos_esperados": ["Art. 6º"]},
+  {"id": "r04", "tipo": "simples", "pergunta": "Posso trancar só uma disciplina, sem trancar a matrícula inteira?", "artigos_esperados": ["Art. 7º §1º"]},
+  {"id": "r05", "tipo": "simples", "pergunta": "O que acontece com a bolsa de um aluno bolsista integral que tranca a matrícula?", "artigos_esperados": ["Art. 8º §1º"]},
+  {"id": "r06", "tipo": "simples", "pergunta": "Um aluno com convênio empresarial precisa de mais alguma coisa além do pedido para trancar?", "artigos_esperados": ["Art. 8º §2º"]},
+  {"id": "r07", "tipo": "simples", "pergunta": "Uma liminar judicial de trancamento espera fila normal de atendimento?", "artigos_esperados": ["Art. 8º §3º"]},
+  {"id": "r08", "tipo": "simples", "pergunta": "Enquanto o aluno não manda o comprovante que a secretaria pediu, o prazo de resposta continua correndo?", "artigos_esperados": ["Art. 9º §2º"]},
+
+  {"id": "n01", "tipo": "negacao", "pergunta": "Posso mandar um print do aplicativo do banco como comprovante de pagamento?", "artigos_esperados": ["Art. 7º §2º"], "observacao": "armadilha de negação (nota 02 §2): o artigo MENCIONA aplicativo do banco só para excluí-lo"},
+
+  {"id": "c01", "tipo": "contradicao", "pergunta": "Qual o prazo de resposta da secretaria para um pedido encaminhado à coordenação?", "artigos_esperados": ["Art. 9º §1º", "Art. 9º §1º (redação de 2024, revogada)"], "artigo_vigente": "Art. 9º §1º", "observacao": "modo de falha 4 (nota 04 §6): duas versões do mesmo dispositivo, 48h vigente vs 72h revogada"},
+
+  {"id": "s01", "tipo": "sem_resposta", "pergunta": "Quanto custa emitir a segunda via do histórico escolar?", "artigos_esperados": [], "observacao": "o regimento não trata de valor/custo de emissão — nenhum artigo responde"},
+  {"id": "s02", "tipo": "sem_resposta", "pergunta": "Posso pedir prorrogação do trancamento por mais um semestre automaticamente?", "artigos_esperados": [], "observacao": "prorrogação automática não é tratada — só existe o trancamento em si"},
+
+  {"id": "m01", "tipo": "multi_salto", "pergunta": "Uma aluna bolsista integral, vinculada também a um convênio empresarial, quer trancar a matrícula por liminar judicial. O que acontece com a bolsa, o que ela precisa apresentar da empresa, e o pedido segue a fila normal?", "artigos_esperados": ["Art. 8º §1º", "Art. 8º §2º", "Art. 8º §3º"], "observacao": "desafio B: exige compor três artigos do Capítulo IV — nenhum sozinho responde"},
+
+  {"id": "x01", "tipo": "fora_de_dominio", "pergunta": "Qual a previsão do tempo para o litoral norte amanhã?", "artigos_esperados": [], "observacao": "par de controle (nota 02 §1): sem relação alguma com o regimento — é o piso real de cosseno, não uma pergunta de domínio sem resposta"},
+  {"id": "x02", "tipo": "fora_de_dominio", "pergunta": "Quem venceu a copa do mundo de 2018?", "artigos_esperados": [], "observacao": "segundo par de controle, mesmo propósito de x01"}
+]

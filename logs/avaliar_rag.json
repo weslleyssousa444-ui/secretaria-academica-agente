@@ -1,0 +1,542 @@
+{
+  "k": 3,
+  "limiar": 0.35,
+  "modelo": "openai/gpt-oss-20b",
+  "n_perguntas": 15,
+  "recall_at_k_pct": 1.0,
+  "citacoes_verificaveis_pct": 1.0,
+  "fidelidade_pct": 0.8,
+  "recusas_corretas": "4/4",
+  "recusas_indevidas": "0/10",
+  "casos": [
+    {
+      "id": "r01",
+      "tipo": "simples",
+      "pergunta": "Preciso de uma declaração de matrícula, mas tenho pendência financeira. Isso me impede?",
+      "artigos_esperados": [
+        "Art. 3º"
+      ],
+      "trechos_recuperados": [
+        "Art. 3º",
+        "Art. 4º",
+        "Art. 7º §2º"
+      ],
+      "melhor_score": 0.5143471956253052,
+      "portao": "passou",
+      "suficiente": true,
+      "recusou": false,
+      "deveria_recusar": false,
+      "recusa_correta": true,
+      "recall_ok": true,
+      "fidelidade_ok": true,
+      "afirmacoes_sem_lastro": [],
+      "fontes_citadas": [
+        "Art. 3º"
+      ],
+      "fontes_inventadas": [],
+      "diagnostico": "ok (ou corpus, se a resposta ainda estiver errada — ver nota 03 §2)",
+      "resposta": "Não, a declaração de matrícula pode ser emitida mesmo com pendência financeira, pois o artigo 3º estabelece que ela é emitida a qualquer aluno com situação de matrícula ativa, independentemente de pendência financeira."
+    },
+    {
+      "id": "r02",
+      "tipo": "simples",
+      "pergunta": "Que condição financeira é exigida para emitir a segunda via do histórico?",
+      "artigos_esperados": [
+        "Art. 4º"
+      ],
+      "trechos_recuperados": [
+        "Art. 4º",
+        "Art. 5º",
+        "Art. 8º §1º"
+      ],
+      "melhor_score": 0.5399404764175415,
+      "portao": "passou",
+      "suficiente": true,
+      "recusou": false,
+      "deveria_recusar": false,
+      "recusa_correta": true,
+      "recall_ok": true,
+      "fidelidade_ok": true,
+      "afirmacoes_sem_lastro": [],
+      "fontes_citadas": [
+        "Art. 4º"
+      ],
+      "fontes_inventadas": [],
+      "diagnostico": "ok (ou corpus, se a resposta ainda estiver errada — ver nota 03 §2)",
+      "resposta": "Para emitir a segunda via do histórico escolar, é exigida a quitação financeira total do aluno, apurada na data do pedido."
+    },
+    {
+      "id": "r03",
+      "tipo": "simples",
+      "pergunta": "Quem decide o trancamento de matrícula: o sistema ou uma pessoa?",
+      "artigos_esperados": [
+        "Art. 6º"
+      ],
+      "trechos_recuperados": [
+        "Art. 6º",
+        "Art. 2º",
+        "Art. 8º §1º"
+      ],
+      "melhor_score": 0.5365052223205566,
+      "portao": "passou",
+      "suficiente": true,
+      "recusou": false,
+      "deveria_recusar": false,
+      "recusa_correta": true,
+      "recall_ok": true,
+      "fidelidade_ok": true,
+      "afirmacoes_sem_lastro": [],
+      "fontes_citadas": [
+        "Art. 6º"
+      ],
+      "fontes_inventadas": [],
+      "diagnostico": "ok (ou corpus, se a resposta ainda estiver errada — ver nota 03 §2)",
+      "resposta": "O trancamento de matrícula é decidido pela coordenação acadêmica, mediante confirmação humana explícita, e nunca por sistema automatizado."
+    },
+    {
+      "id": "r04",
+      "tipo": "simples",
+      "pergunta": "Posso trancar só uma disciplina, sem trancar a matrícula inteira?",
+      "artigos_esperados": [
+        "Art. 7º §1º"
+      ],
+      "trechos_recuperados": [
+        "Art. 7º §1º",
+        "Art. 8º §3º",
+        "Art. 1º"
+      ],
+      "melhor_score": 0.6386888027191162,
+      "portao": "passou",
+      "suficiente": true,
+      "recusou": false,
+      "deveria_recusar": false,
+      "recusa_correta": true,
+      "recall_ok": true,
+      "fidelidade_ok": true,
+      "afirmacoes_sem_lastro": [],
+      "fontes_citadas": [
+        "Art. 7º §1º"
+      ],
+      "fontes_inventadas": [],
+      "diagnostico": "ok (ou corpus, se a resposta ainda estiver errada — ver nota 03 §2)",
+      "resposta": "Não, o Regimento não permite trancar apenas uma disciplina; o trancamento de matrícula deve ser integral."
+    },
+    {
+      "id": "r05",
+      "tipo": "simples",
+      "pergunta": "O que acontece com a bolsa de um aluno bolsista integral que tranca a matrícula?",
+      "artigos_esperados": [
+        "Art. 8º §1º"
+      ],
+      "trechos_recuperados": [
+        "Art. 8º §1º",
+        "Art. 4º",
+        "Art. 3º"
+      ],
+      "melhor_score": 0.7138340473175049,
+      "portao": "passou",
+      "suficiente": true,
+      "recusou": false,
+      "deveria_recusar": false,
+      "recusa_correta": true,
+      "recall_ok": true,
+      "fidelidade_ok": true,
+      "afirmacoes_sem_lastro": [],
+      "fontes_citadas": [
+        "Art. 8º §1º"
+      ],
+      "fontes_inventadas": [],
+      "diagnostico": "ok (ou corpus, se a resposta ainda estiver errada — ver nota 03 §2)",
+      "resposta": "A bolsa do aluno bolsista integral é automaticamente suspensa a partir da data de deferimento do trancamento pela coordenação. Quando o aluno retornar, a retomada da bolsa depende de uma nova análise socioeconômica, não sendo automática."
+    },
+    {
+      "id": "r06",
+      "tipo": "simples",
+      "pergunta": "Um aluno com convênio empresarial precisa de mais alguma coisa além do pedido para trancar?",
+      "artigos_esperados": [
+        "Art. 8º §2º"
+      ],
+      "trechos_recuperados": [
+        "Art. 8º §2º",
+        "Art. 8º §1º",
+        "Art. 7º §1º"
+      ],
+      "melhor_score": 0.6455901861190796,
+      "portao": "passou",
+      "suficiente": true,
+      "recusou": false,
+      "deveria_recusar": false,
+      "recusa_correta": true,
+      "recall_ok": true,
+      "fidelidade_ok": true,
+      "afirmacoes_sem_lastro": [],
+      "fontes_citadas": [
+        "Art. 8º §2º"
+      ],
+      "fontes_inventadas": [],
+      "diagnostico": "ok (ou corpus, se a resposta ainda estiver errada — ver nota 03 §2)",
+      "resposta": "Sim. O aluno com convênio empresarial deve apresentar, além do pedido de trancamento, a anuência por escrito da empresa conveniada; sem essa anuência o pedido é considerado incompleto e não avança para decisão da coordenação."
+    },
+    {
+      "id": "r07",
+      "tipo": "simples",
+      "pergunta": "Uma liminar judicial de trancamento espera fila normal de atendimento?",
+      "artigos_esperados": [
+        "Art. 8º §3º"
+      ],
+      "trechos_recuperados": [
+        "Art. 8º §3º",
+        "Art. 8º §1º",
+        "Art. 9º §1º"
+      ],
+      "melhor_score": 0.616753101348877,
+      "portao": "passou",
+      "suficiente": true,
+      "recusou": false,
+      "deveria_recusar": false,
+      "recusa_correta": true,
+      "recall_ok": true,
+      "fidelidade_ok": false,
+      "afirmacoes_sem_lastro": [
+        "Não, o trancamento amparado por decisão judicial liminar não espera na fila normal de atendimento."
+      ],
+      "fontes_citadas": [
+        "Art. 8º §3º",
+        "Art. 9º §1º"
+      ],
+      "fontes_inventadas": [],
+      "diagnostico": "prompt de resposta",
+      "resposta": "Não, o trancamento amparado por decisão judicial liminar não espera na fila normal de atendimento. Ele é processado independentemente de pendências financeiras ou anuência de terceiros, e a coordenação acadêmica cumpre a ordem judicial dentro do prazo fixado na decisão, ou, se não houver prazo, dentro do prazo de 48 horas úteis previsto no Art. 9º §1º."
+    },
+    {
+      "id": "r08",
+      "tipo": "simples",
+      "pergunta": "Enquanto o aluno não manda o comprovante que a secretaria pediu, o prazo de resposta continua correndo?",
+      "artigos_esperados": [
+        "Art. 9º §2º"
+      ],
+      "trechos_recuperados": [
+        "Art. 9º §2º",
+        "Art. 4º",
+        "Art. 9º §1º"
+      ],
+      "melhor_score": 0.7258765697479248,
+      "portao": "passou",
+      "suficiente": true,
+      "recusou": false,
+      "deveria_recusar": false,
+      "recusa_correta": true,
+      "recall_ok": true,
+      "fidelidade_ok": true,
+      "afirmacoes_sem_lastro": [],
+      "fontes_citadas": [
+        "Art. 9º §2º"
+      ],
+      "fontes_inventadas": [],
+      "diagnostico": "ok (ou corpus, se a resposta ainda estiver errada — ver nota 03 §2)",
+      "resposta": "Não, o prazo de resposta não corre enquanto o pedido estiver aguardando complementação de dado pelo próprio aluno, inclusive o envio do comprovante solicitado pela secretaria."
+    },
+    {
+      "id": "n01",
+      "tipo": "negacao",
+      "pergunta": "Posso mandar um print do aplicativo do banco como comprovante de pagamento?",
+      "artigos_esperados": [
+        "Art. 7º §2º"
+      ],
+      "trechos_recuperados": [
+        "Art. 7º §2º",
+        "Art. 3º",
+        "Art. 4º"
+      ],
+      "melhor_score": 0.6626864671707153,
+      "portao": "passou",
+      "suficiente": true,
+      "recusou": false,
+      "deveria_recusar": false,
+      "recusa_correta": true,
+      "recall_ok": true,
+      "fidelidade_ok": true,
+      "afirmacoes_sem_lastro": [],
+      "fontes_citadas": [
+        "Art. 7º §2º"
+      ],
+      "fontes_inventadas": [],
+      "diagnostico": "ok (ou corpus, se a resposta ainda estiver errada — ver nota 03 §2)",
+      "resposta": "Não, o comprovante de pagamento aceito é o extrato ou recibo emitido diretamente pela instituição financeira, com autenticação mecânica ou código de verificação. Uma captura de tela do aplicativo do banco, sem esses elementos, não é aceita como comprovante e não supera a pendência registrada no sistema financeiro."
+    },
+    {
+      "id": "c01",
+      "tipo": "contradicao",
+      "pergunta": "Qual o prazo de resposta da secretaria para um pedido encaminhado à coordenação?",
+      "artigos_esperados": [
+        "Art. 9º §1º",
+        "Art. 9º §1º (redação de 2024, revogada)"
+      ],
+      "trechos_recuperados": [
+        "Art. 9º §1º",
+        "Art. 9º §1º (redação de 2024, revogada)",
+        "Art. 8º §2º"
+      ],
+      "melhor_score": 0.8251398205757141,
+      "portao": "passou",
+      "suficiente": false,
+      "recusou": true,
+      "deveria_recusar": false,
+      "recusa_correta": false,
+      "recall_ok": true,
+      "fidelidade_ok": null,
+      "afirmacoes_sem_lastro": [],
+      "fontes_citadas": [
+        "Art. 9º §1º",
+        "Art. 9º §1º (redação de 2024, revogada)"
+      ],
+      "fontes_inventadas": [],
+      "diagnostico": "—",
+      "resposta": "Existem duas versões do prazo: 48 horas úteis e 72 horas úteis. Não é possível determinar qual é a válida com os trechos fornecidos."
+    },
+    {
+      "id": "s01",
+      "tipo": "sem_resposta",
+      "pergunta": "Quanto custa emitir a segunda via do histórico escolar?",
+      "artigos_esperados": [],
+      "trechos_recuperados": [
+        "Art. 4º",
+        "Art. 3º",
+        "Art. 5º"
+      ],
+      "melhor_score": 0.6698439717292786,
+      "portao": "passou",
+      "suficiente": false,
+      "recusou": true,
+      "deveria_recusar": true,
+      "recusa_correta": true,
+      "recall_ok": null,
+      "fidelidade_ok": null,
+      "afirmacoes_sem_lastro": [],
+      "fontes_citadas": [
+        "Art. 4º"
+      ],
+      "fontes_inventadas": [],
+      "diagnostico": "—",
+      "resposta": "Os trechos indicam que a segunda via do histórico escolar só pode ser emitida após quitação total, mas não informam o valor."
+    },
+    {
+      "id": "s02",
+      "tipo": "sem_resposta",
+      "pergunta": "Posso pedir prorrogação do trancamento por mais um semestre automaticamente?",
+      "artigos_esperados": [],
+      "trechos_recuperados": [
+        "Art. 9º §1º",
+        "Art. 8º §1º",
+        "Art. 9º §1º (redação de 2024, revogada)"
+      ],
+      "melhor_score": 0.5689564943313599,
+      "portao": "passou",
+      "suficiente": false,
+      "recusou": true,
+      "deveria_recusar": true,
+      "recusa_correta": true,
+      "recall_ok": null,
+      "fidelidade_ok": null,
+      "afirmacoes_sem_lastro": [],
+      "fontes_citadas": [
+        "Art. 9º §1º",
+        "Art. 8º §1º"
+      ],
+      "fontes_inventadas": [],
+      "diagnostico": "—",
+      "resposta": "Os trechos fornecidos tratam apenas do prazo de resposta da secretaria para pedidos encaminhados à coordenação e da suspensão automática da bolsa do aluno bolsista integral ao solicitar trancamento de matrícula, não abordando a possibilidade de prorrogação automática do trancamento por mais um semestre."
+    },
+    {
+      "id": "m01",
+      "tipo": "multi_salto",
+      "pergunta": "Uma aluna bolsista integral, vinculada também a um convênio empresarial, quer trancar a matrícula por liminar judicial. O que acontece com a bolsa, o que ela precisa apresentar da empresa, e o pedido segue a fila normal?",
+      "artigos_esperados": [
+        "Art. 8º §1º",
+        "Art. 8º §2º",
+        "Art. 8º §3º"
+      ],
+      "trechos_recuperados": [
+        "Art. 8º §2º",
+        "Art. 8º §3º",
+        "Art. 8º §1º"
+      ],
+      "melhor_score": 0.5965836048126221,
+      "portao": "passou",
+      "suficiente": true,
+      "recusou": false,
+      "deveria_recusar": false,
+      "recusa_correta": true,
+      "recall_ok": true,
+      "fidelidade_ok": false,
+      "afirmacoes_sem_lastro": [
+        "O pedido é processado de acordo com a ordem judicial, dentro do prazo nela fixado, e não segue a fila normal de tramitação."
+      ],
+      "fontes_citadas": [
+        "Art. 8º §1º",
+        "Art. 8º §3º"
+      ],
+      "fontes_inventadas": [],
+      "diagnostico": "prompt de resposta",
+      "resposta": "A bolsa é suspensa automaticamente a partir da data de deferimento pela coordenação, conforme Art. 8º §1º. Como o trancamento é amparado por decisão judicial liminar, a coordenação não precisa da anuência da empresa conveniada, pois o Art. 8º §3º dispensa essa exigência. O pedido é processado de acordo com a ordem judicial, dentro do prazo nela fixado, e não segue a fila normal de tramitação."
+    },
+    {
+      "id": "x01",
+      "tipo": "fora_de_dominio",
+      "pergunta": "Qual a previsão do tempo para o litoral norte amanhã?",
+      "artigos_esperados": [],
+      "trechos_recuperados": [
+        "Art. 9º §1º (redação de 2024, revogada)",
+        "Art. 9º §1º",
+        "Art. 3º"
+      ],
+      "melhor_score": 0.20167416334152222,
+      "portao": "recusou_por_score",
+      "suficiente": false,
+      "recusou": true,
+      "deveria_recusar": true,
+      "recusa_correta": true,
+      "recall_ok": null,
+      "fidelidade_ok": null,
+      "afirmacoes_sem_lastro": [],
+      "fontes_citadas": [],
+      "fontes_inventadas": [],
+      "diagnostico": "—",
+      "resposta": "O regimento não parece tratar deste assunto. O trecho mais próximo encontrado foi 'Art. 9º §1º (redação de 2024, revogada)', mas a semelhança está abaixo do limiar de confiança — em vez de arriscar uma resposta sobre outro assunto, prefiro recusar."
+    },
+    {
+      "id": "x02",
+      "tipo": "fora_de_dominio",
+      "pergunta": "Quem venceu a copa do mundo de 2018?",
+      "artigos_esperados": [],
+      "trechos_recuperados": [
+        "Art. 6º",
+        "Art. 4º",
+        "Art. 2º"
+      ],
+      "melhor_score": 0.12058064341545105,
+      "portao": "recusou_por_score",
+      "suficiente": false,
+      "recusou": true,
+      "deveria_recusar": true,
+      "recusa_correta": true,
+      "recall_ok": null,
+      "fidelidade_ok": null,
+      "afirmacoes_sem_lastro": [],
+      "fontes_citadas": [],
+      "fontes_inventadas": [],
+      "diagnostico": "—",
+      "resposta": "O regimento não parece tratar deste assunto. O trecho mais próximo encontrado foi 'Art. 6º', mas a semelhança está abaixo do limiar de confiança — em vez de arriscar uma resposta sobre outro assunto, prefiro recusar."
+    }
+  ],
+  "varredura_limiar": [
+    {
+      "limiar": 0.1,
+      "falsos_positivos": 4,
+      "falsos_positivos_ids": [
+        "s01",
+        "s02",
+        "x01",
+        "x02"
+      ],
+      "falsos_negativos": 0,
+      "falsos_negativos_ids": []
+    },
+    {
+      "limiar": 0.15,
+      "falsos_positivos": 3,
+      "falsos_positivos_ids": [
+        "s01",
+        "s02",
+        "x01"
+      ],
+      "falsos_negativos": 0,
+      "falsos_negativos_ids": []
+    },
+    {
+      "limiar": 0.2,
+      "falsos_positivos": 3,
+      "falsos_positivos_ids": [
+        "s01",
+        "s02",
+        "x01"
+      ],
+      "falsos_negativos": 0,
+      "falsos_negativos_ids": []
+    },
+    {
+      "limiar": 0.25,
+      "falsos_positivos": 2,
+      "falsos_positivos_ids": [
+        "s01",
+        "s02"
+      ],
+      "falsos_negativos": 0,
+      "falsos_negativos_ids": []
+    },
+    {
+      "limiar": 0.3,
+      "falsos_positivos": 2,
+      "falsos_positivos_ids": [
+        "s01",
+        "s02"
+      ],
+      "falsos_negativos": 0,
+      "falsos_negativos_ids": []
+    },
+    {
+      "limiar": 0.35,
+      "falsos_positivos": 2,
+      "falsos_positivos_ids": [
+        "s01",
+        "s02"
+      ],
+      "falsos_negativos": 0,
+      "falsos_negativos_ids": []
+    },
+    {
+      "limiar": 0.4,
+      "falsos_positivos": 2,
+      "falsos_positivos_ids": [
+        "s01",
+        "s02"
+      ],
+      "falsos_negativos": 0,
+      "falsos_negativos_ids": []
+    },
+    {
+      "limiar": 0.45,
+      "falsos_positivos": 2,
+      "falsos_positivos_ids": [
+        "s01",
+        "s02"
+      ],
+      "falsos_negativos": 0,
+      "falsos_negativos_ids": []
+    },
+    {
+      "limiar": 0.5,
+      "falsos_positivos": 2,
+      "falsos_positivos_ids": [
+        "s01",
+        "s02"
+      ],
+      "falsos_negativos": 0,
+      "falsos_negativos_ids": []
+    },
+    {
+      "limiar": 0.55,
+      "falsos_positivos": 2,
+      "falsos_positivos_ids": [
+        "s01",
+        "s02"
+      ],
+      "falsos_negativos": 3,
+      "falsos_negativos_ids": [
+        "r01",
+        "r02",
+        "r03"
+      ]
+    }
+  ]
+}

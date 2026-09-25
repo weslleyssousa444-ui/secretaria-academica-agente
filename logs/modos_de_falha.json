@@ -1,0 +1,82 @@
+{
+  "modo_1": {
+    "pergunta": "Quero a segunda via do meu diploma. Como faço o pedido?",
+    "esperado": "Art. 5º",
+    "top1_recuperado": "Art. 5º",
+    "recall_falhou": false,
+    "resposta": "Não é possível solicitar a segunda via do diploma por este canal. De acordo com o Art. 5º, os pedidos de segunda via de diploma seguem um processo próprio junto à secretaria de registros acadêmicos e não são tratados por este Regimento.",
+    "fontes": [
+      "Art. 5º"
+    ]
+  },
+  "modo_2": {
+    "pergunta": "Um pedido de trancamento por liminar judicial espera fila normal?",
+    "certo_primeiro": {
+      "ordem": [
+        "Art. 8º §3º",
+        "Art. 8º §1º",
+        "Art. 9º §1º"
+      ],
+      "resposta": "Não, o trancamento amparado por decisão judicial liminar é processado independentemente da fila normal, conforme Art. 8º §3º.",
+      "fontes": [
+        "Art. 8º §3º"
+      ]
+    },
+    "certo_no_meio": {
+      "ordem": [
+        "Art. 8º §1º",
+        "Art. 8º §3º",
+        "Art. 9º §1º"
+      ],
+      "resposta": "Não, um pedido de trancamento por liminar judicial não espera a fila normal. De acordo com o Art. 8º §3º, o trancamento amparado por decisão judicial liminar é processado independentemente de pendências financeiras ou anuência de terceiros, e a coordenação acadêmica cumpre a ordem judicial no prazo nela fixado, ou, na omissão, no prazo do Art. 9º §1º.",
+      "fontes": [
+        "Art. 8º §3º",
+        "Art. 9º §1º"
+      ]
+    },
+    "respostas_divergem": true
+  },
+  "modo_3": {
+    "pergunta": "Em quantos dias a bolsa do aluno é reativada quando ele volta do trancamento?",
+    "sem_contrato_nenhum": "A bolsa **não é reativada automaticamente** quando o aluno volta do trancamento.  \nConforme o Art. 8º §1º do regimento:\n\n> “O aluno bolsista integral que solicitar trancamento de matrícula tem sua bolsa automaticamente suspensa a partir da data de deferimento pela coordenação, e a retomada da bolsa ao retornar depende de nova análise socioeconômica, não sendo automática.”\n\nPortanto, não há um prazo fixo em dias para a reativação; ela só ocorre após a nova análise socioeconômica.",
+    "com_portao": {
+      "portao": "passou",
+      "suficiente": false,
+      "resposta": "Não há informação nos trechos fornecidos sobre em quantos dias a bolsa do aluno é reativada quando ele volta do trancamento."
+    },
+    "sem_portao_de_score": {
+      "portao": "passou",
+      "suficiente": false,
+      "resposta": "Não há informação sobre o prazo de reativação da bolsa no trecho fornecido.",
+      "fontes": [
+        "Art. 8º §1º"
+      ]
+    }
+  },
+  "modo_4": {
+    "pergunta": "Qual o prazo de resposta da secretaria para um pedido encaminhado?",
+    "sem_filtro_vigencia": [
+      "Art. 9º §1º",
+      "Art. 9º §1º (redação de 2024, revogada)",
+      "Art. 2º"
+    ],
+    "com_filtro_vigencia": [
+      "Art. 9º §1º",
+      "Art. 2º",
+      "Art. 9º §2º"
+    ],
+    "ambas_versoes_recuperadas_sem_filtro": true,
+    "resposta_do_pipeline_padrao": "O Regimento apresenta duas versões do Art. 9º §1º: uma estabelece prazo de 48 horas úteis e a outra, revogada em 2024, estabelece prazo de 72 horas úteis. Não há indicação de qual versão está em vigor.",
+    "fontes": [
+      "Art. 9º §1º",
+      "Art. 9º §1º (redação de 2024, revogada)"
+    ],
+    "suficiente": false,
+    "sistema_detectou_a_contradicao": true
+  },
+  "corpus_desatualizado": {
+    "documento_revogado": "Art. 9º §1º (redação de 2024, revogada)",
+    "sistema_detectou": true,
+    "achado": "O prompt reconheceu a existência de duas versões e recusou a decidir sozinho — mas isso é o prompt cobrindo uma lacuna do corpus, não o sistema 'sabendo' que uma foi revogada."
+  }
+}

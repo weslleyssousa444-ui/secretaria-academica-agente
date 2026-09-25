@@ -79,6 +79,18 @@ Término: `respondeu` · 4.263 tokens gastos · modelo `openai/gpt-oss-20b` (Gro
 - não emite nenhum documento fora dos dois do catálogo (declaração de matrícula, segunda via de histórico);
 - quando não consegue confirmar o RA depois de uma segunda tentativa, não insiste indefinidamente — encaminha o caso e informa o aluno.
 
+## Exercício 7 — RAG sobre o Regimento Acadêmico
+
+Complementar (Aula 07), sobre um Regimento Acadêmico **simulado**. Relatório completo em [`exercicios/aula-07-resposta-que-cita.md`](exercicios/aula-07-resposta-que-cita.md).
+
+```bash
+python src/indice_rag.py    # gera o índice (baixa o modelo de embedding na 1ª vez, ~470MB)
+python src/avaliar_rag.py   # recall@k, fidelidade, citação verificável, varredura do limiar
+python src/modos_de_falha.py  # reproduz os 4 modos de falha + teste de corpus desatualizado
+```
+
+Resultado: recall@k 100%, citações verificáveis 100%, fidelidade 80%, 0 recusas indevidas.
+
 ---
 
 ## Estrutura do repositório
@@ -87,6 +99,7 @@ Término: `respondeu` · 4.263 tokens gastos · modelo `openai/gpt-oss-20b` (Gro
 docs/case.md          o tema, os usuários, o workflow, a justificativa de negócio
 docs/modelos.md        a análise e a escolha do modelo
 docs/fontes.md         tudo que foi consultado
+docs/base-de-conhecimento-v1.md  o plano da base de RAG (Exercício 6)
 prompts/               o system prompt do agente, versionado
 src/dados.py           o "sistema acadêmico" simulado (SQLite)
 src/agente.py          o laço do agente (estado, orçamento, ferramentas)
@@ -95,6 +108,16 @@ src/verificador.py      roda os 40 casos rotulados
 src/comparar_modelos.py roda a verificação mínima dos 3 modelos candidatos
 dados/                  os dados simulados e os casos de teste
 logs/                   as execuções gravadas (geradas ao rodar os scripts acima)
+
+# Exercício 7 — RAG sobre o Regimento Acadêmico (exercicios/aula-07-*.md)
+dados/regimento_dados.py   o Regimento Acadêmico simulado (15 artigos)
+dados/casos_rag.json       perguntas rotuladas do RAG (recall/fidelidade/recusa)
+src/chunking.py            corte por estrutura (1 chunk por artigo)
+src/indice_rag.py          índice de embeddings local (sentence-transformers, sem banco vetorial)
+src/rag.py                 pipeline: recuperar -> contexto -> gerar, citação verificável, portão de recusa
+src/avaliar_rag.py         recall@k, fidelidade, varredura do limiar
+src/modos_de_falha.py      reproduz os 4 modos de falha + corpus desatualizado
+exercicios/aula-07-resposta-que-cita.md  o relatório do Exercício 7
 ```
 
 ## Pendências antes da entrega final
