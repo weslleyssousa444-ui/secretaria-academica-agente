@@ -91,6 +91,16 @@ python src/modos_de_falha.py  # reproduz os 4 modos de falha + teste de corpus d
 
 Resultado: recall@k 100%, citações verificáveis 100%, fidelidade 80%, 0 recusas indevidas.
 
+## Exercício 8 — Memória do agente de triagem
+
+Complementar (Aula 08): episódica, semântica e procedural, com idempotência, desempate de contradição por carimbo de tempo, decaimento e esquecimento seletivo verificado. Decisão de projeto em [`docs/memoria.md`](docs/memoria.md); relatório da implementação em [`exercicios/aula-08-memoria-do-case.md`](exercicios/aula-08-memoria-do-case.md).
+
+```bash
+python src/memoria_demo.py   # roda tudo: fronteira, idempotência, contradição, não reprodutibilidade, esquecimento
+```
+
+Resultado: memória muda a resposta do agente para a mesma pergunta (não reprodutibilidade real, medida); remoção de titular só ficou completa depois de verificar — a primeira passada deixou vestígio num checkpoint.
+
 ---
 
 ## Estrutura do repositório
@@ -118,6 +128,15 @@ src/rag.py                 pipeline: recuperar -> contexto -> gerar, citação v
 src/avaliar_rag.py         recall@k, fidelidade, varredura do limiar
 src/modos_de_falha.py      reproduz os 4 modos de falha + corpus desatualizado
 exercicios/aula-07-resposta-que-cita.md  o relatório do Exercício 7
+
+# Exercício 8 — Memória do agente (exercicios/aula-08-*.md, docs/memoria.md)
+src/memoria_episodica.py   índice vetorial de episódios passados, por RA, com decaimento
+src/memoria_semantica.py   chave-valor idempotente, com campo `substituiu`
+src/memoria_procedural.py  regras aprendidas de erro, com aprovação humana
+src/memoria.py             orçamento de janela, remoção sob solicitação com verificação
+src/memoria_demo.py        roda a demonstração completa
+docs/memoria.md                          a decisão de projeto (avaliada na Parte 2)
+exercicios/aula-08-memoria-do-case.md    o relatório da implementação
 ```
 
 ## Pendências antes da entrega final

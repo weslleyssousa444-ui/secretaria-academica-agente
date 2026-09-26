@@ -5,5 +5,8 @@ __pycache__/
 *.pyc
 dados/academico.db
 dados/embeddings_regimento.npz
+dados/memoria_episodica.json
+dados/memoria_semantica.json
+dados/memoria_procedural.json
 checkpoints/
 .DS_Store
