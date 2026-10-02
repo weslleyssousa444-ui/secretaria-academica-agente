@@ -1,5 +1,7 @@
 .env
 .venv/
+.venv311/
+.pytools/
 .deps/
 __pycache__/
 *.pyc

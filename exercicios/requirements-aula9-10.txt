@@ -1,0 +1,22 @@
+# Ambiente separado para os Exercícios 9 e 10 (Aulas 09-10).
+#
+# O SDK oficial `mcp` exige Python >= 3.10; o venv principal do projeto usa
+# Python 3.9.6 (único disponível no sistema sem brew/pyenv — ver Ex.6
+# §"requirements.txt"). Em vez de arriscar quebrar o agente de triagem já
+# validado (Ex.6, 35/40) subindo a versão do Python do projeto inteiro,
+# este exercício roda sobre um Python 3.11 portátil, baixado à parte
+# (python-build-standalone, sem sudo) e um venv próprio (.venv311/).
+#
+#   .pytools/python/bin/python3 -m venv .venv311
+#   source .venv311/bin/activate
+#   pip install -r exercicios/requirements-aula9-10.txt
+
+mcp==1.30.0          # mcp>=2 renomeou FastMCP -> MCPServer; a aula usa FastMCP
+httpx==0.28.1
+openai==3.24.0
+python-dotenv==1.2.4
+langgraph==1.2.12
+langchain==1.4.3
+langgraph-checkpoint-sqlite==3.1.1
+langchain-mcp-adapters==0.3.1
+langchain-openai==1.6.7

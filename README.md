@@ -101,6 +101,20 @@ python src/memoria_demo.py   # roda tudo: fronteira, idempotência, contradiçã
 
 Resultado: memória muda a resposta do agente para a mesma pergunta (não reprodutibilidade real, medida); remoção de titular só ficou completa depois de verificar — a primeira passada deixou vestígio num checkpoint.
 
+## Exercício 9 — Agente de triagem em LangGraph
+
+Sem enunciado formal (Aula 09). Reescreve o núcleo do Ex.6 como `StateGraph`, com checkpointer em arquivo e `interrupt()`/`Command(resume=...)` para a aprovação de trancamento pela coordenação. Ambiente Python 3.11 à parte (`exercicios/requirements-aula9-10.txt` — `mcp`/`langgraph` exigem >=3.10). Detalhes em [`exercicios/aula09-langgraph/README.md`](exercicios/aula09-langgraph/README.md).
+
+## Exercício 10 — Servidor e cliente MCP (CNPJ + CEP, BrasilAPI)
+
+Servidor MCP (`consultar_cnpj`, `consultar_cep`, Streamable HTTP) + cliente que encadeia as duas consultas sobre a [BrasilAPI](https://brasilapi.com.br/docs). Código e justificativas em comentário, sem relatório à parte (como o enunciado pede) — ver [`exercicios/aula10-mcp/`](exercicios/aula10-mcp/).
+
+```bash
+source .venv311/bin/activate
+python exercicios/aula10-mcp/servidor_cnpj_cep.py &      # terminal 1
+python exercicios/aula10-mcp/cliente_cnpj.py "19.131.243/0001-97"   # terminal 2
+```
+
 ---
 
 ## Estrutura do repositório
