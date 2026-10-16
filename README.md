@@ -115,6 +115,16 @@ python exercicios/aula10-mcp/servidor_cnpj_cep.py &      # terminal 1
 python exercicios/aula10-mcp/cliente_cnpj.py "19.131.243/0001-97"   # terminal 2
 ```
 
+## Exercício 12 — Model card do agente, com evidência
+
+Governança (Aula 12): o *model card* do agente de triagem em [`docs/model-card.md`](docs/model-card.md), com 12 campos. Cada afirmação aponta para a linha de código, o teste, o log ou a saída de comando que a sustenta, ou está marcada como **LACUNA** (lista no fim do documento, com correção e prioridade). As saídas de comando citadas estão em [`docs/evidencias/`](docs/evidencias/).
+
+```bash
+python -m pytest tests -v   # 24 testes offline, sem chave de API
+```
+
+`tests/test_autoridade.py` prova os limites aplicados fora do modelo (o roteiro de teste faz o "modelo" desobedecer o prompt e verifica que o código barra). `tests/test_lacunas.py` fixa o comportamento atual de cada lacuna; quando uma for corrigida, o teste dela falha e deve ser invertido.
+
 ---
 
 ## Estrutura do repositório
@@ -123,6 +133,9 @@ python exercicios/aula10-mcp/cliente_cnpj.py "19.131.243/0001-97"   # terminal 2
 docs/case.md          o tema, os usuários, o workflow, a justificativa de negócio
 docs/modelos.md        a análise e a escolha do modelo
 docs/fontes.md         tudo que foi consultado
+docs/model-card.md     o model card com evidência (Exercício 12)
+docs/evidencias/       saídas de comando citadas no model card
+tests/                 testes de autoridade e de lacunas (pytest, offline)
 docs/base-de-conhecimento-v1.md  o plano da base de RAG (Exercício 6)
 prompts/               o system prompt do agente, versionado
 src/dados.py           o "sistema acadêmico" simulado (SQLite)

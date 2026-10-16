@@ -7,3 +7,6 @@ python-dotenv==1.2.1
 numpy==2.0.2
 sentence-transformers==5.1.2
 torch==2.8.0
+
+# Exercício 12 (governança): testes de autoridade, offline, sem chave de API.
+pytest==9.1.1

@@ -1,0 +1,36 @@
+# Saída dos testes de governança — gerada em 2026-10-16 sobre o commit base 9bc9f8f
+
+$ .venv/Scripts/python -m pytest tests -v -p no:cacheprovider
+============================= test session starts =============================
+platform win32 -- Python 3.13.12, pytest-9.1.1, pluggy-1.7.0 -- <raiz-do-repo>\.venv\Scripts\python.exe
+rootdir: <raiz-do-repo>
+plugins: anyio-4.15.1
+collecting ... collected 24 items
+
+tests/test_autoridade.py::test_nao_existe_ferramenta_de_trancamento PASSED [  4%]
+tests/test_autoridade.py::test_modelo_pede_ferramenta_inexistente_nada_e_executado PASSED [  8%]
+tests/test_autoridade.py::test_emitir_recusa_trancamento PASSED          [ 12%]
+tests/test_autoridade.py::test_emitir_recusa_documento_fora_do_catalogo PASSED [ 16%]
+tests/test_autoridade.py::test_segunda_via_bloqueada_com_pendencia PASSED [ 20%]
+tests/test_autoridade.py::test_declaracao_bloqueada_matricula_nao_ativa PASSED [ 25%]
+tests/test_autoridade.py::test_emitir_ra_inexistente PASSED              [ 29%]
+tests/test_autoridade.py::test_modelo_desobedece_prompt_e_codigo_barra_emissao PASSED [ 33%]
+tests/test_autoridade.py::test_emitir_idempotente PASSED                 [ 37%]
+tests/test_autoridade.py::test_escalar_idempotente_pela_chave PASSED     [ 41%]
+tests/test_autoridade.py::test_orcamento_de_passos_interrompe PASSED     [ 45%]
+tests/test_autoridade.py::test_orcamento_de_tokens_interrompe PASSED     [ 50%]
+tests/test_autoridade.py::test_laco_detectado PASSED                     [ 54%]
+tests/test_autoridade.py::test_erro_da_api_termina_sem_escrita PASSED    [ 58%]
+tests/test_lacunas.py::test_L01_sem_verificacao_de_identidade PASSED     [ 62%]
+tests/test_lacunas.py::test_L02_trancamento_escala_so_se_o_modelo_quiser PASSED [ 66%]
+tests/test_lacunas.py::test_L03_chave_de_idempotencia_vem_do_modelo PASSED [ 70%]
+tests/test_lacunas.py::test_L04_limite_de_custo_inerte_nos_modelos_groq PASSED [ 75%]
+tests/test_lacunas.py::test_L05_registro_sem_instante_modelo_prompt_nem_revisao PASSED [ 79%]
+tests/test_lacunas.py::test_L06_log_versionado_guarda_dado_pessoal_e_raciocinio PASSED [ 83%]
+tests/test_lacunas.py::test_L07_chat_nao_grava_registro_de_execucao PASSED [ 87%]
+tests/test_lacunas.py::test_L08_uma_unica_chave_para_todos_os_componentes PASSED [ 91%]
+tests/test_lacunas.py::test_L09_nomes_da_base_sintetica_coincidem_com_o_grupo PASSED [ 95%]
+tests/test_lacunas.py::test_L10_protocolo_do_langgraph_depende_do_hash_do_processo PASSED [100%]
+
+============================= 24 passed in 0.81s ==============================
+

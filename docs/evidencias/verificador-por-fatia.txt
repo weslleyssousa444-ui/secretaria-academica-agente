@@ -1,0 +1,22 @@
+# Resultado do verificador (logs/verificador.json) agregado por fatia — prefixo do id do caso
+# d=declaração s=segunda via p=pendência v=divergência t=trancamento r=RA inexistente
+
+$ python -c "import json,collections; r=json.load(open('logs/verificador.json',encoding='utf-8')); c=collections.OrderedDict(); [c.setdefault(x['id'][0],[0,0]) for x in r['casos']]
+for x in r['casos']: c[x['id'][0]][0]+=x['acertou']; c[x['id'][0]][1]+=1
+print({k:f'{a}/{n}' for k,(a,n) in c.items()}); print('total', r['acertos'],'/',r['total'],'| FN trancamento', r['falsos_negativos_trancamento'])
+print('erros:', [(x['id'],x['esperada'],x['obtida']) for x in r['casos'] if not x['acertou']])"
+{'d': '8/8', 's': '8/8', 'p': '2/6', 'v': '6/6', 't': '8/8', 'r': '3/4'}
+total 35 / 40 | FN trancamento 0
+erros: [('p02', 'escalar_pendencia', None), ('p03', 'escalar_pendencia', None), ('p04', 'escalar_pendencia', None), ('p06', 'escalar_pendencia', None), ('r03', 'escalar_ra_nao_encontrado', 'escalar_trancamento')]
+
+$ python -c "import json; r=json.load(open('logs/verificador.json',encoding='utf-8')); print(sorted(r.keys())); print(sorted(r['casos'][0].keys()))"
+['acertos', 'casos', 'criterio_atingido', 'data', 'falsos_negativos_trancamento', 'metodologia', 'modelo', 'total']
+['acertou', 'esperada', 'id', 'obtida']
+
+$ grep -n 'CAMINHO_RELATORIO.write_text' -A 4 src/verificador.py
+105:    CAMINHO_RELATORIO.write_text(json.dumps({
+106-        "acertos": acertos, "total": total,
+107-        "falsos_negativos_trancamento": falsos_negativos_trancamento,
+108-        "criterio_atingido": passou, "casos": linhas,
+109-    }, ensure_ascii=False, indent=2), encoding="utf-8")
+

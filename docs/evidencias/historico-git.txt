@@ -1,0 +1,18 @@
+# Histórico de mudanças (git log do repositório)
+
+$ git log --format='%h %ad %an — %s' --date=short
+9bc9f8f 2026-10-02 Weslley Soares de Sousa — Corrige experiência crua do chat: saudação limpa e proibe invenção de passo do processo
+4a3452a 2026-10-02 Weslley Soares de Sousa — Adiciona chat interativo para teste manual do agente de triagem
+5fd36fb 2026-10-02 Weslley Soares de Sousa — Exercícios 9 e 10: agente em LangGraph, servidor/cliente MCP de CNPJ+CEP
+a4eefb3 2026-09-25 Weslley Soares de Sousa — Exercício 8: memória do agente de triagem — episódica, semântica, procedural
+8423133 2026-09-25 Weslley Soares de Sousa — Exercício 7: pipeline RAG completo sobre um Regimento Acadêmico simulado
+ba7fb89 2026-09-23 Weslley Soares de Sousa — Roda o agente de verdade: 4 demos + verificador de 40 casos (35/40, 0 FN em trancamento)
+4a41964 2026-09-22 Weslley Soares de Sousa — Troca provedor padrão de Mistral para Groq (free tier)
+1679bb1 2026-09-22 Weslley Soares de Sousa — Reconfirma preços da Mistral e registra decisão sobre a linha de base do §2.5
+f1ac1ed 2026-09-18 Weslley Soares de Sousa — Explicita plano de acesso à tabela de prazos/SLA na base de conhecimento v1
+3757506 2026-09-18 Weslley Soares de Sousa — Adiciona arquitetura v1 (Exercício 5) e base de conhecimento v1 (Exercício 6)
+069942e 2026-09-04 Weslley Soares de Sousa — Parte 1: case, análise de modelos, agente de triagem e verificador
+
+$ git tag --list; echo '(sem tags de versão)'
+(sem tags de versão)
+

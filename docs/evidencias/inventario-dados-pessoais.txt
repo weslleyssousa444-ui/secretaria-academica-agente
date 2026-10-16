@@ -1,0 +1,55 @@
+# Inventário: onde o dado pessoal (RA, nome, situação financeira) aparece nos arquivos VERSIONADOS
+
+$ git ls-files | xargs grep -lE '2023[0-9]{4}|2022[0-9]{4}' | sort
+README.md
+dados/casos_demo.json
+dados/casos_verificador.json
+docs/arquitetura-v1.md
+docs/case.md
+docs/memoria.md
+ex.5/docs/arquitetura-v1.md
+ex.5/docs/case.md
+exercicios/aula-08-memoria-do-case.md
+exercicios/aula09-langgraph/README.md
+exercicios/aula09-langgraph/agente_langgraph.py
+logs/01-caso-simples-695426dc.json
+logs/02-divergencia-9aee9313.json
+logs/04-nao-dispara-acao-principal-100512d1.json
+src/chat.py
+src/comparar_modelos.py
+src/dados.py
+src/memoria_demo.py
+
+$ grep -lE 'Weslley Sousa|Marina Alves|Bruno Castro|Carla Nunes' logs/*.json
+logs/01-caso-simples-695426dc.json
+logs/02-divergencia-9aee9313.json
+
+$ grep -c 'reasoning=' logs/0*.json
+logs/01-caso-simples-695426dc.json:2
+logs/02-divergencia-9aee9313.json:3
+logs/03-ra-inexistente-e298b1a6.json:2
+logs/04-nao-dispara-acao-principal-100512d1.json:1
+
+$ grep -o '"valor_em_aberto": [0-9.]*' logs/02-divergencia-9aee9313.json
+"valor_em_aberto": 890.0
+
+$ git log --format='%h %ad %s' --date=short -- logs/
+8423133 2026-09-25 Exercício 7: pipeline RAG completo sobre um Regimento Acadêmico simulado
+ba7fb89 2026-09-23 Roda o agente de verdade: 4 demos + verificador de 40 casos (35/40, 0 FN em trancamento)
+069942e 2026-09-04 Parte 1: case, análise de modelos, agente de triagem e verificador
+
+$ grep -nE 'academico.db|memoria_|checkpoints' .gitignore
+8:dados/academico.db
+10:dados/memoria_episodica.json
+11:dados/memoria_semantica.json
+12:dados/memoria_procedural.json
+13:checkpoints/
+
+$ git ls-remote --heads origin
+9bc9f8fd7b319d51acdf9cedaed3adc73a62f966	refs/heads/master
+
+$ grep -n 'salvar_log' src/*.py
+src/agente.py:486:def salvar_log(estado: Estado, nome_caso: str) -> Path:
+src/demo.py:18:from agente import Estado, Orcamento, conversar, salvar_log, resumo
+src/demo.py:38:        caminho = salvar_log(estado, nome)
+

@@ -1,0 +1,51 @@
+# Autoridade efetiva do agente de triagem (src/agente.py): ferramentas expostas e tabelas que cada uma toca
+
+$ grep -nE '^    "[a-z_]+": [a-z_]+,$|^ESCRITA' src/agente.py
+254:    "buscar_aluno": buscar_aluno,
+255:    "consultar_financeiro": consultar_financeiro,
+256:    "emitir_documento": emitir_documento,
+257:    "escalar_para_humano": escalar_para_humano,
+260:ESCRITA = {"emitir_documento", "escalar_para_humano"}
+
+$ grep -nE 'SELECT|INSERT|UPDATE|DELETE' src/agente.py
+150:        "SELECT * FROM alunos WHERE ra = ?", (ra,)).fetchone()
+164:        "SELECT ra FROM alunos WHERE ra = ?", (ra,)).fetchone()
+170:        "SELECT mensalidades_em_aberto, valor_em_aberto FROM financeiro "
+190:        "SELECT * FROM alunos WHERE ra = ?", (ra,)).fetchone()
+204:            "SELECT mensalidades_em_aberto FROM financeiro WHERE ra = ?",
+215:        "SELECT * FROM documentos_emitidos WHERE ra = ? AND tipo_documento = ?",
+221:    protocolo = f"DOC-{conexao.execute('SELECT COUNT(*) FROM documentos_emitidos').fetchone()[0] + 1001}"
+224:        "INSERT INTO documentos_emitidos (protocolo, ra, tipo_documento, "
+238:        "SELECT * FROM casos_pendentes WHERE chave = ?", (chave,)).fetchone()
+243:    protocolo = f"CASO-{conexao.execute('SELECT COUNT(*) FROM casos_pendentes').fetchone()[0] + 3001}"
+245:        "INSERT INTO casos_pendentes (protocolo, ra, tipo_pedido, motivo, chave) "
+
+$ grep -nE 'def conectar' -A 4 src/dados.py
+62:def conectar() -> sqlite3.Connection:
+63-    CAMINHO_DB.parent.mkdir(exist_ok=True)
+64-    conexao = sqlite3.connect(CAMINHO_DB)
+65-    conexao.row_factory = sqlite3.Row
+66-    return conexao
+
+$ grep -nE 'OPENAI_API_KEY|LLM_BASE_URL|LLM_MODELO|RAG_MODELO|LANGGRAPH_MODELO' src/*.py exercicios/aula09-langgraph/*.py
+src/agente.py:34:    base_url=os.environ.get("LLM_BASE_URL", "https://api.groq.com/openai/v1"),
+src/agente.py:35:    api_key=os.environ.get("OPENAI_API_KEY"),
+src/agente.py:37:MODELO = os.environ.get("LLM_MODELO", "qwen/qwen3.8-27b")
+src/comparar_modelos.py:8:# Exige OPENAI_API_KEY configurada no .env. Grava logs/comparar_modelos.csv
+src/demo.py:8:# Exige OPENAI_API_KEY configurada no .env (ver .env.example) — sem chave,
+src/memoria_demo.py:25:RAG_MODELO = "openai/gpt-oss-20b"  # mesmo escolhido no Ex.7, sem os subtetos do qwen
+src/memoria_demo.py:110:    r_vazia = chamar_com_retry(model=RAG_MODELO, temperature=0, messages=[
+src/memoria_demo.py:118:    r_cheia = chamar_com_retry(model=RAG_MODELO, temperature=0, messages=[
+src/rag.py:33:    base_url=os.environ.get("LLM_BASE_URL", "https://api.groq.com/openai/v1"),
+src/rag.py:34:    api_key=os.environ.get("OPENAI_API_KEY"),
+src/rag.py:36:# Modelo PRÓPRIO do RAG, independente do LLM_MODELO do agente de triagem
+src/rag.py:43:MODELO = os.environ.get("RAG_MODELO", "openai/gpt-oss-20b")
+src/verificador.py:9:# Exige OPENAI_API_KEY configurada no .env. Grava um relatório em
+exercicios/aula09-langgraph/agente_langgraph.py:142:    # qwen/qwen3.8-27b (LLM_MODELO do Ex.6) tem teto de 1.000 tokens de
+exercicios/aula09-langgraph/agente_langgraph.py:144:    model=__import__("os").environ.get("LANGGRAPH_MODELO", "openai/gpt-oss-20b"),
+exercicios/aula09-langgraph/agente_langgraph.py:145:    base_url=__import__("os").environ.get("LLM_BASE_URL",
+exercicios/aula09-langgraph/agente_langgraph.py:147:    api_key=__import__("os").environ.get("OPENAI_API_KEY"),
+
+$ grep -nE 'mcp|MCP' src/*.py | head -5; echo "(nenhuma ocorrência = o agente de triagem não usa servidor MCP)"
+(nenhuma ocorrência = o agente de triagem não usa servidor MCP)
+
