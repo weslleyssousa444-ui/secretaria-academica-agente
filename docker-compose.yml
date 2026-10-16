@@ -1,0 +1,17 @@
+# Sobe a API do agente com o estado num volume nomeado (docs/empacotamento.md §4).
+#   docker compose up --build        sobe
+#   docker compose down              derruba e PRESERVA o volume
+#   docker compose down -v           derruba e APAGA o volume (banco e registros)
+services:
+  agente:
+    build: .
+    image: secretaria-academica-agente:${TAG:-dev}
+    env_file: .env          # lido na máquina hospedeira; não entra na imagem
+    ports:
+      - "8000:8000"
+    volumes:
+      - estado:/dados
+    restart: unless-stopped
+
+volumes:
+  estado:

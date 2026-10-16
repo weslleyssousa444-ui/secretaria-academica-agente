@@ -125,6 +125,15 @@ python -m pytest tests -v   # 24 testes offline, sem chave de API
 
 `tests/test_autoridade.py` prova os limites aplicados fora do modelo (o roteiro de teste faz o "modelo" desobedecer o prompt e verifica que o código barra). `tests/test_lacunas.py` fixa o comportamento atual de cada lacuna; quando uma for corrigida, o teste dela falha e deve ser invertido.
 
+## Exercício 13 — Imagem Docker e CI/CD
+
+O agente empacotado como imagem (usuário sem privilégio, só 4 dependências, 248 MB), rodando como API (`src/api.py`) com o banco e os registros num volume, e um pipeline no GitHub Actions: segurança (hadolint, Trivy), testes offline, eval com o modelo real e publicação da imagem no GHCR. Decisões e resultados em [`docs/empacotamento.md`](docs/empacotamento.md); o que falta rodar, em [`CONTINUIDADE.md`](CONTINUIDADE.md).
+
+```bash
+docker compose up --build              # API em localhost:8000, estado no volume
+curl localhost:8000/saude
+```
+
 ---
 
 ## Estrutura do repositório

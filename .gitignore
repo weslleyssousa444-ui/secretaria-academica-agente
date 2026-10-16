@@ -14,3 +14,5 @@ checkpoints/
 .DS_Store
 exercicios/aula09-langgraph/checkpoints.sqlite
 .pytest_cache/
+.env.*
+!.env.example

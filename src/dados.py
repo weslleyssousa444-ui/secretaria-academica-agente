@@ -8,10 +8,15 @@
 # Dados 100% sintéticos (docs/case.md §2.9) — nenhum aluno, RA ou valor aqui
 # corresponde a uma pessoa real.
 
+import os
 import sqlite3
 from pathlib import Path
 
-CAMINHO_DB = Path(__file__).parent.parent / "dados" / "academico.db"
+# ACADEMICO_DB aponta o banco para fora da imagem — no container, um volume
+# montado em /dados (docs/empacotamento.md §4). Sem a variável, o caminho
+# de sempre, dentro do repositório.
+CAMINHO_DB = Path(os.environ.get(
+    "ACADEMICO_DB", Path(__file__).parent.parent / "dados" / "academico.db"))
 
 # RA usado nos casos de teste para o cenário "registro inexistente"
 # (docs/case.md §2.8) — deliberadamente NÃO existe na tabela `alunos`.

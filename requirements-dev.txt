@@ -1,0 +1,5 @@
+# Testes (pytest) e o cliente HTTP do TestClient do FastAPI. Não entra na
+# imagem: o Dockerfile instala só requirements-agente.txt.
+-r requirements-agente.txt
+pytest==9.1.1
+httpx==0.28.1

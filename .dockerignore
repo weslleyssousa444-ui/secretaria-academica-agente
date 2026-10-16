@@ -1,0 +1,29 @@
+# Mesma lógica do .gitignore: o que não vai para o repositório não vai para
+# a imagem. O Dockerfile copia por nome; esta lista é a primeira barreira.
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+.git
+.github
+.venv
+.venv311
+.pytools
+__pycache__
+*.pyc
+.pytest_cache
+
+# estado e artefatos de execução: moram no volume, não na imagem
+dados/*.db
+dados/*.json
+dados/*.npz
+checkpoints
+logs
+
+# o que a imagem não usa
+docs
+ex.5
+exercicios
+tests

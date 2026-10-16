@@ -96,7 +96,7 @@ O que o agente pode fazer, e **onde cada limite é aplicado** (ausência de ferr
 |---|---|---|---|
 | C1 | Chave do provedor de modelo fora do repositório (`.env` ignorado pelo git). | plataforma (git) | [`.gitignore:1`](../.gitignore#L1); [`.env.example:11`](../.env.example#L11) vazio |
 | C2 | Chave **própria** do agente. | **não aplicado.** Agente, RAG, juiz de fidelidade, memória e LangGraph usam a mesma `OPENAI_API_KEY`. | `teste::test_L08_uma_unica_chave_para_todos_os_componentes`; [`autoridade-efetiva.txt`](evidencias/autoridade-efetiva.txt). **LACUNA L08** |
-| C3 | Privilégio mínimo no banco (leitura em `alunos`/`financeiro`, escrita só em `documentos_emitidos`/`casos_pendentes`). | **só código.** O SQLite não tem usuário nem permissão; o processo pode ler e escrever tudo, e o limite é o SQL fixo de cada ferramenta. | [`src/dados.py:62-66`](../src/dados.py#L62-L66); [`autoridade-efetiva.txt`](evidencias/autoridade-efetiva.txt). **LACUNA L12** |
+| C3 | Privilégio mínimo no banco (leitura em `alunos`/`financeiro`, escrita só em `documentos_emitidos`/`casos_pendentes`). | **só código.** O SQLite não tem usuário nem permissão; o processo pode ler e escrever tudo, e o limite é o SQL fixo de cada ferramenta. | [`src/dados.py:67-71`](../src/dados.py#L67-L71); [`autoridade-efetiva.txt`](evidencias/autoridade-efetiva.txt). **LACUNA L12** |
 
 **Revisão do que o agente precisa contra o que ele tem:**
 
@@ -227,7 +227,7 @@ Dado pessoal tratado: **RA, nome, curso, situação de matrícula, número e val
 
 | Afirmação | Evidência |
 |---|---|
-| No agente principal **nada pausa para aprovação.** O agente não espera um humano: ele *entrega* o caso à fila (`casos_pendentes`, `status='aberto'`) e encerra. | [`src/agente.py:232-250`](../src/agente.py#L232-L250); [`src/dados.py:95-102`](../src/dados.py#L95-L102) |
+| No agente principal **nada pausa para aprovação.** O agente não espera um humano: ele *entrega* o caso à fila (`casos_pendentes`, `status='aberto'`) e encerra. | [`src/agente.py:232-250`](../src/agente.py#L232-L250); [`src/dados.py:100-107`](../src/dados.py#L100-L107) |
 | Vão para a fila: trancamento, divergência não resolvida, pendência e RA não encontrado. **Quem encaminha é o modelo** (A11–A13). | [`prompts/triagem-v1.txt:13-22`](../prompts/triagem-v1.txt#L13-L22). **LACUNA L02, L11** |
 | Quem decide os casos: a atendente; o trancamento, a coordenação. Isso é **declarado, não implementado**: não há tela, consumidor da fila nem registro da decisão humana. | [`docs/case.md` §2.2](case.md). **LACUNA L17** |
 | Prazo: "48h" é um texto fixo devolvido pela ferramenta. Não há controle de vencimento nem o que fazer quando vence. | [`src/agente.py:250`](../src/agente.py#L250). **LACUNA L17** |
@@ -240,7 +240,7 @@ O registro de cada decisão comparado com a tupla $R = (id, t, x, C, V, \Phi, P,
 
 | Campo | Guardado? | Evidência |
 |---|---|---|
-| $id$ | sim, `execucao_id` (8 caracteres hex). **Não** aparece na resposta ao aluno nem em `documentos_emitidos`/`casos_pendentes`: não se liga o protocolo `DOC-1002` ao log que o gerou. | [`src/agente.py:104`](../src/agente.py#L104); [`src/dados.py:89-102`](../src/dados.py#L89-L102). **LACUNA L05** |
+| $id$ | sim, `execucao_id` (8 caracteres hex). **Não** aparece na resposta ao aluno nem em `documentos_emitidos`/`casos_pendentes`: não se liga o protocolo `DOC-1002` ao log que o gerou. | [`src/agente.py:104`](../src/agente.py#L104); [`src/dados.py:94-107`](../src/dados.py#L94-L107). **LACUNA L05** |
 | $t$ (instante) | **não** | `teste::test_L05_registro_sem_instante_modelo_prompt_nem_revisao` |
 | $x$ (entrada) | sim, no `historico` | [`logs/01-caso-simples-695426dc.json`](../logs/01-caso-simples-695426dc.json) |
 | $C$ (contexto recuperado) | não se aplica: o agente não recupera do índice | — |
@@ -252,7 +252,7 @@ O registro de cada decisão comparado com a tupla $R = (id, t, x, C, V, \Phi, P,
 
 | Afirmação | Evidência |
 |---|---|
-| **Só `demo.py` grava registro de execução.** `chat.py`, o ponto de entrada de uma conversa real, e `verificador.py` não gravam: uma conversa real não deixa registro. | `teste::test_L07_chat_nao_grava_registro_de_execucao`; [`inventario-dados-pessoais.txt`](evidencias/inventario-dados-pessoais.txt) (último comando). **LACUNA L07** |
+| **`demo.py` e a API (Ex.13) gravam registro de execução**; a API regrava o registro da conversa a cada turno, no volume (`/dados/logs`). `chat.py` (teste manual) e `verificador.py` continuam sem gravar. | `teste::test_L07_chat_nao_grava_registro_de_execucao`; [`inventario-dados-pessoais.txt`](evidencias/inventario-dados-pessoais.txt) (último comando). **LACUNA L07** |
 | O log é serializado com `default=str`: as mensagens do modelo viram texto, incluindo o raciocínio interno. | [`src/agente.py:486-494`](../src/agente.py#L486-L494); `teste::test_L06_log_versionado_guarda_dado_pessoal_e_raciocinio` |
 | Armazenamento: arquivo JSON comum, editável, sem *append-only* nem encadeamento por *hash*. | [`src/agente.py:492`](../src/agente.py#L492). **LACUNA L05** |
 | Prazo de guarda: **nenhum.** Os logs estão no git desde 04/09/2026 e ficam no histórico mesmo se apagados. | [`inventario-dados-pessoais.txt`](evidencias/inventario-dados-pessoais.txt). **LACUNA L20** |
@@ -271,7 +271,8 @@ O registro de cada decisão comparado com a tupla $R = (id, t, x, C, V, \Phi, P,
 | `a4eefb3` | 25/09/2026 | Memória (Ex.8) | *não registrado* |
 | `5fd36fb` | 02/10/2026 | LangGraph e MCP (Ex.9, Ex.10) | *não registrado* |
 | `4a3452a`, `9bc9f8f` | 02/10/2026 | Chat interativo; regra do prompt contra inventar passo do processo | *não registrado* |
-| commit desta entrega | 16/10/2026 | *Model card*, testes de governança, evidências; `.gitignore` passa a cobrir o checkpoint do LangGraph | *não registrado* |
+| `b3f4596` | 16/10/2026 | *Model card*, testes de governança, evidências; `.gitignore` passa a cobrir o checkpoint do LangGraph | *não registrado* |
+| commit do Ex.13 | 16/10/2026 | Imagem Docker (usuário sem privilégio), API (`src/api.py`) com estado em volume, pipeline de CI/CD; `ACADEMICO_DB` e pasta de `salvar_log` configuráveis ([`docs/empacotamento.md`](empacotamento.md)) | *não registrado* |
 
 Evidência: [`historico-git.txt`](evidencias/historico-git.txt). Todos os commits têm um único autor e não passaram por *pull request* nem revisão. Uma mudança que altera autoridade ou destino do dado, como a troca de provedor em `4a41964`, entrou sem aprovação registrada. **LACUNA L21.**
 
@@ -287,7 +288,7 @@ Prioridade: **P1**, impede operar com dados reais; **P2**, corrigir antes da Par
 | L02 | O escalonamento de trancamento (e de todo caso negativo) depende do modelo (A11). | Pós-condição no fim de `conversar()`: se o término é `respondeu`, há RA identificado e nenhuma escrita bem-sucedida, abrir o caso em código, com motivo "sem decisão do agente". Classificar o pedido por roteador determinístico, como em `arquitetura-v1.md` §3. | **P1** |
 | L05 | O registro não tem instante, modelo servido, versão de prompt e de política, campo $H$, nem ligação com o protocolo; é editável. | Acrescentar `t`, `modelo_pedido`, `modelo_servido` (`resposta.model`), `prompt_sha256`, `commit`, `revisao_humana` (com "não houve" explícito) ao `Estado`; gravar `execucao_id` em `documentos_emitidos`/`casos_pendentes`; arquivo só de acréscimo. | **P1** |
 | L06 | Logs com nome, valor e raciocínio do modelo versionados em repositório público, sem prazo. | Registrar referência (RA pseudonimizado, *hash*) em vez de conteúdo; não serializar o raciocínio; tirar `logs/0*.json` do git em produção e definir o acesso. | **P1** |
-| L07 | `chat.py`, o uso real, não grava registro nenhum. | Chamar `salvar_log` em todo término de `chat.py`, inclusive em erro. | **P1** |
+| L07 | **Parcialmente corrigida no Ex.13:** a API, que é o ponto de entrada em produção, grava o registro a cada turno (`teste::test_conversa_em_dois_turnos_emite_e_grava_registro`); `chat.py` ainda não grava. | Chamar `salvar_log` em todo término de `chat.py`, inclusive em erro. | P2 |
 | L14 | Região, retenção e uso para treino da Groq não verificados; sem contrato nem hipótese do art. 33. | Conferir os termos vigentes da Groq, registrar a data e o link aqui e em `docs/fontes.md`; para dado real, provedor com contrato de operador e cláusulas-padrão (Resolução CD/ANPD nº 19/2024). | **P1** |
 | L15 | Nenhum responsável nomeado por papel; ninguém designado para suspender o agente. | Preencher a matriz do campo 1 e a matriz de responsabilidade da nota sobre governar a ação, §7.4. | **P1** |
 | L03 | A chave de idempotência e o `motivo` do escalonamento são texto livre do modelo. | Calcular a chave em código (`ra:tipo_pedido:categoria`), com `motivo` como enum. Inverter `test_L03`. | P2 |
@@ -296,14 +297,14 @@ Prioridade: **P1**, impede operar com dados reais; **P2**, corrigir antes da Par
 | L11 | Regras só no prompt: pedir o RA antes, pedir comprovante, confirmar o RA uma vez, não inventar protocolo, prazo ou canal; texto livre sem filtro. | Contadores de confirmação de RA no `Estado`; validar em código que todo protocolo citado na resposta veio de uma ferramenta; mascarar dado sensível antes do envio. | P2 |
 | L12 | Sem privilégio mínimo no banco; `valor_em_aberto` e o nome vão ao provedor sem necessidade. | Tirar `valor_em_aberto` de `consultar_financeiro`; gerar o documento por template em código; para banco real, usuário de serviço com `SELECT` em `alunos`/`financeiro` e `INSERT` só nas duas tabelas. | P2 |
 | L13 | Modelo sem versão datada; modelo servido não registrado; sem lista de modelos aprovados. | Gravar `resposta.model`; validar `LLM_MODELO` contra uma lista aprovada no início do processo. | P2 |
-| L16 | Sem procedimento de interrupção nem teste; erro de banco derruba o processo sem término registrado. | Interruptor (variável ou arquivo) lido a cada volta do laço; capturar exceções de ferramenta como término `erro_fatal`; exercício de desligamento registrado. | P2 |
+| L16 | Sem procedimento de interrupção nem responsável; erro de banco derruba o processo sem término registrado. No container, `docker stop` encerra a API em 1,1 s ([`evidencias/empacotamento.txt`](evidencias/empacotamento.txt) §4), mas não há exercício periódico nem dono. | Interruptor (variável ou arquivo) lido a cada volta do laço; capturar exceções de ferramenta como término `erro_fatal`; exercício de desligamento registrado. | P2 |
 | L17 | Fila humana sem consumidor, sem registro da decisão humana e sem controle do prazo de 48h. | Tabela de decisões (`protocolo`, quem decidiu, quando, o quê); prazo controlado com alerta no vencimento. | P2 |
 | L18 | Suíte sem versão; relatório montado à mão; série `p` sem segundo turno; concordância do classificador e do juiz de fidelidade com humanos não medida; comparação de modelos nunca rodada. | Versionar a suíte; o script grava modelo, data e commit; dar o segundo turno à série `p`; rotular à mão uma amostra e medir a concordância; rodar `comparar_modelos.py`. | P2 |
 | L19 | Base legal não decidida pela instituição; sem encarregado. | Validar a tabela do campo 6 com o jurídico ou encarregado da instituição. | P2 |
 | L20 | Nenhuma estrutura tem prazo de guarda; o decaimento da memória não elimina. | Prazo por finalidade (memória: um semestre; registro de decisão: prazo de contestação) e rotina de expurgo registrada. | P2 |
 | L09 | Três nomes "fictícios" coincidem com integrantes do grupo. | Trocar por nomes sem relação com pessoas reais, ou corrigir a afirmação de `case.md` §2.9. | P3 |
 | L10 | O protocolo do LangGraph depende de `hash()` do processo. | Derivar o protocolo de um contador ou de um *hash* estável (`hashlib`) do conteúdo. | P3 |
-| L21 | Sem número de versão, sem tag, sem aprovação registrada das mudanças. | Tag por versão entregue; mudanças em autoridade ou dados por *pull request* aprovado por outro integrante. | P3 |
+| L21 | Sem número de versão nem aprovação registrada das mudanças. A partir do Ex.13, a imagem publicada recebe a tag do SHA do commit (pipeline `imagem`). | Tag por versão entregue; mudanças em autoridade ou dados por *pull request* aprovado por outro integrante. | P3 |
 | L23 | A classificação no ECA Digital não foi confirmada; aluno menor de 18 anos não tem tratamento próprio. | Registrar a análise e, se houver alunos menores de 18 anos, aplicar o padrão mais protetivo (sem memória persistente). | P3 |
 
 ---

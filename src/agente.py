@@ -483,10 +483,10 @@ def conversar(estado: Estado, mensagem_usuario: str, orcamento: Orcamento,
         return estado
 
 
-def salvar_log(estado: Estado, nome_caso: str) -> Path:
+def salvar_log(estado: Estado, nome_caso: str, pasta: Path | None = None) -> Path:
     """Serializa mensagens não-JSON-nativas (objetos da SDK) antes de gravar —
     é por isso que o log passa por `default=str`."""
-    pasta = Path(__file__).parent.parent / "logs"
+    pasta = pasta or Path(__file__).parent.parent / "logs"
     pasta.mkdir(exist_ok=True)
     caminho = pasta / f"{nome_caso}-{estado.execucao_id}.json"
     caminho.write_text(json.dumps(asdict(estado), ensure_ascii=False,

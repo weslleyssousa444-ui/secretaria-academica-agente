@@ -1,0 +1,8 @@
+# Dependências da IMAGEM do agente de triagem (Exercício 13) — só o que
+# src/agente.py, src/dados.py, src/api.py e src/chat.py importam, com versão
+# exata. O requirements.txt da raiz reúne os Exercícios 7-8 (torch,
+# sentence-transformers, ~2 GB) e não entra na imagem.
+openai==2.48.0
+python-dotenv==1.2.1
+fastapi==0.143.3
+uvicorn==0.54.0
