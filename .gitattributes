@@ -1,0 +1,4 @@
+# Scripts de shell e o Dockerfile sempre com LF, mesmo em checkout no Windows
+# (CRLF quebra o bash: "$: command not found").
+*.sh text eol=lf
+Dockerfile text eol=lf
