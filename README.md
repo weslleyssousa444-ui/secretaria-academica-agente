@@ -120,7 +120,7 @@ python exercicios/aula10-mcp/cliente_cnpj.py "19.131.243/0001-97"   # terminal 2
 Governança (Aula 12): o *model card* do agente de triagem em [`docs/model-card.md`](docs/model-card.md), com 12 campos. Cada afirmação aponta para a linha de código, o teste, o log ou a saída de comando que a sustenta, ou está marcada como **LACUNA** (lista no fim do documento, com correção e prioridade). As saídas de comando citadas estão em [`docs/evidencias/`](docs/evidencias/).
 
 ```bash
-python -m pytest tests -v   # 24 testes offline, sem chave de API
+python -m pytest tests -v   # 34 testes offline (Python 3.10+), sem chave de API
 ```
 
 `tests/test_autoridade.py` prova os limites aplicados fora do modelo (o roteiro de teste faz o "modelo" desobedecer o prompt e verifica que o código barra). `tests/test_lacunas.py` fixa o comportamento atual de cada lacuna; quando uma for corrigida, o teste dela falha e deve ser invertido.

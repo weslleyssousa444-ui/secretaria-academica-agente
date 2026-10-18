@@ -433,6 +433,49 @@ def detectar_laco(estado: Estado, limite: int = 3) -> bool:
     return len(set(recentes)) == 1
 
 
+PEDIDO_DE_TRANCAMENTO = re.compile(r"\btranc(?:ar|amento)\b", re.IGNORECASE)
+
+
+def escalonamento_de_trancamento_devido(estado: Estado) -> str | None:
+    """Pós-condição da regra "trancamento é sempre humano" (lacuna L02): não
+    depende do modelo. Devolve o RA a escalar quando o aluno pediu trancamento,
+    o RA foi confirmado por `buscar_aluno` e nenhum caso de trancamento foi
+    aberto; senão, None. Falso positivo (aluno só citou a palavra) abre um caso
+    a mais para a secretaria; falso negativo deixaria o pedido sem dono."""
+    pediu = any(PEDIDO_DE_TRANCAMENTO.search(m["content"] or "")
+                for m in estado.historico
+                if isinstance(m, dict) and m.get("role") == "user")
+    if not pediu:
+        return None
+    for passo in estado.passos:
+        if (passo.ferramenta == "escalar_para_humano" and passo.erro is None
+                and passo.argumentos.get("tipo_pedido") == "trancamento_matricula"):
+            return None
+    for passo in reversed(estado.passos):
+        if passo.ferramenta == "buscar_aluno" and passo.erro is None:
+            return passo.resultado["ra"]
+    return None
+
+
+def escalar_trancamento_pelo_codigo(estado: Estado, ra: str) -> None:
+    """Abre o caso e registra o par assistente/ferramenta no histórico, para o
+    modelo redigir a resposta ao aluno já com o protocolo real."""
+    argumentos = {"ra": ra, "tipo_pedido": "trancamento_matricula",
+                  "motivo": "trancamento (aberto pelo código: o agente respondeu "
+                            "sem escalar)",
+                  "chave": f"{ra}:trancamento_matricula:trancamento"}
+    id_chamada = f"codigo-{estado.n_passos}"
+    passo = Passo(indice=estado.n_passos, ferramenta="escalar_para_humano",
+                  argumentos=argumentos, resultado=escalar_para_humano(**argumentos))
+    estado.registrar(passo)
+    estado.historico.append({
+        "role": "assistant", "content": None,
+        "tool_calls": [{"id": id_chamada, "type": "function", "function": {
+            "name": "escalar_para_humano",
+            "arguments": json.dumps(argumentos, ensure_ascii=False)}}]})
+    estado.historico.append(mensagem_de_tool(passo, id_chamada))
+
+
 def conversar(estado: Estado, mensagem_usuario: str, orcamento: Orcamento,
               verboso: bool = True) -> Estado:
     """Processa UM turno do aluno: pode disparar zero ou mais chamadas de
@@ -462,6 +505,12 @@ def conversar(estado: Estado, mensagem_usuario: str, orcamento: Orcamento,
 
             msg = resposta.choices[0].message
             if not msg.tool_calls:
+                ra_devido = escalonamento_de_trancamento_devido(estado)
+                if ra_devido:
+                    escalar_trancamento_pelo_codigo(estado, ra_devido)
+                    if verboso:
+                        print(f"   CODIGO escalar_para_humano(trancamento, {ra_devido})")
+                    continue
                 estado.termino = Termino.RESPONDEU
                 estado.motivo = None
                 estado.historico.append({"role": "assistant", "content": msg.content})

@@ -1,117 +1,85 @@
 # Continuidade — Exercícios 12 e 13
 
-Situação em **16/10/2026**, ao sair do PC do Senac. A rede do Senac bloqueou o **push para o GitHub** e travou o **Docker Desktop**: o motor perdeu a conexão com a VM do WSL (`dialing 192.168.65.7:2376: context deadline exceeded`). Este arquivo diz o que está feito, o que falta e os comandos exatos para terminar em outro PC.
+Situação em **16/10/2026**. O código e a documentação dos Exercícios 12 e 13 estão no GitHub (`origin/master`). Este arquivo diz o que falta e os comandos exatos. O grupo decidiu **seguir sem Docker**; o que depende dele está na seção 4, como opcional.
 
-## ⚠️ Antes de tudo: o GitHub NÃO tem este trabalho
+## 1. Testes offline (não precisam de chave nem de Docker)
 
-O remoto ainda está no commit `9bc9f8f`. Os dois commits novos existem **só neste PC**:
-
-| Commit | Conteúdo |
-|---|---|
-| `b3f4596` | Exercício 12: model card com evidência |
-| commit do Ex.13 | Exercício 13: imagem Docker, API, CI/CD |
-
-Para levar o trabalho para o outro PC, use **um** destes caminhos:
-
-- **Arquivo bundle (recomendado).** `secretaria-academica-agente.bundle`, gerado em `Downloads\secretaria-academica-agente-master\`, ao lado da pasta do projeto. É um arquivo único com todo o histórico. Leve por pendrive, e-mail ou Drive.
-- **A pasta inteira**, incluindo a pasta oculta `.git` (zip da pasta do projeto). Não precisa levar `.venv`.
-
-## 1. No outro PC: recuperar o repositório e subir no GitHub
-
-Com o bundle:
+Exige **Python 3.10 ou superior** (`src/api.py` usa `str | None` em modelos Pydantic). Com Python 3.9, só `tests/test_api.py` deixa de rodar.
 
 ```bash
-git clone secretaria-academica-agente.bundle secretaria-academica-agente
-cd secretaria-academica-agente
-git remote set-url origin https://github.com/weslleyssousa444-ui/secretaria-academica-agente.git
-git log --oneline -3          # os dois commits novos devem aparecer no topo
-git push origin master        # abre o login do GitHub no navegador
-```
-
-Com a pasta zipada: descompacte, entre nela e rode só o `git push origin master`.
-
-Para usar SSH (`git@github.com:...`), cadastre antes uma chave SSH na sua conta do GitHub e rode `git remote set-url origin git@github.com:weslleyssousa444-ui/secretaria-academica-agente.git`.
-
-## 2. Conferir os testes offline (não precisam de chave nem de Docker)
-
-```bash
-python -m venv .venv
-# Windows: .venv\Scripts\activate      Linux/macOS: source .venv/bin/activate
+python3.11 -m venv .venv
+source .venv/bin/activate               # Windows: .venv\Scripts\activate
 pip install -r requirements-dev.txt
-python -m pytest -v                     # esperado: 31 passed, 1 deselected
+python -m pytest -v                     # esperado: 34 passed, 1 deselected
 ```
 
-## 3. Criar o `.env` com a chave da Groq
+- [ ] Rodar em Python 3.10+ e regenerar `docs/evidencias/pytest.txt` (hoje com a saída de 24 testes, de antes da correção da L02).
+- Verificado em 16/10/2026 sob Python 3.9, sem `test_api.py`: 27 passed.
+
+## 2. Chave da Groq e eval com o modelo real
 
 ```bash
 cp .env.example .env
 # edite .env: OPENAI_API_KEY=<sua chave da Groq>  (https://console.groq.com/keys)
-```
-
-O `.env` nunca vai para o git nem para a imagem: está no `.gitignore` e no `.dockerignore`.
-
-## 4. Terminar as evidências do Exercício 13 (precisa de Docker)
-
-```bash
-docker build -t secretaria-academica-agente:local .
-bash scripts/evidencias_ex13.sh          # no Windows, rode no Git Bash
-```
-
-O script **regenera** `docs/evidencias/empacotamento.txt` inteiro e cobre o que ficou pendente:
-
-- [ ] cache de build: depois de mudar o código, a camada do `pip install` sai `CACHED`;
-- [ ] `POST /mensagens` com chave inválida: termina em `erro_fatal`, sem escrita, e grava o registro em `/dados/logs`;
-- [ ] `HEALTHCHECK` chegando a `healthy`.
-
-Abra o arquivo gerado e confira os três itens. Se algum der diferente do esperado, **anote o resultado real** em `docs/empacotamento.md`; não ajuste o texto para parecer certo.
-
-Se o Docker Desktop ficar "iniciando" para sempre, rode `wsl --shutdown` no PowerShell e abra o Docker de novo. Foi o que destravou no Senac, até a rede cair de vez.
-
-## 5. Rodar o eval com o modelo real
-
-```bash
 python -m pytest -m eval -v -s           # usa a OPENAI_API_KEY do .env
 ```
 
-Critério: trancamento 2/2 **e** pelo menos 5/6 no total. Leva cerca de 1 minuto (pausa de 8 s entre casos) e gasta tokens do *free tier*.
+O `.env` nunca vai para o git (está no `.gitignore`). Critério do eval: trancamento 2/2 **e** pelo menos 5/6 no total. Leva cerca de 1 minuto e gasta tokens do *free tier*.
 
-- [ ] Anote o resultado (quantos acertos, quais casos) em `docs/empacotamento.md` §6.
+- [ ] Anotar o resultado (acertos e casos) em `docs/empacotamento.md` §6.
 
-## 6. Ligar o pipeline no GitHub
+**Resultado em 18/10/2026 (Python 3.9, `qwen/qwen3.8-27b`, depois da correção da L02):**
 
-1. **Settings → Secrets and variables → Actions → New repository secret:** nome `GROQ_API_KEY`, valor = a chave da Groq. Sem o secret, o job `eval` é pulado (aviso), e não reprovado.
-2. **Settings → Actions → General → Workflow permissions:** se o push da imagem falhar com `denied`, marque *Read and write permissions*.
-3. O push do passo 1 já dispara o workflow. Acompanhe em **Actions**:
-   - [ ] `seguranca` verde (hadolint e Trivy);
-   - [ ] `testes` verde (31 testes);
-   - [ ] `eval` verde, ou o motivo anotado;
-   - [ ] `imagem` verde, com a imagem em **Packages** como `ghcr.io/weslleyssousa444-ui/secretaria-academica-agente:<sha>`. O pacote nasce privado; para ficar público: *Package settings → Change visibility*.
+| Verificação | Resultado |
+|---|---|
+| Eval (`pytest -m eval`), 1ª execução | 4/6, reprovado: `d01` e `s01` deram `None` (causa não confirmada; suspeita de limite da Groq) |
+| Eval, 2ª execução | **6/6**, trancamento 2/2 |
+| Verificador, casos `d01`–`d08`, `s01`–`s08`, `p01`–`p06`, `v01`–`v05` | **27/27 corretos** |
+| Verificador, `v06`, `t01`–`t08`, `r01`–`r04` (13 casos) | **NÃO AVALIADOS**: `erro_fatal`, cota diária da Groq esgotada (`tokens per day: Limit 200000, Used 199961`) |
 
-## 7. Fechar a documentação
+- [ ] **Rodar os 13 casos que não foram avaliados** quando a cota diária voltar (janela móvel de 24h; o `qwen/qwen3.8-27b` gasta cerca de 5 mil tokens por caso). Até lá, a L02 está validada pelos testes offline e pelo eval (trancamento 2/2), **mas não pelo critério completo do `case.md` §2.7** (0 falso negativo nos 8 casos `t01`–`t08`). Não rode eval e verificador completo no mesmo dia: juntos passam dos 200 mil tokens.
+- [ ] Depois, conferir se o total mantém 35/40 ou mais e gravar `logs/verificador.json`. O arquivo versionado ainda é o da execução de 22-23/09 (35/40).
+- Observação: o verificador conta `erro_fatal` por limite do provedor como erro de decisão, e isso pode reprovar o eval do CI por acaso.
 
-Em `docs/empacotamento.md`:
+## 3. Pipeline no GitHub
 
-- tire o aviso "Situação em 16/10/2026" e os marcadores **PENDENTE** que você resolveu;
-- registre o link da execução do workflow (URL da aba Actions).
+1. **Settings → Secrets and variables → Actions → New repository secret:** `GROQ_API_KEY`. Sem o secret, o job `eval` é pulado (aviso), não reprovado.
+2. **Settings → Actions → General → Workflow permissions:** se o push da imagem falhar com `denied`, marcar *Read and write permissions*.
+3. Acompanhar em **Actions**: `seguranca`, `testes` (34 testes), `eval` e `imagem` (GHCR). Os quatro jobs rodam em `ubuntu-24.04` no GitHub, e o `imagem` faz o `docker build` lá, então **não dependem de Docker local**.
+- [ ] Registrar o link da execução em `docs/empacotamento.md` e tirar o marcador "PENDENTE: o workflow nunca rodou no GitHub".
 
-Depois:
+## 4. Opcional: evidências que exigem Docker local
+
+Ficam pendentes enquanto o grupo não usar Docker. Em `docs/empacotamento.md` continuam marcadas como **PENDENTE**, sem ajustar o texto para parecer concluído.
 
 ```bash
-git add -A
-git commit -m "Ex.13: evidências finais (cache, healthcheck, eval, pipeline no GitHub)"
-git push origin master
+docker build -t secretaria-academica-agente:local .
+bash scripts/evidencias_ex13.sh          # regenera docs/evidencias/empacotamento.txt
 ```
 
-Quando tudo estiver concluído, este arquivo pode ser apagado.
+- [ ] cache de build (camada do `pip install` sai `CACHED` depois de mudar o código);
+- [ ] `POST /mensagens` com chave inválida termina em `erro_fatal`, sem escrita;
+- [ ] `HEALTHCHECK` chegando a `healthy`.
+
+## 5. Lacunas do model card ainda abertas
+
+A L02 (trancamento escalado só se o modelo quisesse) foi **fechada em código** em 16/10/2026: `src/agente.py`, `escalonamento_de_trancamento_devido`. Restam 21 abertas (os ids vão de L01 a L21 e L23; não existe L22). As de maior prioridade:
+
+- **L01**: sem verificação de identidade; qualquer RA digitado é atendido (P1).
+- **L11**: divergência, RA não encontrado e pendência dependem só do prompt (a L02 cobriu só trancamento).
+- **L03**: a chave de idempotência do `escalar_para_humano` é escrita pelo modelo.
 
 ## O que já está feito
 
 | Item | Onde |
 |---|---|
-| Model card nos 12 campos, 23 lacunas, 24 testes de governança | `docs/model-card.md`, `tests/test_autoridade.py`, `tests/test_lacunas.py` |
+| Model card nos 12 campos, 21 lacunas abertas, 27 testes de governança | `docs/model-card.md`, `tests/test_autoridade.py`, `tests/test_lacunas.py` |
+| Trancamento sempre escalado, garantido pelo código (L02) | `src/agente.py:436-476`, 4 testes em `tests/test_autoridade.py` |
 | Imagem: base fixada, 4 dependências, usuário sem privilégio, `COPY` por nome, sem `.env` | `Dockerfile`, `.dockerignore`, `requirements-agente.txt` |
 | API (`/saude`, `/mensagens`) com 7 testes offline | `src/api.py`, `tests/test_api.py` |
 | Estado no volume (banco e registros), testado com `stop`, `rm` e container novo | `docker-compose.yml`, `docs/evidencias/empacotamento.txt` §3–4 |
 | hadolint sem avisos; Trivy sem achados; controle negativo (sem `USER`) reprova | `docs/evidencias/empacotamento.txt` §2 |
 | Histórico do git sem chave vazada | `docs/empacotamento.md` §5 |
 | Workflow: segurança, testes, eval, imagem → GHCR; *actions* e imagens fixadas por SHA ou *digest* | `.github/workflows/ci.yml` |
+
+Quando tudo estiver concluído, este arquivo pode ser apagado.

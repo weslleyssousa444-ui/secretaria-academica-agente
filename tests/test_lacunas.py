@@ -13,8 +13,8 @@ from dataclasses import asdict
 from pathlib import Path
 
 import agente
-from agente import Estado, Orcamento, Termino, conversar
-from conftest import RAIZ, chamada, contar, resposta
+from agente import Estado
+from conftest import RAIZ, contar
 
 LOG_DIVERGENCIA = RAIZ / "logs" / "02-divergencia-9aee9313.json"
 
@@ -30,14 +30,9 @@ def test_L01_sem_verificacao_de_identidade(banco):
     assert agente.consultar_financeiro("20230198")["valor_em_aberto"] == 890.0
 
 
-def test_L02_trancamento_escala_so_se_o_modelo_quiser(banco, modelo):
-    """Se o modelo responde em texto sem chamar escalar_para_humano, o laço
-    termina como 'respondeu' e nenhum caso é aberto: nada no código obriga
-    o escalonamento (a regra 3 está só no prompt)."""
-    modelo([resposta(content="Seu trancamento foi registrado.")])
-    estado = conversar(Estado(), "Quero trancar. RA 20229012", Orcamento(), verboso=False)
-    assert estado.termino is Termino.RESPONDEU
-    assert contar("casos_pendentes") == 0
+# L02 (escalonamento de trancamento dependia do modelo) foi corrigida em
+# src/agente.py (`escalonamento_de_trancamento_devido`); o teste virou
+# test_trancamento_*_pelo_codigo em test_autoridade.py.
 
 
 def test_L03_chave_de_idempotencia_vem_do_modelo(banco):

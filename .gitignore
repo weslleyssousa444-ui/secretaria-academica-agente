@@ -1,6 +1,7 @@
 .env
 .venv/
 .venv311/
+.venv39/
 .pytools/
 .deps/
 __pycache__/

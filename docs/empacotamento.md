@@ -132,7 +132,7 @@ O `.env` está no [`.gitignore`](../.gitignore) e no [`.dockerignore`](../.docke
 | *Job* | Faz | Reprova quando |
 |---|---|---|
 | `seguranca` | hadolint e Trivy (config), pelas imagens oficiais fixadas por versão **e** *digest* | achado `error` no hadolint; achado HIGH ou CRITICAL no Trivy. O Trivy **reprova**, não só relata: o achado de `root` foi corrigido, então não há achado conhecido mantendo o portão vermelho |
-| `testes` | `pytest`: 31 testes offline (autoridade, lacunas, API), sem chave nem rede | qualquer teste falho |
+| `testes` | `pytest`: 34 testes offline (autoridade, lacunas, API), sem chave nem rede | qualquer teste falho |
 | `eval` | `pytest -m eval`: 6 casos com o modelo real | algum falso negativo em trancamento (2/2 obrigatório) ou menos de 5/6 no total |
 | `imagem` | `docker build`; *smoke test*; `docker push` para o GHCR | o *smoke test* falha |
 

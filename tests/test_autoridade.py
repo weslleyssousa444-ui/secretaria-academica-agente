@@ -98,6 +98,59 @@ def test_escalar_idempotente_pela_chave(banco):
 
 # ------------------------------------------------ código (orçamento e laço)
 
+def test_trancamento_escalado_pelo_codigo_se_modelo_nao_escalar(banco, modelo):
+    """L02 corrigida: o modelo confirma o RA e responde em texto 'trancamento
+    registrado' sem chamar escalar_para_humano. O código abre o caso, e o
+    modelo redige a resposta final depois, com o protocolo real."""
+    modelo([resposta([chamada("buscar_aluno", ra="20229012")]),
+            resposta(content="Seu trancamento foi registrado."),
+            resposta(content="Encaminhei seu pedido à coordenação.")])
+    estado = conversar(Estado(), "Quero trancar. RA 20229012", Orcamento(), verboso=False)
+    assert estado.termino is Termino.RESPONDEU
+    assert estado.historico[-1]["content"] == "Encaminhei seu pedido à coordenação."
+    assert contar("casos_pendentes") == 1
+    passo = estado.passos[-1]
+    assert passo.ferramenta == "escalar_para_humano"
+    assert passo.argumentos["tipo_pedido"] == "trancamento_matricula"
+    assert passo.resultado["protocolo"].startswith("CASO-")
+
+
+def test_trancamento_nao_duplica_caso_aberto_pelo_modelo(banco, modelo):
+    """Se o modelo já escalou, o código não abre um segundo caso."""
+    modelo([resposta([chamada("buscar_aluno", ra="20229012")]),
+            resposta([chamada("escalar_para_humano", ra="20229012",
+                              tipo_pedido="trancamento_matricula",
+                              motivo="pedido de trancamento",
+                              chave="20229012:trancamento_matricula:pedido")]),
+            resposta(content="Encaminhado.")])
+    estado = conversar(Estado(), "Quero trancar. RA 20229012", Orcamento(), verboso=False)
+    assert estado.termino is Termino.RESPONDEU
+    assert contar("casos_pendentes") == 1
+
+
+def test_trancamento_sem_ra_confirmado_nao_abre_caso(banco, modelo):
+    """Sem RA confirmado por buscar_aluno (agente pedindo o RA, ou RA
+    inexistente), o código não escala: o modelo segue o diálogo."""
+    modelo([resposta(content="Qual é o seu RA?")])
+    estado = conversar(Estado(), "Quero trancar minha matrícula", Orcamento(), verboso=False)
+    assert estado.termino is Termino.RESPONDEU
+    assert contar("casos_pendentes") == 0
+
+    modelo([resposta([chamada("buscar_aluno", ra="20239999")]),
+            resposta(content="Não encontrei esse RA. Pode confirmar?")])
+    estado = conversar(Estado(), "Quero trancar. RA 20239999", Orcamento(), verboso=False)
+    assert contar("casos_pendentes") == 0
+
+
+def test_outros_pedidos_nao_disparam_escalonamento_de_trancamento(banco, modelo):
+    modelo([resposta([chamada("buscar_aluno", ra="20231045")]),
+            resposta(content="Posso emitir sua declaração.")])
+    estado = conversar(Estado(), "Preciso de uma declaração. RA 20231045",
+                       Orcamento(), verboso=False)
+    assert estado.termino is Termino.RESPONDEU
+    assert contar("casos_pendentes") == 0
+
+
 def test_orcamento_de_passos_interrompe(banco, modelo):
     ras = ["20231045", "20230198", "20229012", "20221100", "20233321"]
     modelo([resposta([chamada("buscar_aluno", ra=ra)]) for ra in ras])
