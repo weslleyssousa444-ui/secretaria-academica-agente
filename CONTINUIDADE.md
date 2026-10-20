@@ -35,10 +35,13 @@ O `.env` nunca vai para o git (está no `.gitignore`). Critério do eval: tranca
 | Eval (`pytest -m eval`), 1ª execução | 4/6, reprovado: `d01` e `s01` deram `None` (causa não confirmada; suspeita de limite da Groq) |
 | Eval, 2ª execução | **6/6**, trancamento 2/2 |
 | Verificador, casos `d01`–`d08`, `s01`–`s08`, `p01`–`p06`, `v01`–`v05` | **27/27 corretos** |
-| Verificador, `v06`, `t01`–`t08`, `r01`–`r04` (13 casos) | **NÃO AVALIADOS**: `erro_fatal`, cota diária da Groq esgotada (`tokens per day: Limit 200000, Used 199961`) |
+| Verificador, `v06`, `t01`–`t08`, `r01`–`r04` (13 casos), 1ª tentativa em 18/10 | `erro_fatal`: cota diária da Groq esgotada (`tokens per day: Limit 200000, Used 199961`) |
+| Verificador, os mesmos 13 casos, refeitos em 20/10 | **12/13 corretos, 0 falso negativo em trancamento** (`t01`–`t08` certos). O erro é o `r03`, ambiguidade de rótulo conhecida (`docs/modelos.md` §3.5) |
+| **Verificador, total (27 + 12)** | **39/40**, critério do `case.md` §2.7 atendido (referência anterior: 35/40) |
+| GitHub Actions, commit `5ade646` | `seguranca`, `testes`, `eval` e `imagem`: todos `success` ([run](https://github.com/weslleyssousa444-ui/secretaria-academica-agente/actions/runs/39099896050)) |
 
-- [ ] **Rodar os 13 casos que não foram avaliados** quando a cota diária voltar (janela móvel de 24h; o `qwen/qwen3.8-27b` gasta cerca de 5 mil tokens por caso). Até lá, a L02 está validada pelos testes offline e pelo eval (trancamento 2/2), **mas não pelo critério completo do `case.md` §2.7** (0 falso negativo nos 8 casos `t01`–`t08`). Não rode eval e verificador completo no mesmo dia: juntos passam dos 200 mil tokens.
-- [ ] Depois, conferir se o total mantém 35/40 ou mais e gravar `logs/verificador.json`. O arquivo versionado ainda é o da execução de 22-23/09 (35/40).
+- O 39/40 vem de **dois lotes** (27 em 18/10, 13 em 20/10), não de uma execução única, porque a cota diária acabou no meio. O `qwen/qwen3.8-27b` gasta cerca de 5 mil tokens por caso: eval e verificador completo no mesmo dia passam dos 200 mil tokens.
+- [ ] Opcional, para ter um registro de execução única: rodar `python src/verificador.py` inteiro num dia sem outros testes e gravar `logs/verificador.json`. O arquivo versionado ainda é o de 22-23/09 (35/40).
 - Observação: o verificador conta `erro_fatal` por limite do provedor como erro de decisão, e isso pode reprovar o eval do CI por acaso.
 
 ## 3. Pipeline no GitHub

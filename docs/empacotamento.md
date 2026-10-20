@@ -148,7 +148,7 @@ O `.env` está no [`.gitignore`](../.gitignore) e no [`.dockerignore`](../.docke
 - **Os testes unitários não rodam na imagem.** Rodam no Python do executor; na imagem roda só o *smoke test*. A diferença fica pequena porque a base é a mesma versão (3.11.13) e as dependências são as mesmas, mas não é zero.
 - **Não há implantação.** O pipeline termina no registro: é integração contínua com entrega do artefato.
 - **Drift do modelo.** O `qwen/qwen3.8-27b` não tem versão datada (model card, lacuna L13). Um *eval* agendado (`schedule`) detectaria mudança do provedor sem commit; não foi configurado, para poupar a cota do *free tier*.
-- **PENDENTE: o workflow nunca rodou no GitHub.** O push está bloqueado nesta rede. Os comandos de `seguranca` e `imagem` foram rodados localmente; os de `testes`, também (31 passaram).
+- **Primeira execução no GitHub (18/10/2026, commit `5ade646`):** os quatro jobs (`seguranca`, `testes`, `eval`, `imagem`) terminaram em `success`: [run 39099896050](https://github.com/weslleyssousa444-ui/secretaria-academica-agente/actions/runs/39099896050). O `eval` rodou de fato (o secret `GROQ_API_KEY` existe). Localmente, com o mesmo modelo, o `eval` reprovou uma vez (4/6) e passou na repetição (6/6); `d01` e `s01` deram `None`, causa não confirmada (suspeita de limite da Groq). O portão de 5/6 tolera um erro, mas um `erro_fatal` por limite do provedor conta como erro de decisão, então o `eval` pode ficar vermelho por acaso.
 
 ## 7. Maturidade (Google, níveis 0 a 2)
 
