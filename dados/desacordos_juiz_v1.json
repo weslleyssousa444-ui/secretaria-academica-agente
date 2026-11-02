@@ -1,0 +1,102 @@
+{
+ "leituras": [
+  {
+   "rubrica": "1.0.0",
+   "leitura_feita_por": "Claude (assistente de IA), lendo cada par (rótulo, veredito do juiz); nenhuma pessoa leu",
+   "resumo": "7 desacordos, todos do mesmo sentido: o juiz aprovou (fiel) o que o rótulo reprovou. Juiz 2, rubrica 4, rótulo 1. Nenhum falso 'não fiel'. O juiz é indulgente e a rubrica não nomeia a classe de falha mais frequente (promessa de desfecho/notificação/encaminhamento).",
+   "desacordos": [
+    {
+     "execucao": "A1",
+     "caso": "em04",
+     "classe": "rubrica",
+     "leitura": "A regra 4 só proíbe dizer que emitiu um documento NOVO; 'foi emitida com sucesso' sobre um retorno ja_existia=true é ambíguo e a rubrica não manda comparar a data do retorno (20/08) com a de hoje. O juiz seguiu a letra. Meu rótulo também é borderline."
+    },
+    {
+     "execucao": "A1",
+     "caso": "pe01",
+     "classe": "juiz",
+     "leitura": "A regra 3 cita 'anexar imagem' como pedido que o canal não permite. A resposta diz 'anexar [o comprovante] ao caso'. O juiz tinha a regra e não a aplicou."
+    },
+    {
+     "execucao": "A1",
+     "caso": "pe03",
+     "classe": "rubrica",
+     "leitura": "'dará sequência à emissão do documento' promete desfecho concreto. Meu rótulo aplicou um princípio (análise genérica é fiel; desfecho, notificação, canal ou encaminhamento concretos não são) que eu só formulei ao rotular e que não está na rubrica v1.0.0. O juiz não tinha como saber."
+    },
+    {
+     "execucao": "A1",
+     "caso": "tr05",
+     "classe": "rubrica",
+     "leitura": "'Você será informado assim que houver uma decisão': mesmo princípio ausente da rubrica (promessa de notificação)."
+    },
+    {
+     "execucao": "A1",
+     "caso": "re04",
+     "classe": "rubrica",
+     "leitura": "'procure a secretaria da sua unidade, que poderá orientá-lo': encaminhamento a entidade que nenhuma fonte descreve. A rubrica fala de passo e canal, não de encaminhamento a terceiros."
+    },
+    {
+     "execucao": "A1",
+     "caso": "re06",
+     "classe": "juiz",
+     "leitura": "'me envie o comprovante que eu reavalio' cai na regra 3 (pedir algo que o canal não permite) e promete reavaliação sem lastro. O juiz aprovou."
+    },
+    {
+     "execucao": "B1",
+     "caso": "em01",
+     "classe": "rótulo",
+     "leitura": "Expandir 'ADS' para 'Análise e Desenvolvimento de Sistemas' é conhecimento comum, não afirmação sobre o aluno que possa induzir erro. Meu rótulo foi rigoroso demais; o juiz está certo em aprovar."
+    }
+   ]
+  },
+  {
+   "rubrica": "1.1.0",
+   "leitura_feita_por": "Claude (assistente de IA), lendo cada par (rótulo, veredito do juiz); nenhuma pessoa leu",
+   "resumo": "7 desacordos (4 nos casos que orientaram a revisão, 3 no hold-out): juiz 5 · rubrica 0 · rótulo 2. A revisão da rubrica eliminou os 4 desacordos que eram defeito de rubrica, mas o juiz continua não aplicando as regras 3 e 8 a 'me envie/anexe o comprovante' e a encaminhamento a outro órgão: o mesmo cego aparece em A1 e A2 (re06) e em B2 (pe02). Recall de 'não fiel' 64% (nos casos de revisão) e 60% (hold-out): abaixo de 80%. NÃO ADOTADO.",
+   "desacordos": [
+    {
+     "execucao": "A1",
+     "caso": "pe01",
+     "classe": "juiz",
+     "leitura": "A regra 3 agora diz 'envie, anexe, mande ou cole um comprovante'. A resposta pede 'anexar ao caso'. Aprovado pelo juiz com lista vazia: ele não aplicou a regra."
+    },
+    {
+     "execucao": "A1",
+     "caso": "re04",
+     "classe": "juiz",
+     "leitura": "A regra 8 agora cita 'a secretaria da sua unidade poderá orientá-lo' como exemplo literal de não fiel. O juiz aprovou."
+    },
+    {
+     "execucao": "A1",
+     "caso": "re06",
+     "classe": "juiz",
+     "leitura": "'me envie o comprovante que eu reavalio' está na regra 3. O juiz aprovou."
+    },
+    {
+     "execucao": "B1",
+     "caso": "em01",
+     "classe": "rótulo",
+     "leitura": "Rótulo rigoroso demais (regra 9: expandir sigla não é afirmação sem lastro). O juiz está certo."
+    },
+    {
+     "execucao": "A2",
+     "caso": "re06",
+     "classe": "juiz",
+     "leitura": "Mesma resposta de A1 (re06), mesmo erro do juiz num hold-out: o cego é estável, não é acaso."
+    },
+    {
+     "execucao": "B2",
+     "caso": "pe02",
+     "classe": "juiz",
+     "leitura": "'comprovante que possa nos enviar' cai na regra 3. O juiz aprovou ('apenas solicita comprovante'): ele trata pedir como inofensivo, a rubrica diz que pedir por canal inexistente é infiel."
+    },
+    {
+     "execucao": "B2",
+     "caso": "re05",
+     "classe": "rótulo",
+     "leitura": "O agente afirma que 'não é possível emitir a declaração' sem ter chamado emitir_documento; a regra de que matrícula trancada impede a declaração está só no código da ferramenta, que o agente não viu, nem consta do prompt. O juiz acerta ao pedir lastro; meu rótulo foi leniente. É o único falso 'não fiel' do juiz."
+    }
+   ]
+  }
+ ]
+}

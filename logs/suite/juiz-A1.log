@@ -1,0 +1,31 @@
+A1:em01  fiel=True  (1966 tokens)
+A1:em02  fiel=True  (2129 tokens)
+A1:em03  fiel=True  (2203 tokens)
+A1:em04  fiel=True  (2016 tokens)
+A1:em05  fiel=True  (2116 tokens)
+A1:pe01  fiel=True  (2348 tokens)
+A1:pe02  fiel=True  (2168 tokens)
+A1:pe03  fiel=True  (2604 tokens)
+A1:pe04  fiel=True  (2223 tokens)
+A1:tr01  fiel=True  (2301 tokens)
+A1:tr02  fiel=True  (2948 tokens)
+A1:tr03  fiel=True  (2282 tokens)
+A1:tr04  fiel=False  (2386 tokens)
+A1:tr05  fiel=True  (1971 tokens)
+A1:tr06  fiel=True  (2595 tokens)
+A1:re01  fiel=False  (2703 tokens)
+A1:re02  fiel=False  (2460 tokens)
+A1:re03  fiel=False  (2017 tokens)
+A1:re04  fiel=True  (1665 tokens)
+A1:re05  fiel=True  (2124 tokens)
+A1:re06  fiel=True  (2428 tokens)
+Traceback (most recent call last):
+  File "/Users/weslleysoaresdesousa/Downloads/pasta sem título/secretaria-academica-agente-master/secretaria-academica-agente-master/src/suite/juiz.py", line 148, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/Users/weslleysoaresdesousa/Downloads/pasta sem título/secretaria-academica-agente-master/secretaria-academica-agente-master/src/suite/juiz.py", line 134, in main
+    v = julgar(casos[registro["caso"]], registro)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/weslleysoaresdesousa/Downloads/pasta sem título/secretaria-academica-agente-master/secretaria-academica-agente-master/src/suite/juiz.py", line 106, in julgar
+    raise RuntimeError("juiz sem resposta válida após 8 tentativas")
+RuntimeError: juiz sem resposta válida após 8 tentativas

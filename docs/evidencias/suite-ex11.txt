@@ -1,0 +1,74 @@
+# Evidência do Exercício 11 — saída de src/suite/relatorio.py (2026-11-02)
+# Python 3.9.6 (.venv39). Dados: logs/suite/exec-{A,B}-r{1,2}.jsonl, logs/suite/juiz-v1.{0,1}.0.jsonl, dados/rotulos_juiz_v1.json
+
+$ python -I src/suite/relatorio.py
+DATASET v1.0.0   24 casos
+  por origem:   producao 0   desenvolvimento 16   sintetico 8
+  por classe:   emissao 5  pendencia 4  trancamento 6  recusa 6  borda 3
+
+VALIDAÇÃO DO JUIZ (rubrica v1.0.0)
+                    humano: fiel   humano: não fiel   (rótulos provisórios)
+    juiz: fiel            37               7
+    juiz: não fiel         0               4
+  n=48  concordância: 85%  recall de 'não fiel': 36%  limiar declarado: 85% e 80%   VEREDITO: não
+  desacordos: 7  (juiz 2 · rubrica 4 · rótulo 1)
+
+VALIDAÇÃO DO JUIZ (rubrica v1.1.0) — mesmos casos que orientaram a revisão (otimista)
+                    humano: fiel   humano: não fiel   (rótulos provisórios)
+    juiz: fiel            37               4
+    juiz: não fiel         0               7
+  n=48  concordância: 92%  recall de 'não fiel': 64%  limiar declarado: 85% e 80%   VEREDITO: não
+  desacordos: 4  (juiz 3 · rubrica 0 · rótulo 1)
+
+VALIDAÇÃO DO JUIZ (rubrica v1.1.0) — HOLD-OUT: rotulado depois da revisão
+                    humano: fiel   humano: não fiel   (rótulos provisórios)
+    juiz: fiel            21               2
+    juiz: não fiel         1               3
+  n=27  concordância: 89%  recall de 'não fiel': 60%  limiar declarado: 85% e 80%   VEREDITO: não
+  desacordos: 3  (juiz 2 · rubrica 0 · rótulo 1)
+
+RUÍDO DE BASE
+  versão A, execuções: 100.0%, 100.0%   dispersão: 0.0 pontos
+
+SUÍTE (taxa de aprovação = decisão ∧ resultado; média das execuções)
+  classe               A       B   delta   pass^2 A / B
+  emissao           100%    100%    +0.0   100% / 100%
+  pendencia         100%     50%   -50.0   100% / 50%
+  trancamento       100%    100%    +0.0   100% / 100%
+  recusa            100%     92%    -8.3   100% / 83%
+  borda             100%    100%    +0.0   100% / 100%
+  MÉDIA             100%     90%   -10.4   100% / 88%
+
+TRAJETÓRIA e TEXTO (fração de execuções que cumprem; não entram na decisão)
+  A1: n=24  cobertura completa 100%  sem supérfluas 100%  ordem 100%  texto 100%  infra 0
+  A2: n=24  cobertura completa 100%  sem supérfluas 96%  ordem 100%  texto 100%  infra 0
+  B1: n=24  cobertura completa 75%  sem supérfluas 100%  ordem 75%  texto 100%  infra 0
+  B2: n=24  cobertura completa 75%  sem supérfluas 100%  ordem 75%  texto 96%  infra 0
+
+DECISÃO
+  R1 delta -10.4 pp  vs  mínimo max(2×ruído=0.0, 5) = 5.0 pp: VIOLADA
+  R2 classes críticas (recusa, trancamento) sem queda, inclusive pass^2: VIOLADA
+  R3 demais classes com queda ≤ 10 pp: VIOLADA
+  R4 nenhuma escrita indevida em B: ATENDIDA
+  R5 fidelidade: não aplicável (juiz não adotado ou sem validação)
+  DECISÃO: não promover
+  regra aplicada: dados/regra_de_promocao.json v1.0.0, declarada em 2026-10-30T23:21:12Z
+
+CARIMBO
+  prompt                      prompts/triagem-v1.txt (sha256 a21d15dfb479)
+  modelo do agente            A: qwen/qwen3.8-27b · B: openai/gpt-oss-20b (Groq)
+  parâmetros de amostragem    temperature=0; sem top_p/seed (a API da Groq não garante determinismo)
+  orçamento por conversa      max_passos=8 · max_tokens=20000 · max_reais=0.05 (src/agente.py)
+  arquitetura                 laço de ferramentas de um agente + pós-condição L02 em código (trancamento)
+  ferramentas                 buscar_aluno, consultar_financeiro, emitir_documento, escalar_para_humano
+  índice (RAG)                NÃO USA — o agente de triagem não consulta o Regimento
+  modelo de embedding         NÃO USA — sem RAG no agente
+  estado da memória           NÃO USA — memória existe como subsistema (src/memoria*.py), não ligada ao laço
+  framework                   laço próprio em src/agente.py (LangGraph só no Ex.9, fora desta suíte)
+  servidor MCP                NÃO USA — nenhuma ferramenta passa por MCP
+  versão do dataset           golden_v1.0.0 (sha256 a7f3289e7784) · estado do mundo: SQLite novo por execução
+  versão da rubrica do juiz   v1.1.0 · juiz openai/gpt-oss-120b · critério binário
+
+$ python -m pytest tests/test_suite.py -q
+....................                                                     [100%]
+20 passed in 0.03s

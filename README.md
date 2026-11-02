@@ -1,5 +1,7 @@
 # Atendimento de secretaria acadêmica — agente de triagem (Parte 1)
 
+> **Quer só rodar e testar?** Veja o [`START.md`](START.md): um caminho sem chave de API (testes e relatórios já gravados) e um com a chave gratuita da Groq (chat, demo, API).
+
 **Grupo:** Weslley Soares de Sousa, Pedro Akira, Henrique Gomes Matos, Erick
 
 **O problema em uma frase:** decidir se uma solicitação de aluno (declaração de matrícula, segunda via de histórico ou trancamento de matrícula) pode ser atendida automaticamente ou precisa ser encaminhada a um atendente humano da secretaria, cruzando o que o aluno relata com o que o sistema acadêmico registra.
@@ -115,6 +117,19 @@ python exercicios/aula10-mcp/servidor_cnpj_cep.py &      # terminal 1
 python exercicios/aula10-mcp/cliente_cnpj.py "19.131.243/0001-97"   # terminal 2
 ```
 
+## Exercício 11 — A suíte do case
+
+Avaliação do agente de triagem: *golden dataset* de 24 casos com origem declarada (`dados/golden_v1.json`), quatro níveis (resultado, decisão, trajetória, texto) mais um juiz LLM de fidelidade validado contra rótulos, e a regra de promoção gravada **antes** de qualquer execução (`dados/regra_de_promocao.json`, assinada em `logs/suite/assinatura-regra.txt`). Desenho em [`exercicios/aula-11-avaliacao.md`](exercicios/aula-11-avaliacao.md); resultado, matriz do juiz e decisão em [`exercicios/aula-11-suite-do-case.md`](exercicios/aula-11-suite-do-case.md).
+
+```bash
+python src/suite/executor.py --versao A --run 1      # grava logs/suite/exec-A-r1.jsonl (retomável; consome tokens da Groq)
+python src/suite/juiz.py --execucoes A1,B1           # veredictos do juiz (modelo openai/gpt-oss-120b)
+python src/suite/relatorio.py                        # saída completa, sem chamar modelo
+python -m pytest tests/test_suite.py -v              # 20 testes dos avaliadores, offline
+```
+
+Os rótulos de validação do juiz são **provisórios, do assistente de IA, não de uma pessoa**; substituí-los por rótulos humanos é editar `dados/rotulos_juiz_v1.json` e rodar `relatorio.py` de novo.
+
 ## Exercício 12 — Model card do agente, com evidência
 
 Governança (Aula 12): o *model card* do agente de triagem em [`docs/model-card.md`](docs/model-card.md), com 12 campos. Cada afirmação aponta para a linha de código, o teste, o log ou a saída de comando que a sustenta, ou está marcada como **LACUNA** (lista no fim do documento, com correção e prioridade). As saídas de comando citadas estão em [`docs/evidencias/`](docs/evidencias/).
@@ -134,6 +149,18 @@ docker compose up --build              # API em localhost:8000, estado no volume
 curl localhost:8000/saude
 ```
 
+## Exercício 14 — Os dez riscos (OWASP ASI01–ASI10)
+
+Os dez riscos do catálogo da OWASP para aplicações agênticas, avaliados no agente de triagem: onde existe, cenário de ataque, impacto de 1 a 3 e mitigação, mais dois riscos aceitos declarados. Relatório em [`exercicios/aula14-respostas.md`](exercicios/aula14-respostas.md); evidências em [`docs/evidencias/seguranca-ex14.txt`](docs/evidencias/seguranca-ex14.txt). Os de maior impacto: **ASI03** (o agente atende qualquer RA), **ASI04** (base e dependências sem *digest*/hash, tag `latest`) e **ASI10** (o pipeline publica a imagem sem esperar o *eval*).
+
+```bash
+python -m pytest tests/test_seguranca.py tests/test_api_seguranca.py -v   # 17 + 5 testes offline, sem chave de API (os da API exigem Python >= 3.10)
+```
+
+## Exercício 15 — Plano de observabilidade
+
+O plano de um agente de trocas de loja virtual (perguntas, árvore de *spans* nas convenções GenAI do OpenTelemetry, modos de falha, SLOs e alertas), com um apêndice que aponta o que o agente de triagem já tem e o que falta para a Parte 3. Em [`exercicios/aula15-plano-de-observabilidade.md`](exercicios/aula15-plano-de-observabilidade.md).
+
 ---
 
 ## Estrutura do repositório
@@ -144,7 +171,13 @@ docs/modelos.md        a análise e a escolha do modelo
 docs/fontes.md         tudo que foi consultado
 docs/model-card.md     o model card com evidência (Exercício 12)
 docs/evidencias/       saídas de comando citadas no model card
-tests/                 testes de autoridade e de lacunas (pytest, offline)
+tests/                 testes de autoridade, de lacunas e de segurança (pytest, offline)
+exercicios/aula-11-avaliacao.md                o desenho da avaliação (Exercício 11)
+exercicios/aula-11-suite-do-case.md            o resultado da suíte (Exercício 11)
+src/suite/                                     executor, avaliadores, juiz e relatório da suíte
+dados/golden_v1.json, dados/regra_de_promocao.json, dados/rotulos_juiz_v1.json, dados/desacordos_juiz_v1.json
+exercicios/aula14-respostas.md                 os dez riscos ASI01–ASI10 (Exercício 14)
+exercicios/aula15-plano-de-observabilidade.md  o plano de observabilidade (Exercício 15)
 docs/base-de-conhecimento-v1.md  o plano da base de RAG (Exercício 6)
 prompts/               o system prompt do agente, versionado
 src/dados.py           o "sistema acadêmico" simulado (SQLite)

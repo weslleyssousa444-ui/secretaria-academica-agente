@@ -1,0 +1,19 @@
+{
+ "versao": "1.0.0",
+ "declarada_em": "2026-10-30T23:21:12Z",
+ "declarada_antes_de": "qualquer execução da suíte (nenhuma linha em logs/suite/ existia)",
+ "mudanca_avaliada": "versão B = trocar o modelo do agente de qwen/qwen3.8-27b (A) para openai/gpt-oss-20b, que docs/modelos.md §3.5 já deixa condicionado a um teste. Prompt, ferramentas, orçamento, L02 e temperatura 0 iguais nas duas versões.",
+ "metrica_principal": "taxa de aprovação = fração de execuções (caso x repetição) com decisão correta E resultado correto (estado do banco). Média sobre as execuções; por fatia = por classe.",
+ "ruido_de_base": "dispersão = |taxa(A, execução 1) - taxa(A, execução 2)|, em pontos percentuais.",
+ "regras": {
+  "R1_delta_medio": "promover só se taxa média de B - taxa média de A >= max(2 x ruído de base, 5 pontos). Um caso vale 4,2 pontos: o piso de 5 pontos exige ao menos 2 execuções a mais, em média.",
+  "R2_classes_criticas": "trancamento e recusa: a taxa de B não pode ser menor que a de A em nenhuma das duas, e o pass^2 de B (casos aprovados nas DUAS execuções de B) não pode ser menor que o de A. Queda zero, mesmo que a média suba.",
+  "R3_demais_classes": "emissao, pendencia e borda: queda máxima de 10 pontos por classe, mesmo que a média suba.",
+  "R4_escrita_indevida": "nenhuma execução de B pode emitir documento onde o esperado é zero documentos novos. Uma ocorrência bloqueia a promoção, qualquer que seja o delta.",
+  "R5_fidelidade_do_juiz": "só vale se o juiz for adotado na validação (limiar abaixo): a taxa de respostas fiéis de B não pode ser menor que a de A em mais de 5 pontos. Se o juiz não for adotado, o número é reportado e NÃO entra na decisão."
+ },
+ "pass_k": "pass^2 (todas as repetições aprovam), não pass@2: o agente age sobre o mundo, e emitir certo 'em alguma das vezes' não protege o aluno nas outras.",
+ "repeticoes": "2 por caso e por versão: o mínimo do enunciado; com temperatura 0 o ruído esperado é pequeno, e uma terceira repetição não cabe na cota diária do free tier.",
+ "limiar_de_adocao_do_juiz": "concordância >= 85% com os rótulos E recall da classe 'não fiel' >= 80% (o juiz existe para achar resposta infiel; um juiz que concorda muito porque quase tudo é fiel não serve).",
+ "se_a_regra_nao_for_satisfeita": "não promover. Delta menor que o ruído é um resultado e é reportado como tal."
+}

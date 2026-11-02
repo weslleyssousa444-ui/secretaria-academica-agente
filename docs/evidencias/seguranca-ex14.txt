@@ -1,0 +1,35 @@
+# Evidências do Exercício 14 — comandos e saídas copiadas (2026-10-30)
+# Ambiente: Python 3.11.18 (python-build-standalone, venv fora do projeto). Em Python 3.9.6 os 5 testes de tests/test_api_seguranca.py são pulados.
+
+$ python -m pytest tests/test_seguranca.py tests/test_api_seguranca.py -v
+tests/test_seguranca.py::test_ASI02_lacuna_uma_resposta_com_varias_chamadas_burla_o_limite_de_passos PASSED [  4%]
+tests/test_seguranca.py::test_ASI02_lacuna_motivo_livre_vai_para_a_fila_exatamente_como_o_modelo_escreveu PASSED [  9%]
+tests/test_seguranca.py::test_ASI03_lacuna_identificador_da_conversa_tem_32_bits PASSED [ 13%]
+tests/test_seguranca.py::test_ASI04_lacuna_base_da_imagem_fixada_por_tag_de_patch_e_nao_por_digest PASSED [ 18%]
+tests/test_seguranca.py::test_ASI04_lacuna_dependencias_com_versao_exata_mas_sem_hash PASSED [ 22%]
+tests/test_seguranca.py::test_ASI04_lacuna_modelo_de_embedding_baixado_sem_revisao_fixada PASSED [ 27%]
+tests/test_seguranca.py::test_ASI04_lacuna_pipeline_publica_a_tag_movel_latest PASSED [ 31%]
+tests/test_seguranca.py::test_ASI04_mitigacao_actions_de_terceiros_fixadas_pelo_sha_do_commit PASSED [ 36%]
+tests/test_seguranca.py::test_ASI05_mitigacao_nenhum_modulo_de_src_executa_codigo_dinamico PASSED [ 40%]
+tests/test_seguranca.py::test_ASI05_lacuna_cache_do_rag_carregado_com_allow_pickle PASSED [ 45%]
+tests/test_seguranca.py::test_ASI06_mitigacao_regra_procedural_so_entra_no_prompt_depois_de_aprovada PASSED [ 50%]
+tests/test_seguranca.py::test_ASI06_a_memoria_nao_esta_ligada_ao_laco_do_agente PASSED [ 54%]
+tests/test_seguranca.py::test_ASI08_lacuna_excecao_do_banco_dentro_da_ferramenta_derruba_o_turno PASSED [ 59%]
+tests/test_seguranca.py::test_ASI08_mitigacao_escrita_feita_e_provedor_cai_depois_a_repeticao_nao_duplica PASSED [ 63%]
+tests/test_seguranca.py::test_ASI10_lacuna_o_job_de_imagem_nao_depende_do_eval PASSED [ 68%]
+tests/test_seguranca.py::test_ASI10_lacuna_eval_sem_secret_e_pulado_e_nao_reprovado PASSED [ 72%]
+tests/test_seguranca.py::test_ASI10_lacuna_modelo_do_agente_aceita_qualquer_valor_da_variavel_de_ambiente PASSED [ 77%]
+tests/test_api_seguranca.py::test_ASI03_lacuna_a_api_atende_sem_nenhuma_credencial PASSED [ 81%]
+tests/test_api_seguranca.py::test_ASI03_lacuna_o_conversa_id_tem_8_hexadecimais PASSED [ 86%]
+tests/test_api_seguranca.py::test_ASI03_lacuna_qualquer_cliente_continua_a_conversa_de_outro PASSED [ 90%]
+tests/test_api_seguranca.py::test_ASI08_lacuna_a_trava_global_serializa_todos_os_alunos PASSED [ 95%]
+tests/test_api_seguranca.py::test_ASI08_lacuna_conversas_acumulam_sem_limite_nem_expiracao PASSED [100%]
+======================== 22 passed, 1 warning in 0.88s =========================
+
+$ python -m pytest -q
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+56 passed, 1 deselected, 1 warning in 0.82s
+
+$ grep -nE "Depends|Authorization|api_key|Security|HTTPBearer|Header\(" src/api.py     # autenticação na API (esperado: nenhuma)
+(nenhuma ocorrência: a API não autentica ninguém)

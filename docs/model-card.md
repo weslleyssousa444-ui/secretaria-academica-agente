@@ -29,16 +29,16 @@ Cada campo traz **a afirmação** e **a evidência**. Os tipos de evidência sã
 | Versão do sistema: **não há número de versão nem tag.** A versão é identificada pelo commit: base `9bc9f8f`, prompt `v1`. | [`historico-git.txt`](evidencias/historico-git.txt) (`git tag --list` vazio); [`prompts/triagem-v1.md`](../prompts/triagem-v1.md). **LACUNA L21** |
 | Data deste documento: 16/10/2026. | — |
 | Grupo: Weslley Soares de Sousa, Pedro Akira, Henrique Gomes Matos, Erick. | [`README.md:3`](../README.md#L3) |
-| Responsáveis nomeados **por papel** (produto, desenvolvimento, operação, risco), isto é, quem responde quando algo dá errado: **não definidos.** Todos os commits são de um único autor, e nenhum documento atribui papéis. | [`historico-git.txt`](evidencias/historico-git.txt). **LACUNA L15** |
+| Responsáveis nomeados **por papel** (produto, desenvolvimento, operação, risco), isto é, quem responde quando algo dá errado: **nomeados pelo grupo em 30/10/2026** (matriz abaixo). Até então não havia ninguém: todos os commits são de um único autor e nenhum documento atribuía papéis. Nomear não basta: o procedimento de interrupção e o teste dele continuam abertos (**L16**). | [`historico-git.txt`](evidencias/historico-git.txt). **L15 fechada quanto aos nomes; L16 aberta** |
 
-Matriz a preencher pelo grupo (o documento não inventa nomes):
+Matriz informada pelo grupo em 30/10/2026 (os nomes vieram do grupo, não do documento):
 
 | Papel | Responde por | Pessoa |
 |---|---|---|
-| Produto | finalidade, escopo, limiar de escalonamento | *a definir — L15* |
-| Desenvolvimento | ferramentas, limites em código, registro | *a definir — L15* |
-| Operação | monitorar, interromper o agente | *a definir — L15* |
-| Risco | aprovar esta especificação, aceitar riscos | *a definir — L15* |
+| Produto | finalidade, escopo, limiar de escalonamento | Weslley Soares de Sousa |
+| Desenvolvimento | ferramentas, limites em código, registro | Pedro Akira |
+| Operação | monitorar, interromper o agente | Henrique Gomes Matos |
+| Risco | aprovar esta especificação, aceitar riscos | Erick |
 
 ## 2. Finalidade
 
@@ -128,7 +128,7 @@ O que o agente pode fazer, e **onde cada limite é aplicado** (ausência de ferr
 
 ### 3.5 Quem pode suspender o agente
 
-**Ninguém está designado, e não há mecanismo próprio.** Hoje só existem dois caminhos: encerrar o processo, ou revogar a chave no console da Groq. Essa revogação derruba juntos o RAG e a memória (C2), e nunca foi testada. **LACUNA L15, L16.**
+**Responsável designado: Henrique Gomes Matos (Operação). Mecanismo próprio: não há.** Hoje só existem dois caminhos: encerrar o processo, ou revogar a chave no console da Groq. Essa revogação derruba juntos o RAG e a memória (C2), e nunca foi testada. **L15 fechada quanto ao nome; LACUNA L16 (procedimento e teste) aberta.**
 
 ## 4. Ferramentas e integrações
 
@@ -211,7 +211,7 @@ Dado pessoal tratado: **RA, nome, curso, situação de matrícula, número e val
 
 ## 9. Riscos aceitos
 
-"Aceito" exige quem aceitou. Como não há responsável de risco nomeado (L15), a tabela separa os riscos que **o grupo já registrou como decisão** em documentos versionados dos que este documento **propõe** aceitar, pendentes de aprovação.
+"Aceito" exige quem aceitou. O responsável de risco é Erick (nomeado em 30/10/2026, L15), mas **ele ainda não registrou nenhum aceite neste documento**: a tabela separa os riscos que **o grupo já registrou como decisão** em documentos versionados dos que este documento **propõe** aceitar, pendentes da aprovação dele.
 
 | Risco | Razão | O que o limita | Situação | Evidência |
 |---|---|---|---|---|
@@ -290,7 +290,7 @@ Prioridade: **P1**, impede operar com dados reais; **P2**, corrigir antes da Par
 | L06 | Logs com nome, valor e raciocínio do modelo versionados em repositório público, sem prazo. | Registrar referência (RA pseudonimizado, *hash*) em vez de conteúdo; não serializar o raciocínio; tirar `logs/0*.json` do git em produção e definir o acesso. | **P1** |
 | L07 | **Parcialmente corrigida no Ex.13:** a API, que é o ponto de entrada em produção, grava o registro a cada turno (`teste::test_conversa_em_dois_turnos_emite_e_grava_registro`); `chat.py` ainda não grava. | Chamar `salvar_log` em todo término de `chat.py`, inclusive em erro. | P2 |
 | L14 | Região, retenção e uso para treino da Groq não verificados; sem contrato nem hipótese do art. 33. | Conferir os termos vigentes da Groq, registrar a data e o link aqui e em `docs/fontes.md`; para dado real, provedor com contrato de operador e cláusulas-padrão (Resolução CD/ANPD nº 19/2024). | **P1** |
-| L15 | Nenhum responsável nomeado por papel; ninguém designado para suspender o agente. | Preencher a matriz do campo 1 e a matriz de responsabilidade da nota sobre governar a ação, §7.4. | **P1** |
+| L15 | ~~Nenhum responsável nomeado por papel~~ **Nomes informados pelo grupo em 30/10/2026** (matriz do campo 1). Falta registrar a matriz de responsabilidade da nota sobre governar a ação, §7.4, e o primeiro aceite de risco assinado por Erick. | Registrar o aceite de Erick em §9 e em `exercicios/aula14-respostas.md`; sem isso o responsável existe, mas ninguém aceitou nada. | P2 (era P1) |
 | L03 | A chave de idempotência e o `motivo` do escalonamento são texto livre do modelo. | Calcular a chave em código (`ra:tipo_pedido:categoria`), com `motivo` como enum. Inverter `test_L03`. | P2 |
 | L04 | O limite em dinheiro é inerte (preço 0), e não há limite por janela nem por chave. | Limitar tokens por dia e por mês, em código, com alerta a 80%; tratar modelo fora da tabela de preços como erro, não como custo 0. | P2 |
 | L08 | Uma única chave para agente, RAG, juiz, memória e LangGraph. | Uma chave por carga de trabalho (`TRIAGEM_API_KEY`, `RAG_API_KEY`, ...), para atribuir gasto e revogar só uma. | P2 |
@@ -315,4 +315,4 @@ Prioridade: **P1**, impede operar com dados reais; **P2**, corrigir antes da Par
 
 **Em parte, e só para as execuções de demonstração.** Para os 4 casos de `logs/0*.json`, sim: o log tem cada ferramenta chamada, com argumentos e resultado, e os limites que valem fora do modelo (A1–A10, O1–O3, F1) estão no código e são exercitados por testes que o auditor roda sem chave. Ele confirma, por exemplo, que no caso `02-divergencia` o agente não emitiu a segunda via e que, se tivesse tentado, a ferramenta teria recusado.
 
-Para uma decisão real, não. Uma conversa pelo `chat.py` não deixa registro (L07). Mesmo num log, o auditor não sabe que modelo decidiu nem quando (L05, L13). Também não sabe se quem pediu era o titular do RA (L01). E não tem a quem perguntar (L15). As lacunas P1 são exatamente as que separam "o sistema se comportou bem nos testes" de "o sistema consegue provar o que fez".
+Para uma decisão real, não. Uma conversa pelo `chat.py` não deixa registro (L07). Mesmo num log, o auditor não sabe que modelo decidiu nem quando (L05, L13). Também não sabe se quem pediu era o titular do RA (L01). A quem perguntar já está nomeado (L15, 30/10/2026), mas sem procedimento de interrupção nem aceite de risco registrado (L16). As lacunas P1 são exatamente as que separam "o sistema se comportou bem nos testes" de "o sistema consegue provar o que fez".

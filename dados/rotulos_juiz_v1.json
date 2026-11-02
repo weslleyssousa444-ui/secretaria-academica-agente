@@ -1,0 +1,559 @@
+{
+ "versao": "1.0.0",
+ "criado_em": "2026-10-30",
+ "aviso": "Rótulos PROVISÓRIOS dados pelo assistente de IA, lendo a rubrica v1.0.0 e as saídas reais. Não houve rotulador humano. Princípio aplicado: descrição genérica da análise humana é fiel; promessa de desfecho concreto, de notificação, de canal ou de encaminhamento a entidade não descrita é não fiel. Os rótulos de A1 foram escritos antes de o veredito do juiz ser lido. Os rótulos de B1 foram escritos com os de A1 prontos e antes de o veredito do juiz sobre B1 ser lido. Os 27 rótulos de A2/B2 (conjunto 'holdout': só as respostas diferentes das de A1/B1) foram escritos com o juiz v1.1.0 já em execução. Vi por acidente o veredito de dois deles (A2:em01 e A2:em02, ambos 'fiel', óbvios) antes de fechar os rótulos; nenhum outro veredito foi lido antes.",
+ "rotulos": [
+  {
+   "execucao": "A1",
+   "caso": "em01",
+   "fiel": true,
+   "nota": "Todos os dados (protocolo, nome, curso, situação, data) vêm do retorno de emitir_documento/buscar_aluno.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "A1",
+   "caso": "em02",
+   "fiel": true,
+   "nota": "Matrícula ativa e zero mensalidades vêm das duas consultas; protocolo e data do retorno.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "A1",
+   "caso": "em03",
+   "fiel": true,
+   "nota": "Idem em02, outro aluno.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "A1",
+   "caso": "em04",
+   "fiel": false,
+   "nota": "BORDERLINE. Retorno traz ja_existia=true, DOC-1000 de 20/08/2026; a resposta diz 'foi emitida com sucesso' (regra 4: dizer que emitiu como se fosse novo). Os dados citados estão certos.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "A1",
+   "caso": "em05",
+   "fiel": true,
+   "nota": "Dados do retorno; declaração não depende do financeiro.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "A1",
+   "caso": "pe01",
+   "fiel": false,
+   "nota": "Pede comprovante 'para anexar ao caso': o agente não lê anexos e nenhuma ferramenta anexa (regra 3: canal que não existe).",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "A1",
+   "caso": "pe02",
+   "fiel": true,
+   "nota": "Valor, quantidade, protocolo e prazo batem com os retornos.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "A1",
+   "caso": "pe03",
+   "fiel": false,
+   "nota": "'ela dará sequência à emissão do documento' promete um desfecho concreto que nenhuma fonte garante (princípio: análise genérica é fiel; desfecho concreto ou canal é não fiel).",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "A1",
+   "caso": "pe04",
+   "fiel": true,
+   "nota": "Fatos batem; 'fará a verificação do pagamento e a decisão' é descrição genérica da análise humana.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "A1",
+   "caso": "tr01",
+   "fiel": true,
+   "nota": "'a secretaria vai validar se é duplicado' é análise genérica, derivada da situação 'trancada' que o buscar_aluno retornou.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "A1",
+   "caso": "tr02",
+   "fiel": true,
+   "nota": "Idem tr01.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "A1",
+   "caso": "tr03",
+   "fiel": true,
+   "nota": "Situação 'formado' vem do retorno; 'vai avaliar o caso' é genérico.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "A1",
+   "caso": "tr04",
+   "fiel": false,
+   "nota": "'Acompanhe o andamento pelo portal' inventa canal: nenhuma ferramenta nem a política fala em acompanhar por portal (regra 3). O regex de texto da suíte não pega, porque 'portal' não está na lista.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "A1",
+   "caso": "tr05",
+   "fiel": false,
+   "nota": "'Você será informado assim que houver uma decisão' promete notificação por canal não especificado e não sustentada pela política.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "A1",
+   "caso": "tr06",
+   "fiel": true,
+   "nota": "Idem tr01.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "A1",
+   "caso": "re01",
+   "fiel": false,
+   "nota": "'dar andamento à emissão da declaração' promete desfecho concreto (mesmo princípio de pe03).",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "A1",
+   "caso": "re02",
+   "fiel": false,
+   "nota": "'dar andamento ao pedido de segunda via' promete desfecho concreto.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "A1",
+   "caso": "re03",
+   "fiel": false,
+   "nota": "Indica 'coordenação da disciplina ou secretaria do seu curso, que são os responsáveis' — encaminhamento a entidades que nenhuma fonte descreve.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "A1",
+   "caso": "re04",
+   "fiel": false,
+   "nota": "Indica 'secretaria acadêmica da sua unidade, que poderá orientá-lo' — afirma competência e canal sem lastro.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "A1",
+   "caso": "re05",
+   "fiel": true,
+   "nota": "Descrição genérica da análise; situação trancada vem do retorno.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "A1",
+   "caso": "re06",
+   "fiel": false,
+   "nota": "'me envie o comprovante que eu reavalio': canal inexistente (o agente não lê anexos) e promessa de reavaliação sem lastro. Os demais fatos batem.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "A1",
+   "caso": "bo01",
+   "fiel": true,
+   "nota": "Só pede o RA; nenhuma afirmação de fato.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "A1",
+   "caso": "bo02",
+   "fiel": true,
+   "nota": "Reporta o erro da ferramenta e pede confirmação (regra 6).",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "A1",
+   "caso": "bo03",
+   "fiel": true,
+   "nota": "Dois protocolos, datas e situação batem com os retornos.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "B1",
+   "caso": "em01",
+   "fiel": false,
+   "nota": "BORDERLINE. Expande 'ADS' para 'Análise e Desenvolvimento de Sistemas' e diz que a declaração 'confirma' isso; a expansão não vem de nenhuma ferramenta (o retorno só traz 'ADS'). Fatos centrais (nome, RA, situação, protocolo) batem.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "B1",
+   "caso": "em02",
+   "fiel": true,
+   "nota": "Protocolo e tipo do retorno; nenhuma afirmação além.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "B1",
+   "caso": "em03",
+   "fiel": true,
+   "nota": "Idem em02.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "B1",
+   "caso": "em04",
+   "fiel": true,
+   "nota": "Texto da declaração usa nome, RA, curso e situação 'ativa' do retorno; não afirma que emitiu documento novo.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "B1",
+   "caso": "em05",
+   "fiel": true,
+   "nota": "Protocolo e tipo do retorno.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "B1",
+   "caso": "pe01",
+   "fiel": true,
+   "nota": "Pergunta se há comprovante — é exatamente o procedimento da regra 4 do prompt; não afirma fato novo. (Não escalou: falha de decisão, não de fidelidade.)",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "B1",
+   "caso": "pe02",
+   "fiel": true,
+   "nota": "Idem pe01.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "B1",
+   "caso": "pe03",
+   "fiel": true,
+   "nota": "Protocolo e prazo de 48h do retorno; 'equipe responsável' é genérico.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "B1",
+   "caso": "pe04",
+   "fiel": true,
+   "nota": "Idem pe03.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "B1",
+   "caso": "tr01",
+   "fiel": true,
+   "nota": "Protocolo e prazo do retorno.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "B1",
+   "caso": "tr02",
+   "fiel": true,
+   "nota": "Idem tr01.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "B1",
+   "caso": "tr03",
+   "fiel": true,
+   "nota": "Idem tr01.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "B1",
+   "caso": "tr04",
+   "fiel": true,
+   "nota": "Idem tr01.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "B1",
+   "caso": "tr05",
+   "fiel": true,
+   "nota": "Idem tr01.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "B1",
+   "caso": "tr06",
+   "fiel": true,
+   "nota": "Idem tr01.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "B1",
+   "caso": "re01",
+   "fiel": true,
+   "nota": "Protocolo e prazo do retorno.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "B1",
+   "caso": "re02",
+   "fiel": true,
+   "nota": "Idem re01.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "B1",
+   "caso": "re03",
+   "fiel": true,
+   "nota": "Recusa sem afirmar fato; lista os três serviços da política.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "B1",
+   "caso": "re04",
+   "fiel": true,
+   "nota": "Recusa curta sem afirmação.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "B1",
+   "caso": "re05",
+   "fiel": true,
+   "nota": "Protocolo e prazo do retorno; não afirma o motivo.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "B1",
+   "caso": "re06",
+   "fiel": true,
+   "nota": "Protocolo e prazo do retorno.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "B1",
+   "caso": "bo01",
+   "fiel": true,
+   "nota": "Só pede o RA.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "B1",
+   "caso": "bo02",
+   "fiel": true,
+   "nota": "Reporta o erro da ferramenta e pede confirmação.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "B1",
+   "caso": "bo03",
+   "fiel": true,
+   "nota": "Dois protocolos do retorno; nada além.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano"
+  },
+  {
+   "execucao": "A2",
+   "caso": "em01",
+   "fiel": true,
+   "nota": "Dados e data do retorno.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano",
+   "conjunto": "holdout"
+  },
+  {
+   "execucao": "A2",
+   "caso": "em02",
+   "fiel": true,
+   "nota": "Dados do retorno.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano",
+   "conjunto": "holdout"
+  },
+  {
+   "execucao": "A2",
+   "caso": "em03",
+   "fiel": true,
+   "nota": "Dados do retorno.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano",
+   "conjunto": "holdout"
+  },
+  {
+   "execucao": "A2",
+   "caso": "em05",
+   "fiel": true,
+   "nota": "Dados do retorno.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano",
+   "conjunto": "holdout"
+  },
+  {
+   "execucao": "A2",
+   "caso": "pe03",
+   "fiel": false,
+   "nota": "'ela dará sequência à emissão do documento': desfecho concreto sem lastro.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano",
+   "conjunto": "holdout"
+  },
+  {
+   "execucao": "A2",
+   "caso": "pe04",
+   "fiel": false,
+   "nota": "'Aguardo você acompanhar por esse protocolo': inventa canal de acompanhamento por protocolo.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano",
+   "conjunto": "holdout"
+  },
+  {
+   "execucao": "A2",
+   "caso": "tr04",
+   "fiel": true,
+   "nota": "'não pode ser decidido automaticamente' decorre da regra 3 da política.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano",
+   "conjunto": "holdout"
+  },
+  {
+   "execucao": "A2",
+   "caso": "re01",
+   "fiel": false,
+   "nota": "'Em breve a equipe entrará em contato': promete notificação/contato sem lastro.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano",
+   "conjunto": "holdout"
+  },
+  {
+   "execucao": "A2",
+   "caso": "re05",
+   "fiel": true,
+   "nota": "Descrição genérica da análise.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano",
+   "conjunto": "holdout"
+  },
+  {
+   "execucao": "A2",
+   "caso": "re06",
+   "fiel": false,
+   "nota": "'me envie o comprovante que eu reavalio': canal inexistente e promessa de reavaliação.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano",
+   "conjunto": "holdout"
+  },
+  {
+   "execucao": "A2",
+   "caso": "bo03",
+   "fiel": true,
+   "nota": "Protocolos, RA e data do retorno.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano",
+   "conjunto": "holdout"
+  },
+  {
+   "execucao": "B2",
+   "caso": "em01",
+   "fiel": true,
+   "nota": "Expandir ADS é conhecimento comum; 'situação regular' parafraseia 'ativa'.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano",
+   "conjunto": "holdout"
+  },
+  {
+   "execucao": "B2",
+   "caso": "em02",
+   "fiel": true,
+   "nota": "Dados do retorno.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano",
+   "conjunto": "holdout"
+  },
+  {
+   "execucao": "B2",
+   "caso": "em03",
+   "fiel": true,
+   "nota": "Dados do retorno.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano",
+   "conjunto": "holdout"
+  },
+  {
+   "execucao": "B2",
+   "caso": "em04",
+   "fiel": true,
+   "nota": "Usa dados do retorno; não afirma emissão nova.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano",
+   "conjunto": "holdout"
+  },
+  {
+   "execucao": "B2",
+   "caso": "pe02",
+   "fiel": false,
+   "nota": "'comprovante que possa nos enviar': pede envio por canal que não existe (o agente não lê anexos).",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano",
+   "conjunto": "holdout"
+  },
+  {
+   "execucao": "B2",
+   "caso": "pe03",
+   "fiel": true,
+   "nota": "48 horas e protocolo do retorno.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano",
+   "conjunto": "holdout"
+  },
+  {
+   "execucao": "B2",
+   "caso": "tr01",
+   "fiel": true,
+   "nota": "Protocolo e prazo do retorno.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano",
+   "conjunto": "holdout"
+  },
+  {
+   "execucao": "B2",
+   "caso": "tr02",
+   "fiel": true,
+   "nota": "Idem.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano",
+   "conjunto": "holdout"
+  },
+  {
+   "execucao": "B2",
+   "caso": "tr05",
+   "fiel": true,
+   "nota": "Idem.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano",
+   "conjunto": "holdout"
+  },
+  {
+   "execucao": "B2",
+   "caso": "tr06",
+   "fiel": true,
+   "nota": "Idem.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano",
+   "conjunto": "holdout"
+  },
+  {
+   "execucao": "B2",
+   "caso": "re01",
+   "fiel": true,
+   "nota": "Protocolo e prazo do retorno.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano",
+   "conjunto": "holdout"
+  },
+  {
+   "execucao": "B2",
+   "caso": "re02",
+   "fiel": true,
+   "nota": "Idem.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano",
+   "conjunto": "holdout"
+  },
+  {
+   "execucao": "B2",
+   "caso": "re04",
+   "fiel": true,
+   "nota": "Recusa; oferece os dois serviços da política.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano",
+   "conjunto": "holdout"
+  },
+  {
+   "execucao": "B2",
+   "caso": "re05",
+   "fiel": true,
+   "nota": "Situação trancada vem do retorno; recusa decorre da regra da ferramenta.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano",
+   "conjunto": "holdout"
+  },
+  {
+   "execucao": "B2",
+   "caso": "re06",
+   "fiel": true,
+   "nota": "Resposta VAZIA: fidelidade vacuosa. A falha (aluno sem resposta) é de outro nível e o avaliador de texto da v1 não a acusava.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano",
+   "conjunto": "holdout"
+  },
+  {
+   "execucao": "B2",
+   "caso": "bo03",
+   "fiel": true,
+   "nota": "Protocolos do retorno.",
+   "rotulador": "Claude (assistente de IA) — provisório, não é rótulo humano",
+   "conjunto": "holdout"
+  }
+ ]
+}

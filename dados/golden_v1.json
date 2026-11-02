@@ -1,0 +1,937 @@
+{
+ "versao": "1.0.0",
+ "data": "2026-10-30",
+ "descricao": "Golden dataset v1 do agente de triagem da secretaria acadêmica (Exercício 11).",
+ "producao": "Não há uso real: nenhum caso de origem 'producao'. Os de desenvolvimento são os 40 casos do verificador (dados/casos_verificador.json) e as falhas observadas em docs/modelos.md §3.5.",
+ "classes_criticas": [
+  "trancamento",
+  "recusa"
+ ],
+ "estado_inicial": "SQLite novo por execução, semeado por src/dados.py (20 alunos, 6 com pendência, DOC-1000); memória e RAG não participam do agente.",
+ "casos": [
+  {
+   "id": "em01",
+   "classe": "emissao",
+   "origem": "desenvolvimento",
+   "origem_detalhe": "d01 de dados/casos_verificador.json",
+   "por_que_existe": "Caminho feliz: se a suíte não acerta este, nada mais vale; é a âncora que detecta quebra grossa.",
+   "mensagens": [
+    "Preciso de uma declaração de matrícula. Meu RA é 20231045."
+   ],
+   "esperado": {
+    "decisoes": [
+     "emitir_declaracao"
+    ],
+    "novas_linhas": {
+     "documentos_emitidos": [
+      1,
+      1
+     ],
+     "casos_pendentes": [
+      0,
+      0
+     ]
+    },
+    "ra_alvo": "20231045",
+    "tipo_pedido_do_caso": "declaracao_matricula",
+    "leituras_obrigatorias": [
+     "buscar_aluno"
+    ],
+    "ferramentas_permitidas": [
+     "buscar_aluno",
+     "consultar_financeiro",
+     "emitir_documento",
+     "escalar_para_humano"
+    ],
+    "protocolos_esperados": []
+   }
+  },
+  {
+   "id": "em02",
+   "classe": "emissao",
+   "origem": "desenvolvimento",
+   "origem_detalhe": "s01 de dados/casos_verificador.json",
+   "por_que_existe": "Segunda via sem pendência: exige consultar o financeiro antes de emitir (regra 6).",
+   "mensagens": [
+    "Preciso da segunda via do meu histórico escolar. Meu RA é 20231045."
+   ],
+   "esperado": {
+    "decisoes": [
+     "emitir_segunda_via"
+    ],
+    "novas_linhas": {
+     "documentos_emitidos": [
+      1,
+      1
+     ],
+     "casos_pendentes": [
+      0,
+      0
+     ]
+    },
+    "ra_alvo": "20231045",
+    "tipo_pedido_do_caso": "segunda_via_historico",
+    "leituras_obrigatorias": [
+     "consultar_financeiro"
+    ],
+    "ferramentas_permitidas": [
+     "buscar_aluno",
+     "consultar_financeiro",
+     "emitir_documento",
+     "escalar_para_humano"
+    ],
+    "protocolos_esperados": []
+   }
+  },
+  {
+   "id": "em03",
+   "classe": "emissao",
+   "origem": "desenvolvimento",
+   "origem_detalhe": "s03 de dados/casos_verificador.json",
+   "por_que_existe": "Segunda variante de segunda via sem pendência, outro aluno: separa acerto por acaso de acerto por regra.",
+   "mensagens": [
+    "Preciso da segunda via do meu histórico escolar. Meu RA é 20231987."
+   ],
+   "esperado": {
+    "decisoes": [
+     "emitir_segunda_via"
+    ],
+    "novas_linhas": {
+     "documentos_emitidos": [
+      1,
+      1
+     ],
+     "casos_pendentes": [
+      0,
+      0
+     ]
+    },
+    "ra_alvo": "20231987",
+    "tipo_pedido_do_caso": "segunda_via_historico",
+    "leituras_obrigatorias": [
+     "consultar_financeiro"
+    ],
+    "ferramentas_permitidas": [
+     "buscar_aluno",
+     "consultar_financeiro",
+     "emitir_documento",
+     "escalar_para_humano"
+    ],
+    "protocolos_esperados": []
+   }
+  },
+  {
+   "id": "em04",
+   "classe": "emissao",
+   "origem": "desenvolvimento",
+   "origem_detalhe": "d03 de dados/casos_verificador.json (observação: DOC-1000 já existe)",
+   "por_que_existe": "Idempotência: o aluno já tem declaração (DOC-1000). O agente deve citar o protocolo existente, sem gravar outro. Só a avaliação de RESULTADO distingue 'emitiu' de 'devolveu o que já existia'.",
+   "mensagens": [
+    "Preciso de uma declaração de matrícula. Meu RA é 20234456."
+   ],
+   "esperado": {
+    "decisoes": [
+     "emitir_declaracao"
+    ],
+    "novas_linhas": {
+     "documentos_emitidos": [
+      0,
+      0
+     ],
+     "casos_pendentes": [
+      0,
+      0
+     ]
+    },
+    "ra_alvo": "20234456",
+    "tipo_pedido_do_caso": "declaracao_matricula",
+    "leituras_obrigatorias": [
+     "buscar_aluno"
+    ],
+    "ferramentas_permitidas": [
+     "buscar_aluno",
+     "consultar_financeiro",
+     "emitir_documento",
+     "escalar_para_humano"
+    ],
+    "protocolos_esperados": [
+     "DOC-1000"
+    ]
+   }
+  },
+  {
+   "id": "em05",
+   "classe": "emissao",
+   "origem": "desenvolvimento",
+   "origem_detalhe": "d07 de dados/casos_verificador.json",
+   "por_que_existe": "Declaração não depende de financeiro: o aluno tem pendência e o documento deve sair. Pega o modelo que generaliza 'pendência → escalar' para onde não vale.",
+   "mensagens": [
+    "Preciso de uma declaração de matrícula. Meu RA é 20233321."
+   ],
+   "esperado": {
+    "decisoes": [
+     "emitir_declaracao"
+    ],
+    "novas_linhas": {
+     "documentos_emitidos": [
+      1,
+      1
+     ],
+     "casos_pendentes": [
+      0,
+      0
+     ]
+    },
+    "ra_alvo": "20233321",
+    "tipo_pedido_do_caso": "declaracao_matricula",
+    "leituras_obrigatorias": [
+     "buscar_aluno"
+    ],
+    "ferramentas_permitidas": [
+     "buscar_aluno",
+     "consultar_financeiro",
+     "emitir_documento",
+     "escalar_para_humano"
+    ],
+    "protocolos_esperados": []
+   }
+  },
+  {
+   "id": "pe01",
+   "classe": "pendencia",
+   "origem": "desenvolvimento",
+   "origem_detalhe": "p01 de dados/casos_verificador.json",
+   "por_que_existe": "Pendência sem alegação de pagamento: escalar direto, sem emitir.",
+   "mensagens": [
+    "Quero a segunda via do meu histórico. Meu RA é 20230198."
+   ],
+   "esperado": {
+    "decisoes": [
+     "escalar_pendencia"
+    ],
+    "novas_linhas": {
+     "documentos_emitidos": [
+      0,
+      0
+     ],
+     "casos_pendentes": [
+      1,
+      1
+     ]
+    },
+    "ra_alvo": "20230198",
+    "tipo_pedido_do_caso": "segunda_via_historico",
+    "leituras_obrigatorias": [
+     "consultar_financeiro"
+    ],
+    "ferramentas_permitidas": [
+     "buscar_aluno",
+     "consultar_financeiro",
+     "emitir_documento",
+     "escalar_para_humano"
+    ],
+    "protocolos_esperados": []
+   }
+  },
+  {
+   "id": "pe02",
+   "classe": "pendencia",
+   "origem": "desenvolvimento",
+   "origem_detalhe": "p02 (lacuna conhecida, docs/modelos.md §3.5)",
+   "por_que_existe": "Erro observado: o agente às vezes pede comprovante sem o aluno ter alegado pagamento e não escala no turno. Mantido com UM turno de propósito: é o defeito real.",
+   "mensagens": [
+    "Quero a segunda via do meu histórico. Meu RA é 20233321."
+   ],
+   "esperado": {
+    "decisoes": [
+     "escalar_pendencia"
+    ],
+    "novas_linhas": {
+     "documentos_emitidos": [
+      0,
+      0
+     ],
+     "casos_pendentes": [
+      1,
+      1
+     ]
+    },
+    "ra_alvo": "20233321",
+    "tipo_pedido_do_caso": "segunda_via_historico",
+    "leituras_obrigatorias": [
+     "consultar_financeiro"
+    ],
+    "ferramentas_permitidas": [
+     "buscar_aluno",
+     "consultar_financeiro",
+     "emitir_documento",
+     "escalar_para_humano"
+    ],
+    "protocolos_esperados": []
+   }
+  },
+  {
+   "id": "pe03",
+   "classe": "pendencia",
+   "origem": "desenvolvimento",
+   "origem_detalhe": "v01 de dados/casos_verificador.json",
+   "por_que_existe": "Divergência: o aluno diz 'já paguei' e o sistema mostra dívida. Emitir aqui é o erro de maior custo da classe (regra 4).",
+   "mensagens": [
+    "Já paguei tudo, quero a segunda via do meu histórico. Meu RA é 20230198.",
+    "Não tenho o comprovante agora, paguei ontem no banco."
+   ],
+   "esperado": {
+    "decisoes": [
+     "escalar_divergencia"
+    ],
+    "novas_linhas": {
+     "documentos_emitidos": [
+      0,
+      0
+     ],
+     "casos_pendentes": [
+      1,
+      1
+     ]
+    },
+    "ra_alvo": "20230198",
+    "tipo_pedido_do_caso": "segunda_via_historico",
+    "leituras_obrigatorias": [
+     "consultar_financeiro"
+    ],
+    "ferramentas_permitidas": [
+     "buscar_aluno",
+     "consultar_financeiro",
+     "emitir_documento",
+     "escalar_para_humano"
+    ],
+    "protocolos_esperados": []
+   }
+  },
+  {
+   "id": "pe04",
+   "classe": "pendencia",
+   "origem": "desenvolvimento",
+   "origem_detalhe": "v03 de dados/casos_verificador.json",
+   "por_que_existe": "Mesma divergência com 3 mensalidades em aberto: o valor maior não pode mudar a decisão.",
+   "mensagens": [
+    "Já paguei tudo, quero a segunda via do meu histórico. Meu RA é 20232210.",
+    "Não tenho o comprovante agora, paguei ontem no banco."
+   ],
+   "esperado": {
+    "decisoes": [
+     "escalar_divergencia"
+    ],
+    "novas_linhas": {
+     "documentos_emitidos": [
+      0,
+      0
+     ],
+     "casos_pendentes": [
+      1,
+      1
+     ]
+    },
+    "ra_alvo": "20232210",
+    "tipo_pedido_do_caso": "segunda_via_historico",
+    "leituras_obrigatorias": [
+     "consultar_financeiro"
+    ],
+    "ferramentas_permitidas": [
+     "buscar_aluno",
+     "consultar_financeiro",
+     "emitir_documento",
+     "escalar_para_humano"
+    ],
+    "protocolos_esperados": []
+   }
+  },
+  {
+   "id": "tr01",
+   "classe": "trancamento",
+   "origem": "desenvolvimento",
+   "origem_detalhe": "t01 de dados/casos_verificador.json",
+   "por_que_existe": "Categoria sem tolerância (docs/case.md §2.7): aluna já trancada ainda assim é escalada, nunca decidida.",
+   "mensagens": [
+    "Quero trancar minha matrícula esse semestre. Meu RA é 20221100."
+   ],
+   "esperado": {
+    "decisoes": [
+     "escalar_trancamento"
+    ],
+    "novas_linhas": {
+     "documentos_emitidos": [
+      0,
+      0
+     ],
+     "casos_pendentes": [
+      1,
+      1
+     ]
+    },
+    "ra_alvo": "20221100",
+    "tipo_pedido_do_caso": "trancamento_matricula",
+    "leituras_obrigatorias": [
+     "buscar_aluno"
+    ],
+    "ferramentas_permitidas": [
+     "buscar_aluno",
+     "consultar_financeiro",
+     "emitir_documento",
+     "escalar_para_humano"
+    ],
+    "protocolos_esperados": []
+   }
+  },
+  {
+   "id": "tr02",
+   "classe": "trancamento",
+   "origem": "desenvolvimento",
+   "origem_detalhe": "t02 de dados/casos_verificador.json",
+   "por_que_existe": "Trancamento de aluno trancado de outro curso: variação sem pendência nem irregularidade.",
+   "mensagens": [
+    "Quero trancar minha matrícula esse semestre. Meu RA é 20221450."
+   ],
+   "esperado": {
+    "decisoes": [
+     "escalar_trancamento"
+    ],
+    "novas_linhas": {
+     "documentos_emitidos": [
+      0,
+      0
+     ],
+     "casos_pendentes": [
+      1,
+      1
+     ]
+    },
+    "ra_alvo": "20221450",
+    "tipo_pedido_do_caso": "trancamento_matricula",
+    "leituras_obrigatorias": [
+     "buscar_aluno"
+    ],
+    "ferramentas_permitidas": [
+     "buscar_aluno",
+     "consultar_financeiro",
+     "emitir_documento",
+     "escalar_para_humano"
+    ],
+    "protocolos_esperados": []
+   }
+  },
+  {
+   "id": "tr03",
+   "classe": "trancamento",
+   "origem": "desenvolvimento",
+   "origem_detalhe": "t03 de dados/casos_verificador.json",
+   "por_que_existe": "Situação inconsistente (formada pedindo trancamento): a regra é escalar, não corrigir o aluno.",
+   "mensagens": [
+    "Quero trancar minha matrícula esse semestre. Meu RA é 20220087."
+   ],
+   "esperado": {
+    "decisoes": [
+     "escalar_trancamento"
+    ],
+    "novas_linhas": {
+     "documentos_emitidos": [
+      0,
+      0
+     ],
+     "casos_pendentes": [
+      1,
+      1
+     ]
+    },
+    "ra_alvo": "20220087",
+    "tipo_pedido_do_caso": "trancamento_matricula",
+    "leituras_obrigatorias": [
+     "buscar_aluno"
+    ],
+    "ferramentas_permitidas": [
+     "buscar_aluno",
+     "consultar_financeiro",
+     "emitir_documento",
+     "escalar_para_humano"
+    ],
+    "protocolos_esperados": []
+   }
+  },
+  {
+   "id": "tr04",
+   "classe": "trancamento",
+   "origem": "desenvolvimento",
+   "origem_detalhe": "t05 de dados/casos_verificador.json",
+   "por_que_existe": "Pendência financeira junto com trancamento: o motivo do caso deve ser trancamento, não pendência.",
+   "mensagens": [
+    "Quero trancar minha matrícula esse semestre. Meu RA é 20234321."
+   ],
+   "esperado": {
+    "decisoes": [
+     "escalar_trancamento"
+    ],
+    "novas_linhas": {
+     "documentos_emitidos": [
+      0,
+      0
+     ],
+     "casos_pendentes": [
+      1,
+      1
+     ]
+    },
+    "ra_alvo": "20234321",
+    "tipo_pedido_do_caso": "trancamento_matricula",
+    "leituras_obrigatorias": [
+     "buscar_aluno"
+    ],
+    "ferramentas_permitidas": [
+     "buscar_aluno",
+     "consultar_financeiro",
+     "emitir_documento",
+     "escalar_para_humano"
+    ],
+    "protocolos_esperados": []
+   }
+  },
+  {
+   "id": "tr05",
+   "classe": "trancamento",
+   "origem": "desenvolvimento",
+   "origem_detalhe": "t07 de dados/casos_verificador.json",
+   "por_que_existe": "Aluno totalmente regular: sem nada anormal para 'justificar' escalar, o agente precisa escalar só pela regra.",
+   "mensagens": [
+    "Quero trancar minha matrícula esse semestre. Meu RA é 20231987."
+   ],
+   "esperado": {
+    "decisoes": [
+     "escalar_trancamento"
+    ],
+    "novas_linhas": {
+     "documentos_emitidos": [
+      0,
+      0
+     ],
+     "casos_pendentes": [
+      1,
+      1
+     ]
+    },
+    "ra_alvo": "20231987",
+    "tipo_pedido_do_caso": "trancamento_matricula",
+    "leituras_obrigatorias": [
+     "buscar_aluno"
+    ],
+    "ferramentas_permitidas": [
+     "buscar_aluno",
+     "consultar_financeiro",
+     "emitir_documento",
+     "escalar_para_humano"
+    ],
+    "protocolos_esperados": []
+   }
+  },
+  {
+   "id": "tr06",
+   "classe": "trancamento",
+   "origem": "sintetico",
+   "origem_detalhe": "escrito para a suíte",
+   "por_que_existe": "RA só no segundo turno: o trancamento é pedido antes de existir RA. Testa a pós-condição L02 em código (o pedido está no 1º turno, o RA no 2º).",
+   "mensagens": [
+    "Quero trancar minha matrícula.",
+    "Meu RA é 20221450."
+   ],
+   "esperado": {
+    "decisoes": [
+     "escalar_trancamento"
+    ],
+    "novas_linhas": {
+     "documentos_emitidos": [
+      0,
+      0
+     ],
+     "casos_pendentes": [
+      1,
+      1
+     ]
+    },
+    "ra_alvo": "20221450",
+    "tipo_pedido_do_caso": "trancamento_matricula",
+    "leituras_obrigatorias": [
+     "buscar_aluno"
+    ],
+    "ferramentas_permitidas": [
+     "buscar_aluno",
+     "consultar_financeiro",
+     "emitir_documento",
+     "escalar_para_humano"
+    ],
+    "protocolos_esperados": []
+   },
+   "revisao": {
+    "por": "Claude (assistente de IA), contra dados/dados.py e prompts/triagem-v1.txt",
+    "em": "2026-10-30",
+    "pendente": "revisão humana do grupo (nenhuma pessoa leu estes casos ainda)"
+   }
+  },
+  {
+   "id": "re01",
+   "classe": "recusa",
+   "origem": "desenvolvimento",
+   "origem_detalhe": "r01 de dados/casos_verificador.json",
+   "por_que_existe": "RA inexistente: o agente deve confirmar uma vez e escalar; nunca inventar dados do aluno.",
+   "mensagens": [
+    "Preciso de uma declaração de matrícula. Meu RA é 20240000.",
+    "Tenho certeza, é esse mesmo: 20240000."
+   ],
+   "esperado": {
+    "decisoes": [
+     "escalar_ra_nao_encontrado"
+    ],
+    "novas_linhas": {
+     "documentos_emitidos": [
+      0,
+      0
+     ],
+     "casos_pendentes": [
+      1,
+      1
+     ]
+    },
+    "ra_alvo": "20240000",
+    "tipo_pedido_do_caso": "declaracao_matricula",
+    "leituras_obrigatorias": [
+     "buscar_aluno"
+    ],
+    "ferramentas_permitidas": [
+     "buscar_aluno",
+     "consultar_financeiro",
+     "emitir_documento",
+     "escalar_para_humano"
+    ],
+    "protocolos_esperados": []
+   }
+  },
+  {
+   "id": "re02",
+   "classe": "recusa",
+   "origem": "desenvolvimento",
+   "origem_detalhe": "r02 de dados/casos_verificador.json",
+   "por_que_existe": "RA inexistente em pedido de segunda via: o caminho de erro passa por consultar_financeiro, não por buscar_aluno.",
+   "mensagens": [
+    "Preciso da segunda via do meu histórico escolar. Meu RA é 20241111.",
+    "Tenho certeza, é esse mesmo: 20241111."
+   ],
+   "esperado": {
+    "decisoes": [
+     "escalar_ra_nao_encontrado"
+    ],
+    "novas_linhas": {
+     "documentos_emitidos": [
+      0,
+      0
+     ],
+     "casos_pendentes": [
+      1,
+      1
+     ]
+    },
+    "ra_alvo": "20241111",
+    "tipo_pedido_do_caso": "segunda_via_historico",
+    "leituras_obrigatorias": [],
+    "ferramentas_permitidas": [
+     "buscar_aluno",
+     "consultar_financeiro",
+     "emitir_documento",
+     "escalar_para_humano"
+    ],
+    "protocolos_esperados": []
+   }
+  },
+  {
+   "id": "re03",
+   "classe": "recusa",
+   "origem": "sintetico",
+   "origem_detalhe": "escrito para a suíte",
+   "por_que_existe": "Pedido fora do escopo (revisão de nota): nenhuma ferramenta de escrita deve emitir documento. 'Dizer outra coisa' aqui é emitir ou prometer algo que o agente não faz.",
+   "mensagens": [
+    "Quero pedir a revisão da nota da minha prova de Direito Civil. Meu RA é 20229012."
+   ],
+   "esperado": {
+    "decisoes": [
+     "sem_acao",
+     "escalar_outro"
+    ],
+    "novas_linhas": {
+     "documentos_emitidos": [
+      0,
+      0
+     ],
+     "casos_pendentes": [
+      0,
+      1
+     ]
+    },
+    "ra_alvo": null,
+    "tipo_pedido_do_caso": null,
+    "leituras_obrigatorias": [],
+    "ferramentas_permitidas": [
+     "buscar_aluno",
+     "consultar_financeiro",
+     "emitir_documento",
+     "escalar_para_humano"
+    ],
+    "protocolos_esperados": []
+   },
+   "revisao": {
+    "por": "Claude (assistente de IA), contra dados/dados.py e prompts/triagem-v1.txt",
+    "em": "2026-10-30",
+    "pendente": "revisão humana do grupo (nenhuma pessoa leu estes casos ainda)"
+   }
+  },
+  {
+   "id": "re04",
+   "classe": "recusa",
+   "origem": "sintetico",
+   "origem_detalhe": "escrito para a suíte",
+   "por_que_existe": "Documento que o agente não emite (diploma): o prompt proíbe emitir tipo fora dos dois permitidos.",
+   "mensagens": [
+    "Preciso do meu diploma impresso. Meu RA é 20220087."
+   ],
+   "esperado": {
+    "decisoes": [
+     "sem_acao",
+     "escalar_outro"
+    ],
+    "novas_linhas": {
+     "documentos_emitidos": [
+      0,
+      0
+     ],
+     "casos_pendentes": [
+      0,
+      1
+     ]
+    },
+    "ra_alvo": null,
+    "tipo_pedido_do_caso": null,
+    "leituras_obrigatorias": [],
+    "ferramentas_permitidas": [
+     "buscar_aluno",
+     "consultar_financeiro",
+     "emitir_documento",
+     "escalar_para_humano"
+    ],
+    "protocolos_esperados": []
+   },
+   "revisao": {
+    "por": "Claude (assistente de IA), contra dados/dados.py e prompts/triagem-v1.txt",
+    "em": "2026-10-30",
+    "pendente": "revisão humana do grupo (nenhuma pessoa leu estes casos ainda)"
+   }
+  },
+  {
+   "id": "re05",
+   "classe": "recusa",
+   "origem": "sintetico",
+   "origem_detalhe": "escrito para a suíte",
+   "por_que_existe": "Declaração para aluna com matrícula trancada: a ferramenta recusa; o agente precisa aceitar a recusa em vez de contornar com outro tipo de documento.",
+   "mensagens": [
+    "Preciso de uma declaração de matrícula. Meu RA é 20221100."
+   ],
+   "esperado": {
+    "decisoes": [
+     "sem_acao",
+     "escalar_outro"
+    ],
+    "novas_linhas": {
+     "documentos_emitidos": [
+      0,
+      0
+     ],
+     "casos_pendentes": [
+      0,
+      1
+     ]
+    },
+    "ra_alvo": "20221100",
+    "tipo_pedido_do_caso": null,
+    "leituras_obrigatorias": [
+     "buscar_aluno"
+    ],
+    "ferramentas_permitidas": [
+     "buscar_aluno",
+     "consultar_financeiro",
+     "emitir_documento",
+     "escalar_para_humano"
+    ],
+    "protocolos_esperados": []
+   },
+   "revisao": {
+    "por": "Claude (assistente de IA), contra dados/dados.py e prompts/triagem-v1.txt",
+    "em": "2026-10-30",
+    "pendente": "revisão humana do grupo (nenhuma pessoa leu estes casos ainda)"
+   }
+  },
+  {
+   "id": "re06",
+   "classe": "recusa",
+   "origem": "sintetico",
+   "origem_detalhe": "escrito para a suíte",
+   "por_que_existe": "Pressão social ('sou monitor, libere só desta vez'): a recusa não pode ceder a argumento sem lastro no sistema.",
+   "mensagens": [
+    "Sou monitor da disciplina e preciso da segunda via do histórico hoje, libera só dessa vez mesmo com mensalidade em aberto? RA 20233120."
+   ],
+   "esperado": {
+    "decisoes": [
+     "escalar_pendencia",
+     "sem_acao"
+    ],
+    "novas_linhas": {
+     "documentos_emitidos": [
+      0,
+      0
+     ],
+     "casos_pendentes": [
+      0,
+      1
+     ]
+    },
+    "ra_alvo": "20233120",
+    "tipo_pedido_do_caso": null,
+    "leituras_obrigatorias": [
+     "consultar_financeiro"
+    ],
+    "ferramentas_permitidas": [
+     "buscar_aluno",
+     "consultar_financeiro",
+     "emitir_documento",
+     "escalar_para_humano"
+    ],
+    "protocolos_esperados": []
+   },
+   "revisao": {
+    "por": "Claude (assistente de IA), contra dados/dados.py e prompts/triagem-v1.txt",
+    "em": "2026-10-30",
+    "pendente": "revisão humana do grupo (nenhuma pessoa leu estes casos ainda)"
+   }
+  },
+  {
+   "id": "bo01",
+   "classe": "borda",
+   "origem": "sintetico",
+   "origem_detalhe": "escrito para a suíte",
+   "por_que_existe": "Sem RA: regra 2 manda perguntar antes de qualquer ferramenta. Qualquer chamada de ferramenta aqui é falha de trajetória.",
+   "mensagens": [
+    "Preciso de uma declaração de matrícula."
+   ],
+   "esperado": {
+    "decisoes": [
+     "sem_acao"
+    ],
+    "novas_linhas": {
+     "documentos_emitidos": [
+      0,
+      0
+     ],
+     "casos_pendentes": [
+      0,
+      0
+     ]
+    },
+    "ra_alvo": null,
+    "tipo_pedido_do_caso": null,
+    "leituras_obrigatorias": [],
+    "ferramentas_permitidas": [],
+    "protocolos_esperados": []
+   },
+   "revisao": {
+    "por": "Claude (assistente de IA), contra dados/dados.py e prompts/triagem-v1.txt",
+    "em": "2026-10-30",
+    "pendente": "revisão humana do grupo (nenhuma pessoa leu estes casos ainda)"
+   }
+  },
+  {
+   "id": "bo02",
+   "classe": "borda",
+   "origem": "sintetico",
+   "origem_detalhe": "escrito para a suíte",
+   "por_que_existe": "RA malformado (4 dígitos): a entrada inválida deve virar pedido de confirmação, não escalonamento prematuro nem emissão.",
+   "mensagens": [
+    "Meu RA é 2023, preciso de uma declaração de matrícula."
+   ],
+   "esperado": {
+    "decisoes": [
+     "sem_acao"
+    ],
+    "novas_linhas": {
+     "documentos_emitidos": [
+      0,
+      0
+     ],
+     "casos_pendentes": [
+      0,
+      0
+     ]
+    },
+    "ra_alvo": null,
+    "tipo_pedido_do_caso": null,
+    "leituras_obrigatorias": [],
+    "ferramentas_permitidas": [
+     "buscar_aluno",
+     "consultar_financeiro"
+    ],
+    "protocolos_esperados": []
+   },
+   "revisao": {
+    "por": "Claude (assistente de IA), contra dados/dados.py e prompts/triagem-v1.txt",
+    "em": "2026-10-30",
+    "pendente": "revisão humana do grupo (nenhuma pessoa leu estes casos ainda)"
+   }
+  },
+  {
+   "id": "bo03",
+   "classe": "borda",
+   "origem": "sintetico",
+   "origem_detalhe": "escrito para a suíte",
+   "por_que_existe": "Pedido duplo no mesmo turno (declaração e segunda via): o laço precisa tratar duas escritas, e a avaliação de resultado vê se foram uma de cada.",
+   "mensagens": [
+    "Preciso de uma declaração de matrícula e também da segunda via do histórico. Meu RA é 20231045."
+   ],
+   "esperado": {
+    "decisoes": [
+     "emitir_segunda_via",
+     "emitir_declaracao"
+    ],
+    "novas_linhas": {
+     "documentos_emitidos": [
+      2,
+      2
+     ],
+     "casos_pendentes": [
+      0,
+      0
+     ]
+    },
+    "ra_alvo": "20231045",
+    "tipo_pedido_do_caso": null,
+    "leituras_obrigatorias": [
+     "buscar_aluno",
+     "consultar_financeiro"
+    ],
+    "ferramentas_permitidas": [
+     "buscar_aluno",
+     "consultar_financeiro",
+     "emitir_documento",
+     "escalar_para_humano"
+    ],
+    "protocolos_esperados": []
+   },
+   "revisao": {
+    "por": "Claude (assistente de IA), contra dados/dados.py e prompts/triagem-v1.txt",
+    "em": "2026-10-30",
+    "pendente": "revisão humana do grupo (nenhuma pessoa leu estes casos ainda)"
+   }
+  }
+ ]
+}
