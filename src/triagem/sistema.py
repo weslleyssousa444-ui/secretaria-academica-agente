@@ -27,11 +27,17 @@ import dados
 from triagem import humano
 from triagem import nos as n
 from triagem.grafo import RECURSION_LIMIT, construir
+import agente
 from triagem.memoria import Memoria
+from triagem.modelos import verificar_modelo
 from triagem.saida import SaidaTriagem, Suficiencia
 
 RAIZ = Path(__file__).resolve().parents[2]
 MAX_ENTRADA = 2000  # caracteres: o mesmo teto da API da Parte 1
+
+
+class IdentidadeAusente(Exception):
+    """A sessão não traz o RA autenticado e o sistema exige identidade (ASI03)."""
 
 
 class ConversaEncerrada(Exception):
@@ -41,7 +47,14 @@ class ConversaEncerrada(Exception):
 
 class Sistema:
     def __init__(self, checkpoint: Path | str | None = None,
-                 memoria_dir: Path | str | None = None):
+                 memoria_dir: Path | str | None = None,
+                 permitir_modelo_nao_aprovado: bool = False,
+                 exige_identidade: bool | None = None):
+        # ASI10: não sobe com modelo fora da lista (src/triagem/modelos.py).
+        self.modelo_aprovado = verificar_modelo(agente.MODELO, permitir_modelo_nao_aprovado)
+        # ASI03: com TRIAGEM_EXIGE_IDENTIDADE=1, sem `ra_autenticado` não há atendimento.
+        self.exige_identidade = (os.environ.get("TRIAGEM_EXIGE_IDENTIDADE") == "1"
+                                 if exige_identidade is None else exige_identidade)
         self.caminho_checkpoint = Path(checkpoint or os.environ.get(
             "TRIAGEM_CHECKPOINT", RAIZ / "checkpoints" / "triagem.sqlite"))
         self.caminho_checkpoint.parent.mkdir(parents=True, exist_ok=True)
@@ -68,6 +81,8 @@ class Sistema:
         """Um turno do aluno. Se a conversa está esperando a coordenação, NÃO
         chama o modelo: devolve o estado do pedido (um segundo trancamento
         não abre outro caso, e o aluno não fica sem resposta)."""
+        if self.exige_identidade and not ra_autenticado:
+            raise IdentidadeAusente(thread_id)  # fail-closed
         texto = (texto or "").strip()
         if not texto:
             raise ValueError("mensagem vazia")

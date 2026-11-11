@@ -35,6 +35,21 @@ SYSTEM = (Path(__file__).resolve().parents[1] / "prompts" / "triagem-v2.txt"
 # passar do teto; ele impede a PRÓXIMA volta, e não interrompe a em curso.
 MAX_SEGUNDOS_POR_TURNO = 120.0
 
+# CONTROLES DA PARTE 3 (docs/seguranca.md §3). Os três valem FORA do prompt: o
+# texto injetado chega pelo mesmo canal que o prompt, e só o código o barra.
+#
+# ASI02: um modelo (ou quem o sequestrou) pode devolver dezenas de chamadas numa
+# única resposta, e todas executariam antes de o orçamento de passos ser visto.
+# CUSTO: o modelo não pode agrupar duas escritas numa volta (emitir dois
+# documentos exige duas voltas, uma chamada de modelo a mais).
+MAX_CHAMADAS_POR_VOLTA = 4
+MAX_ESCRITAS_POR_VOLTA = 1
+
+# ASI03: ferramentas que recebem um RA. Com sessão autenticada, o RA do argumento
+# TEM de ser o da sessão ("" = RA nunca identificado, só faz sentido ao escalar).
+FERRAMENTAS_COM_RA = frozenset({"buscar_aluno", "consultar_financeiro",
+                                "emitir_documento", "escalar_para_humano"})
+
 SAUDACAO_FIXA = (
     "Olá! Sou o assistente da secretaria acadêmica. Posso ajudar com "
     "declaração de matrícula, segunda via de histórico, trancamento de "
@@ -96,7 +111,22 @@ def laco_detectado(passos: list[dict], limite: int = 3) -> bool:
     return len({assinatura(p) for p in passos[-limite:]}) == 1
 
 
-def executar_chamada(nome: str, argumentos_json: str) -> dict:
+def argumentos_tentados(chamada: dict) -> dict:
+    """Os argumentos que o modelo pediu, para o registro da chamada recusada."""
+    try:
+        valor = json.loads(chamada["function"]["arguments"])
+        return valor if isinstance(valor, dict) else {}
+    except (json.JSONDecodeError, TypeError):
+        return {}
+
+
+def passo_recusado(nome: str, argumentos: dict, motivo: str, sugestao: str) -> dict:
+    """Uma chamada que o CÓDIGO não executa: devolve erro como dado, sem efeito."""
+    return {"ferramenta": nome, "argumentos": argumentos, "erro": motivo,
+            "resultado": {"erro": motivo, "sugestao": sugestao}}
+
+
+def executar_chamada(nome: str, argumentos_json: str, ra_sessao: str | None = None) -> dict:
     """Uma chamada de ferramenta. Erro vira DADO que ensina o modelo (nota 03
     da Aula 05), nunca exceção que derruba o turno. Diferença para
     agente.executar: QUALQUER exceção da ferramenta (ex.: banco travado) é
@@ -113,6 +143,15 @@ def executar_chamada(nome: str, argumentos_json: str) -> dict:
         passo["erro"] = f"ferramenta desconhecida: {nome}"
         passo["resultado"] = {"erro": passo["erro"], "disponiveis": sorted(FERRAMENTAS)}
         return passo
+    # ASI03 (credencial delegada): o RA da ferramenta é o da SESSÃO, e não o que a
+    # pessoa digitou. Fail-closed: o dado de outro aluno nem chega a ser lido.
+    if ra_sessao is not None and nome in FERRAMENTAS_COM_RA:
+        ra_pedido = passo["argumentos"].get("ra")
+        if ra_pedido not in (ra_sessao, "", None):
+            return passo_recusado(
+                nome, passo["argumentos"], "ra diferente do aluno autenticado nesta sessão",
+                "este atendimento só consulta o RA do próprio aluno autenticado; diga isso "
+                "ao aluno e não tente outro RA")
     try:
         passo["resultado"] = funcao(**passo["argumentos"])
     except ErroRecuperavel as e:
@@ -250,9 +289,21 @@ class Nos:
     # 5. FERRAMENTAS — código. Executa o que o modelo pediu, com as guardas.
     def ferramentas(self, estado: dict) -> dict:
         ultima = estado["mensagens"][-1]
-        novas, passos = [], []
-        for chamada in ultima["tool_calls"]:
-            passo = executar_chamada(chamada["function"]["name"], chamada["function"]["arguments"])
+        novas, passos, escritas = [], [], 0
+        ra_sessao = estado.get("ra_autenticado")
+        for posicao, chamada in enumerate(ultima["tool_calls"]):
+            nome = chamada["function"]["name"]
+            # ASI02: o teto vale POR VOLTA, e toda chamada recebe uma resposta (o
+            # protocolo da API exige uma mensagem de ferramenta por tool_call).
+            if posicao >= MAX_CHAMADAS_POR_VOLTA:
+                passo = passo_recusado(nome, argumentos_tentados(chamada), f"mais de {MAX_CHAMADAS_POR_VOLTA} chamadas numa só volta",
+                                       "faça uma chamada por vez")
+            elif nome in agente.ESCRITA and escritas >= MAX_ESCRITAS_POR_VOLTA:
+                passo = passo_recusado(nome, argumentos_tentados(chamada), f"mais de {MAX_ESCRITAS_POR_VOLTA} escrita numa só volta",
+                                       "faça uma escrita por volta")
+            else:
+                passo = executar_chamada(nome, chamada["function"]["arguments"], ra_sessao)
+                escritas += nome in agente.ESCRITA and passo["erro"] is None
             passos.append(passo)
             novas.append(mensagem_de_ferramenta(passo, chamada["id"]))
         return {"mensagens": novas, "passos": passos, "eventos": ["ferramentas"]}

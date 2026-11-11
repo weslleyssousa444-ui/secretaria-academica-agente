@@ -40,7 +40,8 @@ from pydantic import BaseModel, Field
 import agente
 import dados
 from triagem import humano
-from triagem.sistema import ConversaEncerrada, Sistema
+from triagem.modelos import verificar_modelo
+from triagem.sistema import ConversaEncerrada, IdentidadeAusente, Sistema
 
 PASTA_LOGS = Path(os.environ["LOGS_DIR"]) if os.environ.get("LOGS_DIR") else None
 
@@ -61,6 +62,7 @@ def obter_sistema() -> Sistema:
 @asynccontextmanager
 async def ciclo_de_vida(_app: FastAPI):
     global _sistema
+    verificar_modelo(agente.MODELO)  # ASI10: não sobe com modelo fora da lista aprovada
     dados.inicializar()  # idempotente: semeia só se o banco estiver vazio
     yield
     if _sistema is not None:
@@ -128,6 +130,8 @@ def mensagens(corpo: Mensagem, x_aluno_ra: str | None = Header(default=None)) ->
             resultado = sistema.conversar(conversa_id, corpo.mensagem, ra_autenticado)
         except ConversaEncerrada as e:
             raise HTTPException(409, "conversa encerrada; abra uma nova") from e
+        except IdentidadeAusente as e:
+            raise HTTPException(401, "sessão sem identidade: o portal deve enviar X-Aluno-RA") from e
         _gravar_registro(conversa_id, resultado, sistema.estado(conversa_id))
 
     saida = resultado["saida"]

@@ -64,7 +64,8 @@ Outros comandos: `python src/demo_grafo.py` (as 8 demonstrações, contra o mode
 | `No such file` ao instalar ou rodar | você está na pasta errada; rode `cd` até a que contém `src` |
 | `requires a different Python` ao instalar | falta o Python 3.10+; confira `python --version` dentro do `.venv` |
 | `The api_key client option must be set` | falta o `.env` com a chave (só o passo 3 precisa dela) |
-| `429` ou `tokens per day` | acabou a cota gratuita do modelo no dia; espere, ou troque `LLM_MODELO` no `.env` para `openai/gpt-oss-20b` |
+| `429` ou `tokens per day` | acabou a cota gratuita do modelo no dia; **espere** (a cota é uma janela de 24 h). Trocar `LLM_MODELO` não resolve: o sistema só sobe com modelo da lista aprovada (`src/triagem/modelos.py`), e o único aprovado é o `qwen/qwen3.8-27b` |
+| `ModeloNaoAprovado` ao subir | o `LLM_MODELO` do `.env` não está em `MODELOS_APROVADOS`: volte a `qwen/qwen3.8-27b`, ou avalie o modelo (`python -m evals.rodar`) e aprove-o no código |
 | `503` em `/coordenacao/...` | falta `COORDENACAO_TOKEN` no `.env`: sem ele o endpoint de decisão fica **fechado** de propósito |
 
 Onde está cada exercício: [`README.md`](README.md). O sistema não confere quem é o aluno (lacuna L01 do [model card](docs/model-card.md)); use apenas dados sintéticos.

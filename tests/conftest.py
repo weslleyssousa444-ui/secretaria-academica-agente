@@ -83,3 +83,10 @@ def modelo(monkeypatch):
         monkeypatch.setattr(agente, "client", falso)
         return falso
     return instalar
+
+
+@pytest.fixture(autouse=True)
+def modelo_aprovado_nos_testes(monkeypatch):
+    """Os testes não dependem do LLM_MODELO do .env de quem os roda: o Sistema se
+    recusa a subir com modelo fora da lista aprovada (src/triagem/modelos.py)."""
+    monkeypatch.setattr(agente, "MODELO", "qwen/qwen3.8-27b")
