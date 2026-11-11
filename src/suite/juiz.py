@@ -75,8 +75,13 @@ class CotaDiaria(Exception):
     pass
 
 
-def montar_pergunta(caso: dict, registro: dict) -> str:
-    politica = (RAIZ / "prompts" / "triagem-v1.txt").read_text(encoding="utf-8")
+POLITICA_PADRAO = RAIZ / "src" / "prompts" / "triagem-v1.txt"  # o prompt avaliado no Exercício 11
+
+
+def montar_pergunta(caso: dict, registro: dict, politica_arquivo: Path | None = None) -> str:
+    """`politica_arquivo`: o prompt do sistema SOB AVALIAÇÃO (a v1 no Exercício 11;
+    a v2 nas rodadas do sistema em grafo, evals/juizar.py)."""
+    politica = (politica_arquivo or POLITICA_PADRAO).read_text(encoding="utf-8")
     ferramentas = [{"ferramenta": p["ferramenta"], "argumentos": p["argumentos"],
                     "retorno": p["resultado"]} for p in registro["passos"]]
     return (f"POLÍTICA DO AGENTE (prompt do sistema):\n{politica}\n\n"
@@ -85,8 +90,8 @@ def montar_pergunta(caso: dict, registro: dict) -> str:
             f"\n\nRESPOSTA FINAL DO AGENTE AO ALUNO:\n{registro['respostas'][-1] if registro['respostas'] else '(vazia)'}")
 
 
-def julgar(caso: dict, registro: dict, rubrica: str = RUBRICA) -> dict:
-    pergunta = montar_pergunta(caso, registro)
+def julgar(caso: dict, registro: dict, rubrica: str = RUBRICA, politica_arquivo: Path | None = None) -> dict:
+    pergunta = montar_pergunta(caso, registro, politica_arquivo)
     cliente = agente.client.with_options(timeout=90, max_retries=0)
     for tentativa in range(8):
         try:

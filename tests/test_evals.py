@@ -203,3 +203,24 @@ def test_percentil_por_posto_mais_proximo():
     assert metricas.percentil([10, 20, 30, 40, 50], 50) == 30
     assert metricas.percentil([10, 20, 30, 40, 50], 95) == 50
     assert metricas.percentil([], 50) != metricas.percentil([], 50)  # NaN
+
+
+# ------------------------------------------------------------------ regressão da mudança de pasta dos prompts
+
+def test_o_juiz_monta_a_pergunta_lendo_o_prompt_no_lugar_certo():
+    """Regressão: o juiz montava o caminho `RAIZ / "prompts"` e quebrava depois de os
+    prompts irem para `src/prompts/` (Parte 2). Nenhum teste o exercitava."""
+    from suite import juiz
+    caso = CASOS["em01"]
+    r = {"passos": [{"ferramenta": "buscar_aluno", "argumentos": {"ra": "20231045"}, "resultado": {"nome": "X"}, "erro": None}],
+         "respostas": ["Pronto."]}
+    pergunta = juiz.montar_pergunta(caso, r)
+    assert "POLÍTICA DO AGENTE" in pergunta and "agente de triagem da secretaria" in pergunta
+    v2 = juiz.montar_pergunta(caso, r, RAIZ / "src" / "prompts" / "triagem-v2.txt")
+    assert "consultar_regimento" in v2 and "consultar_regimento" not in pergunta   # a política avaliada é a do sistema
+
+
+def test_todo_arquivo_de_prompt_citado_no_codigo_existe():
+    for arquivo in ("triagem-v1.txt", "triagem-v2.txt", "historico/juiz-rubrica-v1.0.0.txt"):
+        assert (RAIZ / "src" / "prompts" / arquivo).exists(), arquivo
+    assert not (RAIZ / "prompts").exists()   # a pasta antiga não voltou

@@ -120,7 +120,7 @@ def escalar_para_humano(ra: str, tipo_pedido: str, motivo: str, chave: str) -> d
 FERRAMENTAS = [buscar_aluno, consultar_financeiro, emitir_documento,
                escalar_para_humano]
 
-SYSTEM = (Path(__file__).parent.parent.parent / "prompts" / "triagem-v1.txt"
+SYSTEM = (Path(__file__).parent.parent.parent / "src" / "prompts" / "triagem-v1.txt"
           ).read_text(encoding="utf-8")
 
 
