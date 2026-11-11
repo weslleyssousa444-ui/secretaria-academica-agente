@@ -33,7 +33,7 @@ Cinco fontes disputando a janela do agente de triagem:
 
 | Fonte | Teto | Descartada primeiro? |
 |---|---|---|
-| System prompt (`prompts/triagem-v1.txt`) | ~400 tokens, fixo | nunca |
+| System prompt (`src/prompts/triagem-v1.txt`) | ~400 tokens, fixo | nunca |
 | Objetivo/pedido do aluno | ~200 tokens | nunca |
 | Trajetória da conversa corrente | até o teto de 20.000 tokens do orçamento do agente (`Orcamento.max_tokens`, `src/agente.py`) | 3º |
 | Memória de longo prazo (episódica + semântica + procedural) | **400 tokens** (`OrcamentoDeMemoria.max_tokens_memoria`, `src/memoria.py`) | **1º** |

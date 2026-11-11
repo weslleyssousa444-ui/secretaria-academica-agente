@@ -12,7 +12,7 @@ O agente de triagem sai da máquina de quem o escreveu: vira uma **imagem Docker
 |---|---|---|
 | Python 3.11.13 (`python:3.11.13-slim-bookworm`, fixado até o *patch*) | **segredo**: `OPENAI_API_KEY` | `--env-file .env` ou `env_file` do Compose, em tempo de execução |
 | 4 dependências diretas com versão exata ([`requirements-agente.txt`](../requirements-agente.txt)) | **modelo**: Groq, pela rede | `LLM_BASE_URL` e `LLM_MODELO` no ambiente |
-| `src/agente.py`, `src/dados.py`, `src/api.py`, `src/chat.py` e `prompts/triagem-v1.txt`, copiados por nome | **estado**: banco SQLite e registros de execução | volume montado em `/dados` (§4) |
+| `src/agente.py`, `src/dados.py`, `src/api.py`, `src/chat.py` e `src/prompts/triagem-v1.txt`, copiados por nome | **estado**: banco SQLite e registros de execução | volume montado em `/dados` (§4) |
 
 **Só o que o agente importa.** O `requirements.txt` da raiz traz `torch` e `sentence-transformers`, que só os Exercícios 7 e 8 usam e não estão ligados ao agente. A imagem instala só [`requirements-agente.txt`](../requirements-agente.txt): `openai`, `python-dotenv`, `fastapi` e `uvicorn`. O resultado é uma imagem de **248 MB**, em que `import torch` falha ([evidência §1](evidencias/empacotamento.txt)).
 

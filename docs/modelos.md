@@ -55,7 +55,7 @@ Com `ministral-3b-latest` o custo cairia para cerca de um quarto disso; com `mis
 
 ## 3.3 A verificação mínima
 
-Cinco casos do domínio (extraídos de `dados/casos_demo.json` e `dados/casos_verificador.json`), rodados nos três candidatos com o mesmo prompt (`prompts/triagem-v1.md`), usando `src/comparar_modelos.py`.
+Cinco casos do domínio (extraídos de `dados/casos_demo.json` e `dados/casos_verificador.json`), rodados nos três candidatos com o mesmo prompt (`src/prompts/triagem-v1.md`), usando `src/comparar_modelos.py`.
 
 | # | Caso | Resultado esperado | `ministral-3b-latest` | `mistral-small-latest` | `mistral-large-latest` |
 |---|---|---|---|---|---|

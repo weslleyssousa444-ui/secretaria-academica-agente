@@ -96,7 +96,7 @@ def fidelidade(nome: str, validacao: dict) -> float | None:
 def carimbo(gold: dict) -> list[tuple[str, str]]:
     sha = lambda p: hashlib.sha256(Path(p).read_bytes()).hexdigest()[:12]
     return [
-        ("prompt", f"prompts/triagem-v1.txt (sha256 {sha(RAIZ / 'prompts' / 'triagem-v1.txt')})"),
+        ("prompt", f"src/prompts/triagem-v1.txt (sha256 {sha(RAIZ / 'src' / 'prompts' / 'triagem-v1.txt')})"),
         ("modelo do agente", "A: qwen/qwen3.8-27b · B: openai/gpt-oss-20b (Groq)"),
         ("parâmetros de amostragem", "temperature=0; sem top_p/seed (a API da Groq não garante determinismo)"),
         ("orçamento por conversa", "max_passos=8 · max_tokens=20000 · max_reais=0.05 (src/agente.py)"),

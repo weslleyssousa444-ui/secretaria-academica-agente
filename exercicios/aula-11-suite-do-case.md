@@ -132,7 +132,7 @@ Gravada em [`dados/regra_de_promocao.json`](../dados/regra_de_promocao.json) às
 - **A suíte está saturada para A**, e os intervalos são largos: 24 casos por execução, um caso = 4,2 pontos. A diferença A × B (−10,4) são 2,5 casos; ela é maior que o ruído medido (0), mas a base é pequena.
 - **O juiz v1.1.0 foi revisado sobre os mesmos 48 casos em que foi depois medido:** a linha "otimista" da tabela não vale como validação; só o hold-out vale, e ele reprova.
 - **Os desafios A (dois juízes) e B (retroativo) não foram feitos.**
-- Um resultado de B só vale para o `prompts/triagem-v1.txt` atual; um prompt ajustado para `gpt-oss-20b` (que pede comprovante antes de escalar) pode mudar o quadro.
+- Um resultado de B só vale para o `src/prompts/triagem-v1.txt` atual; um prompt ajustado para `gpt-oss-20b` (que pede comprovante antes de escalar) pode mudar o quadro.
 
 ## 7. O que mudaria o desenho na próxima versão
 
@@ -145,7 +145,7 @@ Gravada em [`dados/regra_de_promocao.json`](../dados/regra_de_promocao.json) às
 
 | Campo | Valor |
 |---|---|
-| prompt | `prompts/triagem-v1.txt` (sha256 `a21d15dfb479…`) |
+| prompt | `src/prompts/triagem-v1.txt` (sha256 `a21d15dfb479…`) |
 | modelo do agente | A: `qwen/qwen3.8-27b` · B: `openai/gpt-oss-20b` (Groq) |
 | parâmetros de amostragem | `temperature=0`; sem `top_p`/`seed` |
 | orçamento por conversa | `max_passos=8` · `max_tokens=20000` · `max_reais=0.05` |
@@ -157,7 +157,7 @@ Gravada em [`dados/regra_de_promocao.json`](../dados/regra_de_promocao.json) às
 | framework | laço próprio em `src/agente.py` (LangGraph só no Ex. 9) |
 | servidor MCP | **NÃO USA** — nenhuma ferramenta passa por MCP |
 | versão do dataset | `golden_v1.0.0` (sha256 `a7f3289e7784…`); estado do mundo: SQLite novo por execução |
-| versão da rubrica do juiz | v1.1.0 (v1.0.0 em `prompts/historico/juiz-rubrica-v1.0.0.txt`); juiz `openai/gpt-oss-120b`; critério binário; **não adotado** |
+| versão da rubrica do juiz | v1.1.0 (v1.0.0 em `src/prompts/historico/juiz-rubrica-v1.0.0.txt`); juiz `openai/gpt-oss-120b`; critério binário; **não adotado** |
 
 ## Como reproduzir
 

@@ -35,7 +35,7 @@ from openai import APIConnectionError, APIStatusError, APITimeoutError, RateLimi
 
 import agente  # noqa: E402
 
-# v1.0.0 (prompts/historico/juiz-rubrica-v1.0.0.txt): validada, NÃO adotada
+# v1.0.0 (src/prompts/historico/juiz-rubrica-v1.0.0.txt): validada, NÃO adotada
 # (concordância 85%, recall de "não fiel" 36%). v1.1.0: regras 3, 4, 8 e 9
 # reescritas depois da leitura dos 7 desacordos (dados/desacordos_juiz_v1.json).
 RUBRICA_VERSAO = "1.1.0"

@@ -105,6 +105,27 @@ def inicializar(forcar: bool = False) -> None:
             chave TEXT UNIQUE,
             status TEXT NOT NULL DEFAULT 'aberto'
         );
+        -- Aprovação humana do trancamento (src/triagem/humano.py, docs/humano.md).
+        -- `aprovacoes` guarda o que está esperando uma pessoa e até quando;
+        -- `decisoes_humanas` guarda o que a pessoa decidiu. A chave da decisão
+        -- é derivada do caso (`<protocolo>:decisao`): decidir duas vezes o
+        -- mesmo caso não grava duas vezes.
+        CREATE TABLE IF NOT EXISTS aprovacoes (
+            protocolo TEXT PRIMARY KEY,
+            thread_id TEXT NOT NULL,
+            ra TEXT,
+            criado_em TEXT NOT NULL,
+            prazo_ate TEXT NOT NULL,
+            estado TEXT NOT NULL DEFAULT 'aguardando'
+        );
+        CREATE TABLE IF NOT EXISTS decisoes_humanas (
+            chave TEXT PRIMARY KEY,
+            protocolo TEXT NOT NULL,
+            decisao TEXT NOT NULL,
+            edicao TEXT,
+            decidido_por TEXT NOT NULL,
+            decidido_em TEXT NOT NULL
+        );
     """)
 
     if cur.execute("SELECT COUNT(*) FROM alunos").fetchone()[0] == 0:

@@ -29,7 +29,7 @@ RUN useradd --create-home --uid 10001 agente \
 # Só os arquivos que o agente usa, por nome — segunda barreira contra o .env,
 # além do .dockerignore.
 COPY src/agente.py src/dados.py src/api.py src/chat.py ./src/
-COPY prompts/triagem-v1.txt ./prompts/
+COPY src/prompts/triagem-v1.txt ./src/prompts/
 
 # ---------------------------------------------------------------- 5
 ENV ACADEMICO_DB=/dados/academico.db \

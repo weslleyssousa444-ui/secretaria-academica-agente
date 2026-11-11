@@ -36,7 +36,7 @@ client = OpenAI(
 )
 MODELO = os.environ.get("LLM_MODELO", "qwen/qwen3.8-27b")
 
-PROMPT_PATH = Path(__file__).parent.parent / "prompts" / "triagem-v1.txt"
+PROMPT_PATH = Path(__file__).parent / "prompts" / "triagem-v1.txt"
 SYSTEM = PROMPT_PATH.read_text(encoding="utf-8")
 
 # Preços documentados em docs/modelos.md §3.1/§3.5 (US$ por 1M de tokens).
