@@ -37,10 +37,15 @@ COPY src/prompts/triagem-v1.txt src/prompts/triagem-v2.txt ./src/prompts/
 COPY dados/regimento_dados.py ./dados/
 
 # ---------------------------------------------------------------- 5
+# O commit entra como argumento do build (a imagem não tem .git): é o que o
+# trace carrega em `agente.versao` (docs/observabilidade.md §2).
+ARG COMMIT=desconhecido
 ENV ACADEMICO_DB=/dados/academico.db \
     LOGS_DIR=/dados/logs \
     TRIAGEM_CHECKPOINT=/dados/triagem.sqlite \
-    TRIAGEM_MEMORIA_DIR=/dados/memoria
+    TRIAGEM_MEMORIA_DIR=/dados/memoria \
+    TRIAGEM_TRACES_DIR=/dados/traces \
+    AGENTE_COMMIT=$COMMIT
 USER agente
 EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=3s --retries=3 \

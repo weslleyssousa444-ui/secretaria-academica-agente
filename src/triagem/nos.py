@@ -19,7 +19,7 @@ from langgraph.types import interrupt
 
 import agente
 from agente import ErroFatal, ErroRecuperavel, Orcamento
-from triagem import humano, janela, saida as contrato, validacao
+from triagem import humano, janela, saida as contrato, telemetria, validacao
 from triagem.memoria import Memoria
 from triagem.regimento import consultar_regimento
 
@@ -122,7 +122,7 @@ def argumentos_tentados(chamada: dict) -> dict:
 
 def passo_recusado(nome: str, argumentos: dict, motivo: str, sugestao: str) -> dict:
     """Uma chamada que o CÓDIGO não executa: devolve erro como dado, sem efeito."""
-    return {"ferramenta": nome, "argumentos": argumentos, "erro": motivo,
+    return {"ferramenta": nome, "argumentos": argumentos, "erro": motivo, "recusado": True,
             "resultado": {"erro": motivo, "sugestao": sugestao}}
 
 
@@ -268,12 +268,15 @@ class Nos:
         contexto = [{"role": "system", "content": SYSTEM}]
         if estado.get("memoria_bloco"):
             contexto.append({"role": "system", "content": "MEMÓRIA\n" + estado["memoria_bloco"]})
-        try:
-            resposta = agente.chamar_com_retry(
-                model=agente.MODELO, messages=contexto + mensagens,
-                tools=DECLARACOES, temperature=0)
-        except ErroFatal as e:
-            return {"termino": "erro_fatal", "motivo": str(e), "eventos": ["agente:erro_fatal"]}
+        with telemetria.chamada_ao_modelo(agente.MODELO, 0) as span_chat:
+            try:
+                resposta = agente.chamar_com_retry(
+                    model=agente.MODELO, messages=contexto + mensagens,
+                    tools=DECLARACOES, temperature=0)
+            except ErroFatal as e:
+                telemetria.registrar_erro(span_chat, e, "erro_fatal")
+                return {"termino": "erro_fatal", "motivo": str(e), "eventos": ["agente:erro_fatal"]}
+            telemetria.registrar_resposta_do_modelo(span_chat, resposta, omitidos)
 
         msg = resposta.choices[0].message
         registro: dict = {"role": "assistant", "content": msg.content}
@@ -293,20 +296,29 @@ class Nos:
         ra_sessao = estado.get("ra_autenticado")
         for posicao, chamada in enumerate(ultima["tool_calls"]):
             nome = chamada["function"]["name"]
-            # ASI02: o teto vale POR VOLTA, e toda chamada recebe uma resposta (o
-            # protocolo da API exige uma mensagem de ferramenta por tool_call).
-            if posicao >= MAX_CHAMADAS_POR_VOLTA:
-                passo = passo_recusado(nome, argumentos_tentados(chamada), f"mais de {MAX_CHAMADAS_POR_VOLTA} chamadas numa só volta",
-                                       "faça uma chamada por vez")
-            elif nome in agente.ESCRITA and escritas >= MAX_ESCRITAS_POR_VOLTA:
-                passo = passo_recusado(nome, argumentos_tentados(chamada), f"mais de {MAX_ESCRITAS_POR_VOLTA} escrita numa só volta",
-                                       "faça uma escrita por volta")
-            else:
-                passo = executar_chamada(nome, chamada["function"]["arguments"], ra_sessao)
-                escritas += nome in agente.ESCRITA and passo["erro"] is None
+            with telemetria.execucao_de_ferramenta(nome, chamada["id"]) as span_ferramenta:
+                passo = self._uma_chamada(posicao, chamada, escritas, ra_sessao)
+                telemetria.registrar_ferramenta(span_ferramenta, passo, bool(passo.get("recusado")))
+            escritas += nome in agente.ESCRITA and passo["erro"] is None
             passos.append(passo)
             novas.append(mensagem_de_ferramenta(passo, chamada["id"]))
         return {"mensagens": novas, "passos": passos, "eventos": ["ferramentas"]}
+
+    def _uma_chamada(self, posicao: int, chamada: dict, escritas: int, ra_sessao: str | None) -> dict:
+        """Uma chamada de ferramenta, com os controles ASI02 e ASI03."""
+        nome = chamada["function"]["name"]
+        # ASI02: o teto vale POR VOLTA, e toda chamada recebe uma resposta (o
+        # protocolo da API exige uma mensagem de ferramenta por tool_call).
+        if posicao >= MAX_CHAMADAS_POR_VOLTA:
+            return passo_recusado(nome, argumentos_tentados(chamada),
+                                  f"mais de {MAX_CHAMADAS_POR_VOLTA} chamadas numa só volta",
+                                  "faça uma chamada por vez")
+        if nome in agente.ESCRITA and escritas >= MAX_ESCRITAS_POR_VOLTA:
+            return passo_recusado(nome, argumentos_tentados(chamada),
+                                  f"mais de {MAX_ESCRITAS_POR_VOLTA} escrita numa só volta",
+                                  "faça uma escrita por volta")
+        # ASI03 está dentro de executar_chamada (precisa do RA da sessão).
+        return executar_chamada(nome, chamada["function"]["arguments"], ra_sessao)
 
     # 6. GARANTIR TRANCAMENTO — código. Pós-condição L02 (portão).
     def garantir_trancamento(self, estado: dict) -> dict:
@@ -316,9 +328,15 @@ class Nos:
         argumentos = {"ra": ra, "tipo_pedido": "trancamento_matricula",
                       "motivo": "trancamento (aberto pelo código: o agente respondeu sem escalar)",
                       "chave": f"{ra}:trancamento_matricula:trancamento"}
-        passo = {"ferramenta": "escalar_para_humano", "argumentos": argumentos,
-                 "resultado": agente.escalar_para_humano(**argumentos), "erro": None}
         id_chamada = f"codigo-{len(estado.get('passos', []))}"
+        # A escrita feita PELO CÓDIGO também é uma chamada de ferramenta no trace,
+        # marcada com a origem: sem isso, reconstruir a decisão pelo trace não
+        # veria quem abriu o caso (docs/model-card.md, Registro e retenção).
+        with telemetria.execucao_de_ferramenta("escalar_para_humano", id_chamada) as span_codigo:
+            passo = {"ferramenta": "escalar_para_humano", "argumentos": argumentos,
+                     "resultado": agente.escalar_para_humano(**argumentos), "erro": None}
+            telemetria.registrar_ferramenta(span_codigo, passo, False)
+            span_codigo.set_attribute("agente.ferramenta.origem", "codigo")
         return {
             "mensagens": [
                 {"role": "assistant", "content": None, "tool_calls": [

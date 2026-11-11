@@ -24,7 +24,7 @@ from langgraph.errors import GraphRecursionError
 from langgraph.types import Command
 
 import dados
-from triagem import humano
+from triagem import humano, telemetria
 from triagem import nos as n
 from triagem.grafo import RECURSION_LIMIT, construir
 import agente
@@ -61,6 +61,7 @@ class Sistema:
         self._conexao = sqlite3.connect(self.caminho_checkpoint, check_same_thread=False)
         self.memoria = Memoria(Path(memoria_dir or os.environ.get(
             "TRIAGEM_MEMORIA_DIR", RAIZ / "dados" / "memoria")))
+        telemetria.configurar_do_ambiente()  # TRIAGEM_TRACES_DIR liga o trace; sem ela, no-op
         # Decaimento (docs/memoria.md §4.2): a rotina roda ao subir o processo,
         # que no contêiner é o que reinicia a cada implantação. Não há agendador.
         self.memoria.episodica.aplicar_decaimento(date.today())
@@ -76,11 +77,25 @@ class Sistema:
         return {"configurable": {"thread_id": thread_id}, "recursion_limit": RECURSION_LIMIT}
 
     # ------------------------------------------------------------------ turno
+    def versao(self) -> str:
+        """`<commit>/<prompt>/<modelo>`: o carimbo que toda métrica carrega."""
+        return telemetria.versao_do_sistema(agente.MODELO, n.SYSTEM)
+
     def conversar(self, thread_id: str, texto: str,
                   ra_autenticado: str | None = None) -> dict:
-        """Um turno do aluno. Se a conversa está esperando a coordenação, NÃO
-        chama o modelo: devolve o estado do pedido (um segundo trancamento
-        não abre outro caso, e o aluno não fica sem resposta)."""
+        """Um turno do aluno, dentro de um trace (`invoke_agent`). Se a conversa
+        está esperando a coordenação, NÃO chama o modelo: devolve o estado do
+        pedido (um segundo trancamento não abre outro caso, e o aluno não fica
+        sem resposta)."""
+        with telemetria.invocar_agente(
+                thread_id, self.versao(), **{"agente.identidade": bool(ra_autenticado),
+                                             "agente.modelo_aprovado": self.modelo_aprovado}) as span:
+            telemetria.evento_de_conteudo(span, "gen_ai.user.message", texto or "")
+            resultado = self._turno(thread_id, texto, ra_autenticado)
+            telemetria.registrar_resultado(span, resultado, self.estado(thread_id))
+            return resultado
+
+    def _turno(self, thread_id: str, texto: str, ra_autenticado: str | None) -> dict:
         if self.exige_identidade and not ra_autenticado:
             raise IdentidadeAusente(thread_id)  # fail-closed
         texto = (texto or "").strip()
@@ -131,12 +146,29 @@ class Sistema:
             suficiencia=Suficiencia(suficiente=True, motivo="caso já aberto, aguardando a coordenação"),
             protocolo=protocolo, aguardando_humano=True, termino="respondeu")
         return {"thread_id": thread_id, "saida": saida.model_dump(),
-                "aguardando_humano": True, "termino": "respondeu", "motivo": None}
+                "aguardando_humano": True, "termino": "respondeu", "motivo": None, "espera": True}
 
     # ----------------------------------------------------- a coordenação decide
     def decidir(self, protocolo: str, decisao: humano.DecisaoHumana) -> dict:
-        """Retoma o grafo pausado com a decisão. Repetir a MESMA chamada não
-        grava de novo: devolve a decisão já gravada (docs/humano.md §5)."""
+        """Retoma o grafo pausado com a decisão, dentro de um trace de retomada
+        (a aprovação humana: quem, quando e o quê, docs/model-card.md). Repetir
+        a MESMA chamada não grava de novo (docs/humano.md §5)."""
+        con = dados.conectar()
+        espera = con.execute("SELECT thread_id FROM aprovacoes WHERE protocolo = ?", (protocolo,)).fetchone()
+        con.close()
+        with telemetria.invocar_agente(
+                espera["thread_id"] if espera else "desconhecido", self.versao(), retomada=True,
+                **{"agente.aprovacao.protocolo": protocolo, "agente.aprovacao.pedida": decisao.decisao,
+                   "agente.aprovacao.por": decisao.por}) as span:
+            resultado = self._decidir(protocolo, decisao)
+            span.set_attributes({
+                "agente.termino": "vencido" if resultado["decisao"] == "vencido" else "respondeu",
+                "agente.aprovacao.decisao": resultado["decisao"],
+                "agente.aprovacao.ja_decidido": resultado["ja_decidido"],
+                "agente.aprovacao.conflito": resultado["conflito"]})
+            return resultado
+
+    def _decidir(self, protocolo: str, decisao: humano.DecisaoHumana) -> dict:
         gravada = humano.decisao_gravada(protocolo)
         if gravada:
             novo_status = humano.STATUS_DO_CASO[decisao.decisao]

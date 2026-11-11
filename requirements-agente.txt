@@ -15,3 +15,10 @@ uvicorn==0.54.0
 pydantic==2.14.3
 langgraph==1.2.12
 langgraph-checkpoint-sqlite==3.1.1
+
+# Parte 3 (observabilidade): o trace nas convenções GenAI do OpenTelemetry.
+# Versões exatas: o nome e os atributos dos spans fazem parte do contrato do
+# plano de observabilidade (docs/observabilidade.md).
+opentelemetry-api==1.45.2
+opentelemetry-sdk==1.45.2
+opentelemetry-semantic-conventions==0.66b2
