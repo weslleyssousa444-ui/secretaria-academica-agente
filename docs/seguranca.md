@@ -220,7 +220,7 @@ $ git log --all -G "sk-[A-Za-z0-9]{20,}" --oneline         (saída vazia)
 $ git log --all --oneline -- tes                           (saída vazia)
 ```
 
-Nenhuma chave da Groq (`gsk_`) nem da OpenAI (`sk-`) aparece em qualquer commit, e o arquivo `tes`, onde uma chave foi colada por engano durante o trabalho, **nunca foi commitado** (foi apagado antes). **A chave que esteve nesse arquivo apareceu em texto durante uma sessão de trabalho; ela deve ser revogada em <https://console.groq.com/keys>**, e não tenho como confirmar que o grupo o fez.
+Nenhuma chave da Groq (`gsk_`) nem da OpenAI (`sk-`) aparece em qualquer commit, e o arquivo `tes`, onde uma chave foi colada por engano durante o trabalho, **nunca foi commitado** (foi apagado antes). **A chave que esteve nesse arquivo apareceu em texto durante uma sessão de trabalho.** Recomendei revogá-la em <https://console.groq.com/keys>; **o usuário decidiu em 11/11/2026 não revogar**, e a chave **segue ativa**. É um risco residual assumido por essa decisão: quem tiver o texto da sessão pode gastar a cota do grupo, e a chave não tem outro escopo além da própria conta gratuita. Reavaliar antes de qualquer dado real.
 
 ## 7. O que esta análise não prova
 

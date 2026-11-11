@@ -49,7 +49,7 @@ python -m evals.atualizar_docs --a evals/resultados/2026-11-11-A-r1 --b evals/re
 
 - [ ] **Rotular 20 saídas do juiz à mão** (~30 min, uma pessoa): `evals/rotulagem/LEIA-ME.md`; depois `python -m evals.rotulagem medir`. Hoje os 75 rótulos do Ex.11 são de uma IA (L24).
 - [ ] **Erick aceita ou recusa** os três riscos propostos (ASI09, ASI04, ASI03 "o portal não existe") em `docs/seguranca.md` §4 e `docs/model-card.md` §9 (L15).
-- [ ] **Revogar a chave da Groq** que esteve num arquivo local (apagado, nunca commitado) e gerar outra (`docs/seguranca.md` §6).
+- [x] ~~Revogar a chave da Groq~~ que esteve num arquivo local (apagado, nunca commitado): **decisão do usuário em 11/11/2026, não revogar.** O risco que sobra (a chave apareceu em texto numa sessão de trabalho) está registrado em `docs/seguranca.md` §6; a decisão pode ser revista a qualquer momento.
 - [ ] Decidir o **prazo de guarda** do trace (proposta: 90 dias) e o acesso (L26).
 
 ## 4. Lacunas do *model card* que a Parte 3 deixou abertas

@@ -95,7 +95,7 @@ O que o sistema pode fazer, e **onde cada limite é aplicado** (ausência de fer
 
 | # | Limite | Onde é aplicado | Evidência |
 |---|---|---|---|
-| C1 | Chave do provedor fora do repositório (`.env` ignorado pelo git). Uma chave exposta num arquivo local foi **apagada antes de qualquer commit**; revogá-la no console é do usuário. | plataforma (git) | [`.gitignore:1`](../.gitignore#L1); [`docs/seguranca.md` §6](seguranca.md) |
+| C1 | Chave do provedor fora do repositório (`.env` ignorado pelo git). Uma chave exposta num arquivo local foi **apagada antes de qualquer commit**; **o usuário decidiu em 11/11/2026 não revogá-la**, então ela segue ativa (risco residual, `docs/seguranca.md` §6). | plataforma (git) | [`.gitignore:1`](../.gitignore#L1); [`docs/seguranca.md` §6](seguranca.md) |
 | C2 | Chave **própria** do sistema. | **não aplicado.** Agente, RAG, juiz e memória usam a mesma `OPENAI_API_KEY`. | `teste::test_L08_uma_unica_chave_para_todos_os_componentes`. **LACUNA L08** |
 | C3 | Privilégio mínimo no banco. | **só código.** O SQLite não tem usuário nem permissão; o limite é o SQL fixo de cada ferramenta (A3). | [`src/dados.py:67-71`](../src/dados.py#L67-L71). **LACUNA L12** |
 | C4 | Endpoint de decisão da coordenação protegido por token; **sem `COORDENACAO_TOKEN`, responde 503** e não funciona. | código (fail-closed) | [`src/api.py:147-152`](../src/api.py#L147-L152); testes em [`tests/test_api.py`](../tests/test_api.py) |

@@ -102,4 +102,4 @@ São o tipo de achado que mais importa para a honestidade da entrega: o texto af
 3. Reconstruir uma decisão real com `python -m evals.reconstruir` e **substituir** o exemplo de teste no *model card* §11.
 4. O grupo rotula as 20 saídas; `python -m evals.rotulagem medir`.
 5. Erick registra o aceite (ou a recusa) em `docs/seguranca.md` §4 e `docs/model-card.md` §9.
-6. Revogar a chave da Groq que esteve num arquivo local (apagado, nunca commitado) e gerar outra.
+6. ~~Revogar a chave da Groq~~ que esteve num arquivo local (apagado, nunca commitado): o usuário decidiu em 11/11/2026 **não revogar** (`docs/seguranca.md` §6).
