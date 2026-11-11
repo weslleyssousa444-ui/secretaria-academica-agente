@@ -26,15 +26,24 @@ _PRAZO = re.compile(r"\b(\d+)\s*(h|horas?|dias?|semanas?)\b", re.IGNORECASE)
 # (docs/rag.md §4): ela devolve artigo de ruído para uma pergunta sem resposta,
 # e só o modelo, lendo o texto, sabe dizer que o artigo não responde. O CÓDIGO
 # exige a marcação, confere o resto e a remove antes de mostrar ao aluno.
-_MARCACAO = re.compile(r"\s*\[SUFICIENTE:\s*(sim|n[aã]o)\]\s*$", re.IGNORECASE)
+#
+# O prompt pede a marcação NA ÚLTIMA LINHA, mas o código a aceita em QUALQUER
+# posição: o modelo real, sem uma frase da regra 7, escreveu `[SUFICIENTE: não]`
+# e continuou o texto depois dela, e um parser que exigia o fim reprovava boas
+# respostas e as trocava pelo molde de contingência (docs/prompts.md §5). A
+# marcação é um token de máquina; a posição dela não carrega significado.
+_MARCACAO = re.compile(r"[ \t]*\[SUFICIENTE:\s*(sim|n[aã]o)\][ \t]*", re.IGNORECASE)
 
 
 def separar_suficiencia(texto: str) -> tuple[str, bool | None]:
-    """(texto sem a marcação, declarada). `None` quando o texto não a traz."""
-    achou = _MARCACAO.search(texto)
-    if not achou:
+    """(texto sem a marcação, declarada). `None` quando o texto não a traz.
+    Com mais de uma marcação, vale a ÚLTIMA."""
+    achados = list(_MARCACAO.finditer(texto))
+    if not achados:
         return texto.strip(), None
-    return texto[:achou.start()].rstrip(), achou.group(1).lower() == "sim"
+    limpo = _MARCACAO.sub(" ", texto)
+    limpo = re.sub(r"[ \t]*\n[ \t]*\n(?:[ \t]*\n)+", "\n\n", limpo).strip()
+    return limpo, achados[-1].group(1).lower() == "sim"
 
 
 def consultou_regimento_com_artigo(passos: list[dict]) -> bool:
@@ -114,5 +123,8 @@ def resposta_de_contingencia(passos: list[dict]) -> str:
         if passo["ferramenta"] == "escalar_para_humano":
             return (f"Seu caso foi encaminhado à secretaria. Protocolo: "
                     f"{resultado['protocolo']}. Prazo de resposta: {PRAZO_PROMETIDO_HORAS}h.")
+    if consultou_regimento_com_artigo(passos):
+        return ("Não consegui responder sua dúvida com segurança. Se quiser, posso "
+                "encaminhar o caso à secretaria.")
     return ("Não consegui concluir sua solicitação por aqui. Informe seu RA e o "
             "que precisa, ou procure a secretaria.")

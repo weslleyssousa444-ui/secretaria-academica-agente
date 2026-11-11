@@ -1,0 +1,62 @@
+{
+  "modelo": "qwen/qwen3.8-27b",
+  "frase_removida": "Se a ferramenta não devolver\n   artigo que trate do assunto, diga que o Regimento não trata disso e\n   ofereça encaminhar o caso à secretaria; não responda com conhecimento\n   próprio.",
+  "resultados": [
+    {
+      "variante": "com_a_frase",
+      "pergunta": "s01-custo-da-segunda-via",
+      "resposta": "O Regimento Acadêmico não informa valor de custo para a emissão da segunda via do histórico escolar. O que ele trata é a condição para a emissão:\n\n- **Art. 4º**: a segunda via do histórico escolar exige quitação financeira total do aluno, apurada na data do pedido. A existência de qualquer mensalidade em aberto impede a emissão até a regularização ou a confirmação do pagamento pela secretaria.\n\nOu seja, o Regimento não trata de preço/taxa, apenas da exigência de estar em dia com as mensalidades. Se você quiser, posso encaminhar o caso à secretaria para que ela informe se há algum custo envolvido.",
+      "decisao": "sem_acao",
+      "suficiente": false,
+      "ferramentas": [
+        [
+          "consultar_regimento",
+          3
+        ]
+      ],
+      "termino": "respondeu"
+    },
+    {
+      "variante": "com_a_frase",
+      "pergunta": "s02-prorrogacao",
+      "resposta": "O Regimento não trata de \"prorrogação automática de trancamento por mais um semestre\". Os artigos que a consulta devolveu falam de outros pontos:\n\n- **Art. 7º §1º**: o trancamento não pode ser parcial (não existe trancamento de disciplina isolada).\n- **Art. 8º §1º**: para aluno bolsista integral, a bolsa é suspensa automaticamente ao deferir o trancamento, mas a retomada depende de nova análise.\n- **Art. 10**: os casos omissos são decididos pela coordenação acadêmica, vedada a decisão automatizada em qualquer matéria não expressamente autorizada.\n\nOu seja, o Regimento não prevê prorrogação automática de trancamento; e, pelo Art. 10, qualquer caso não expressamente previsto é decidido pela coordenação acadêmica, sem decisão automatizada. Se quiser, posso encaminhar seu caso à secretaria para análise.",
+      "decisao": "sem_acao",
+      "suficiente": false,
+      "ferramentas": [
+        [
+          "consultar_regimento",
+          3
+        ]
+      ],
+      "termino": "respondeu"
+    },
+    {
+      "variante": "sem_a_frase",
+      "pergunta": "s01-custo-da-segunda-via",
+      "resposta": "O Regimento Acadêmico não informa valor de custo para a emissão da segunda via do histórico escolar. O que ele trata é a condição para a emissão:\n\n- **Art. 4º**: a segunda via do histórico exige quitação financeira total do aluno, apurada na data do pedido. Qualquer mensalidade em aberto impede a emissão até a regularização ou a confirmação do pagamento pela secretaria.\n\nComo o Regimento não menciona taxa ou preço para o documento, não posso informar um valor. Se você quiser, posso encaminhar o caso à secretaria para que ela confirme se há algum custo envolvido.",
+      "decisao": "sem_acao",
+      "suficiente": false,
+      "ferramentas": [
+        [
+          "consultar_regimento",
+          3
+        ]
+      ],
+      "termino": "respondeu"
+    },
+    {
+      "variante": "sem_a_frase",
+      "pergunta": "s02-prorrogacao",
+      "resposta": "Não consegui concluir sua solicitação por aqui. Informe seu RA e o que precisa, ou procure a secretaria.",
+      "decisao": "responder_regimento",
+      "suficiente": false,
+      "ferramentas": [
+        [
+          "consultar_regimento",
+          3
+        ]
+      ],
+      "termino": "respondeu"
+    }
+  ]
+}

@@ -10,7 +10,7 @@
 #
 # O QUE ESTE EXERCÍCIO FECHA que o src/agente.py não fechava: o trancamento
 # hoje (Ex.6) termina com `HUMANO` e a conversa acaba ali — não há como a
-# coordenação retomar depois (docs/memoria.md §1.1 já registrava isso como
+# coordenação retomar depois (docs/memoria-ex8.md §1.1 já registrava isso como
 # lacuna). Aqui, `interrupt()` + checkpointer em arquivo fecham o laço:
 # o grafo pausa esperando a decisão da coordenação, e retoma de onde parou,
 # em outro processo, outro dia.

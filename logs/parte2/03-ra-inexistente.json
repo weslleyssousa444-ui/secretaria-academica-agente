@@ -1,0 +1,155 @@
+{
+  "caso": "03-ra-inexistente",
+  "descricao": "RA que não existe: o modelo confirma uma vez e escala",
+  "executado_em": "2026-11-11T14:43:18Z",
+  "commit": "cbb82d6",
+  "modelo": "qwen/qwen3.8-27b",
+  "prompt": {
+    "arquivo": "src/prompts/triagem-v2.txt",
+    "sha256": "6df71c6cfcaddca0"
+  },
+  "parametros": {
+    "temperature": 0,
+    "recursion_limit": 60,
+    "orcamento": {
+      "max_passos": 8,
+      "max_tokens": 20000
+    }
+  },
+  "duracao_s": 66.9,
+  "turnos": [
+    {
+      "aluno": "Preciso de uma declaração de matrícula.",
+      "agente": "Claro, posso ajudar com a declaração de matrícula. Para eu consultar seus dados, preciso que você informe seu RA (registro acadêmico).",
+      "saida": {
+        "resultado": "Claro, posso ajudar com a declaração de matrícula. Para eu consultar seus dados, preciso que você informe seu RA (registro acadêmico).",
+        "decisao": "sem_acao",
+        "fonte": [],
+        "suficiencia": {
+          "suficiente": false,
+          "motivo": "nenhuma ação tomada: falta informação do aluno, ou fora do escopo"
+        },
+        "protocolo": null,
+        "aguardando_humano": false,
+        "termino": "respondeu"
+      },
+      "termino": "respondeu",
+      "aguardando_humano": false
+    },
+    {
+      "aluno": "20240000",
+      "agente": "Não encontrei o RA 20240000 no sistema. Você poderia confirmar o número do seu RA?",
+      "saida": {
+        "resultado": "Não encontrei o RA 20240000 no sistema. Você poderia confirmar o número do seu RA?",
+        "decisao": "sem_acao",
+        "fonte": [],
+        "suficiencia": {
+          "suficiente": false,
+          "motivo": "nenhuma ação tomada: falta informação do aluno, ou fora do escopo"
+        },
+        "protocolo": null,
+        "aguardando_humano": false,
+        "termino": "respondeu"
+      },
+      "termino": "respondeu",
+      "aguardando_humano": false
+    },
+    {
+      "aluno": "Tenho certeza, é esse mesmo: 20240000.",
+      "agente": "Como o RA 20240000 não foi localizado no sistema mesmo após a confirmação, seu caso foi encaminhado para a secretaria humana.\n\n- Protocolo: CASO-3001\n- Prazo de retorno: 48h",
+      "saida": {
+        "resultado": "Como o RA 20240000 não foi localizado no sistema mesmo após a confirmação, seu caso foi encaminhado para a secretaria humana.\n\n- Protocolo: CASO-3001\n- Prazo de retorno: 48h",
+        "decisao": "escalar_ra_nao_encontrado",
+        "fonte": [
+          {
+            "tipo": "ferramenta",
+            "referencia": "escalar_para_humano:CASO-3001"
+          }
+        ],
+        "suficiencia": {
+          "suficiente": true,
+          "motivo": "decisão tomada com o retorno de uma ferramenta"
+        },
+        "protocolo": "CASO-3001",
+        "aguardando_humano": false,
+        "termino": "respondeu"
+      },
+      "termino": "respondeu",
+      "aguardando_humano": false
+    }
+  ],
+  "trajetoria": [
+    {
+      "ferramenta": "buscar_aluno",
+      "argumentos": {
+        "ra": "20240000"
+      },
+      "resultado": {
+        "erro": "RA não encontrado no sistema acadêmico",
+        "recebido": "20240000",
+        "sugestao": "peça ao aluno para confirmar o RA uma vez; se não encontrar de novo, use escalar_para_humano com motivo 'RA não encontrado'"
+      },
+      "erro": "RA não encontrado no sistema acadêmico"
+    },
+    {
+      "ferramenta": "escalar_para_humano",
+      "argumentos": {
+        "chave": "20240000:declaracao_matricula:ra_nao_encontrado",
+        "motivo": "RA não encontrado",
+        "ra": "20240000",
+        "tipo_pedido": "declaracao_matricula"
+      },
+      "resultado": {
+        "protocolo": "CASO-3001",
+        "ra": "20240000",
+        "tipo_pedido": "declaracao_matricula",
+        "motivo": "RA não encontrado",
+        "prazo": "48h",
+        "ja_existia": false
+      },
+      "erro": null
+    }
+  ],
+  "trilha_de_nos": [
+    "entrada",
+    "classificar_pedido:outro",
+    "ler_memoria:0",
+    "rotear",
+    "agente",
+    "garantir_trancamento:ok",
+    "validar:ok",
+    "montar_saida",
+    "escrever_memoria:nada",
+    "entrada",
+    "classificar_pedido:outro",
+    "ler_memoria:0",
+    "rotear",
+    "agente",
+    "ferramentas",
+    "agente",
+    "garantir_trancamento:ok",
+    "validar:ok",
+    "montar_saida",
+    "escrever_memoria:nada",
+    "entrada",
+    "classificar_pedido:outro",
+    "ler_memoria:0",
+    "rotear",
+    "agente",
+    "ferramentas",
+    "agente",
+    "garantir_trancamento:ok",
+    "validar:ok",
+    "montar_saida",
+    "escrever_memoria:nada"
+  ],
+  "tokens_gastos": 9780,
+  "chamadas_ao_modelo": 5,
+  "contagens": {
+    "documentos_emitidos": 1,
+    "casos_pendentes": 1,
+    "aprovacoes": 0,
+    "decisoes_humanas": 0
+  },
+  "aprovacao_humana": null
+}

@@ -1,0 +1,42 @@
+{
+  "modelo": "qwen/qwen3.8-27b",
+  "frase_removida": "Se a ferramenta não devolver\n   artigo que trate do assunto, diga que o Regimento não trata disso e\n   ofereça encaminhar o caso à secretaria; não responda com conhecimento\n   próprio.",
+  "resultados": [
+    {
+      "variante": "com_a_frase",
+      "pergunta": "a-mensalidade",
+      "resposta": "Não tenho como informar valores de mensalidade — isso não faz parte das minhas funções de secretaria acadêmica (documentos e trancamento).\n\nPara valores e condições de pagamento, o canal certo é a secretaria financeira da instituição. Posso te ajudar com:\n\n- Declaração de matrícula\n- Segunda via de histórico\n- Trancamento de matrícula\n- Dúvidas sobre regras do Regimento Acadêmico\n\nPosso ajudar com algum desses?",
+      "decisao": "sem_acao",
+      "suficiente": false,
+      "ferramentas": [],
+      "termino": "respondeu"
+    },
+    {
+      "variante": "com_a_frase",
+      "pergunta": "b-tempo",
+      "resposta": "Não consigo ajudar com previsão do tempo — meu atendimento é voltado à secretaria acadêmica (declaração de matrícula, segunda via de histórico, trancamento e dúvidas sobre o Regimento Acadêmico).\n\nSe quiser, posso te ajudar com algum desses assuntos. É só me dizer o que você precisa e, se for o caso, informar seu RA.",
+      "decisao": "sem_acao",
+      "suficiente": false,
+      "ferramentas": [],
+      "termino": "respondeu"
+    },
+    {
+      "variante": "sem_a_frase",
+      "pergunta": "a-mensalidade",
+      "resposta": "Não tenho como informar valores de mensalidade — isso não faz parte das minhas funções de secretaria acadêmica (documentos e trancamento).\n\nPara valores e condições de pagamento, o canal certo é a secretaria financeira da instituição. Posso te ajudar com:\n\n- Declaração de matrícula\n- Segunda via de histórico\n- Trancamento de matrícula\n- Dúvidas sobre regras do Regimento Acadêmico\n\nPosso ajudar com algum desses?",
+      "decisao": "sem_acao",
+      "suficiente": false,
+      "ferramentas": [],
+      "termino": "respondeu"
+    },
+    {
+      "variante": "sem_a_frase",
+      "pergunta": "b-tempo",
+      "resposta": "Não consigo ajudar com previsão do tempo — meu atendimento é voltado à secretaria acadêmica (declaração de matrícula, segunda via de histórico, trancamento e dúvidas sobre o Regimento Acadêmico).\n\nSe quiser, posso te ajudar com algum desses assuntos. É só me dizer o que você precisa e, se for o caso, informar seu RA.",
+      "decisao": "sem_acao",
+      "suficiente": false,
+      "ferramentas": [],
+      "termino": "respondeu"
+    }
+  ]
+}

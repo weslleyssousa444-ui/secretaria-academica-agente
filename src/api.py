@@ -40,7 +40,7 @@ from pydantic import BaseModel, Field
 import agente
 import dados
 from triagem import humano
-from triagem.sistema import Sistema
+from triagem.sistema import ConversaEncerrada, Sistema
 
 PASTA_LOGS = Path(os.environ["LOGS_DIR"]) if os.environ.get("LOGS_DIR") else None
 
@@ -124,7 +124,10 @@ def mensagens(corpo: Mensagem, x_aluno_ra: str | None = Header(default=None)) ->
                 raise HTTPException(404, "conversa não encontrada; abra uma nova")
             if anterior.get("termino") not in (None, "respondeu"):
                 raise HTTPException(409, "conversa encerrada; abra uma nova")
-        resultado = sistema.conversar(conversa_id, corpo.mensagem, ra_autenticado)
+        try:
+            resultado = sistema.conversar(conversa_id, corpo.mensagem, ra_autenticado)
+        except ConversaEncerrada as e:
+            raise HTTPException(409, "conversa encerrada; abra uma nova") from e
         _gravar_registro(conversa_id, resultado, sistema.estado(conversa_id))
 
     saida = resultado["saida"]

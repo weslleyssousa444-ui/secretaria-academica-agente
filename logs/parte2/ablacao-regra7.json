@@ -1,0 +1,114 @@
+{
+  "modelo": "qwen/qwen3.8-27b",
+  "frase_removida": "Se a ferramenta não devolver\n   artigo que trate do assunto, diga que o Regimento não trata disso e\n   ofereça encaminhar o caso à secretaria; não responda com conhecimento\n   próprio.",
+  "resultados": [
+    {
+      "variante": "com_a_frase",
+      "pergunta": "s02-prorrogacao",
+      "resposta": "O Regimento não trata de \"prorrogação automática de trancamento por mais um semestre\". Os artigos que a consulta devolveu falam de outros pontos:\n\n- **Art. 7º §1º**: o trancamento não pode ser parcial (não existe trancamento de disciplina isolada).\n- **Art. 8º §1º**: para aluno bolsista integral, a bolsa é suspensa automaticamente ao deferir o trancamento, mas a retomada depende de nova análise.\n- **Art. 10**: os casos omissos são decididos pela coordenação acadêmica, sendo vedada decisão automatizada em matéria não expressamente autorizada.\n\nOu seja, o Regimento não prevê prorrogação automática de trancamento; e, pelo Art. 10, qualquer caso não expressamente previsto é decidido pela coordenação acadêmica, não de forma automatizada. Se quiser, posso encaminhar seu caso à secretaria para análise.",
+      "decisao": "sem_acao",
+      "suficiente": false,
+      "ferramentas": [
+        [
+          "consultar_regimento",
+          3
+        ]
+      ],
+      "termino": "respondeu",
+      "repeticao": 1,
+      "validador": [
+        "validar:ok"
+      ]
+    },
+    {
+      "variante": "com_a_frase",
+      "pergunta": "s02-prorrogacao",
+      "resposta": "O Regimento não trata de \"prorrogação automática de trancamento por mais um semestre\". Os artigos que a consulta devolveu falam de outros pontos:\n\n- **Art. 7º §1º**: o trancamento não pode ser parcial (não existe trancamento de disciplina isolada).\n- **Art. 8º §1º**: para aluno bolsista integral, a bolsa é suspensa automaticamente ao deferir o trancamento, mas a retomada depende de nova análise.\n- **Art. 10**: os casos omissos são decididos pela coordenação acadêmica, sendo vedada decisão automatizada em matéria não expressamente autorizada.\n\nOu seja, o Regimento não prevê prorrogação automática de trancamento; e, pelo Art. 10, qualquer caso não expressamente previsto é decidido pela coordenação acadêmica, não de forma automatizada. Se quiser, posso encaminhar seu caso à secretaria para análise.",
+      "decisao": "sem_acao",
+      "suficiente": false,
+      "ferramentas": [
+        [
+          "consultar_regimento",
+          3
+        ]
+      ],
+      "termino": "respondeu",
+      "repeticao": 2,
+      "validador": [
+        "validar:ok"
+      ]
+    },
+    {
+      "variante": "com_a_frase",
+      "pergunta": "s02-prorrogacao",
+      "resposta": "O Regimento não trata de \"prorrogação automática de trancamento por mais um semestre\". Os artigos que a consulta devolveu falam de outros pontos:\n\n- **Art. 7º §1º**: o trancamento não pode ser parcial (não existe trancamento de disciplina isolada).\n- **Art. 8º §1º**: para aluno bolsista integral, a bolsa é suspensa automaticamente ao deferir o trancamento, mas a retomada depende de nova análise.\n- **Art. 10**: os casos omissos são decididos pela coordenação acadêmica, sendo vedada decisão automatizada em matéria não expressamente autorizada.\n\nOu seja, o Regimento não prevê prorrogação automática de trancamento; e, pelo Art. 10, qualquer caso não expressamente previsto é decidido pela coordenação acadêmica, não de forma automatizada. Se quiser, posso encaminhar seu caso à secretaria para análise.",
+      "decisao": "sem_acao",
+      "suficiente": false,
+      "ferramentas": [
+        [
+          "consultar_regimento",
+          3
+        ]
+      ],
+      "termino": "respondeu",
+      "repeticao": 3,
+      "validador": [
+        "validar:ok"
+      ]
+    },
+    {
+      "variante": "sem_a_frase",
+      "pergunta": "s02-prorrogacao",
+      "resposta": "O Regimento não prevê prorrogação automática de trancamento. Pelo que os artigos devolvidos mostram:\n\n- O trancamento de matrícula não pode ser parcial (Art. 7º §1º).\n- A retomada de bolsa, quando aplicável, depende de nova análise e não é automática (Art. 8º §1º).\n- Os casos omissos são decididos pela coordenação acadêmica, sendo vedada a decisão automatizada em qualquer matéria não expressamente autorizada (Art. 10).\n\nOu seja, não há previsão de prorrogação automática por mais um semestre; a decisão fica a cargo da coordenação acadêmica.\n\nO Regimento trata do trancamento e das exceções, mas não disciplina expressamente a prorrogação automática do trancamento. Posso encaminhar seu caso à secretaria para que a coordenação avalie, se você quiser.",
+      "decisao": "sem_acao",
+      "suficiente": false,
+      "ferramentas": [
+        [
+          "consultar_regimento",
+          3
+        ]
+      ],
+      "termino": "respondeu",
+      "repeticao": 1,
+      "validador": [
+        "validar:ok"
+      ]
+    },
+    {
+      "variante": "sem_a_frase",
+      "pergunta": "s02-prorrogacao",
+      "resposta": "O Regimento não prevê prorrogação automática de trancamento. Pelo que os artigos devolvidos mostram:\n\n- O trancamento de matrícula não pode ser parcial (Art. 7º §1º).\n- A retomada de bolsa, quando aplicável, depende de nova análise e não é automática (Art. 8º §1º).\n- Os casos omissos são decididos pela coordenação acadêmica, sendo vedada a decisão automatizada em qualquer matéria não expressamente autorizada (Art. 10).\n\nOu seja, não há previsão de prorrogação automática por mais um semestre; a decisão fica a cargo da coordenação acadêmica.\n\nO Regimento trata do trancamento e das exceções, mas não disciplina expressamente a prorrogação automática do trancamento. Posso encaminhar seu caso à secretaria para que a coordenação avalie, se você quiser.",
+      "decisao": "sem_acao",
+      "suficiente": false,
+      "ferramentas": [
+        [
+          "consultar_regimento",
+          3
+        ]
+      ],
+      "termino": "respondeu",
+      "repeticao": 2,
+      "validador": [
+        "validar:ok"
+      ]
+    },
+    {
+      "variante": "sem_a_frase",
+      "pergunta": "s02-prorrogacao",
+      "resposta": "O Regimento não prevê prorrogação automática de trancamento. Pelo que os artigos devolvidos mostram:\n\n- O trancamento de matrícula não pode ser parcial (Art. 7º §1º).\n- A retomada de bolsa, quando aplicável, depende de nova análise e não é automática (Art. 8º §1º).\n- Os casos omissos são decididos pela coordenação acadêmica, sendo vedada a decisão automatizada em qualquer matéria não expressamente autorizada (Art. 10).\n\nOu seja, não há previsão de prorrogação automática por mais um semestre; a decisão fica a cargo da coordenação acadêmica.\n\nO Regimento trata do trancamento e das exceções, mas não disciplina expressamente a prorrogação automática do trancamento. Posso encaminhar seu caso à secretaria para que a coordenação avalie, se você quiser.",
+      "decisao": "sem_acao",
+      "suficiente": false,
+      "ferramentas": [
+        [
+          "consultar_regimento",
+          3
+        ]
+      ],
+      "termino": "respondeu",
+      "repeticao": 3,
+      "validador": [
+        "validar:ok"
+      ]
+    }
+  ]
+}

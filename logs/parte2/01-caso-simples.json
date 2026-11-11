@@ -1,0 +1,130 @@
+{
+  "caso": "01-caso-simples",
+  "descricao": "o caminho feliz existe",
+  "executado_em": "2026-11-11T14:40:32Z",
+  "commit": "cbb82d6",
+  "modelo": "qwen/qwen3.8-27b",
+  "prompt": {
+    "arquivo": "src/prompts/triagem-v2.txt",
+    "sha256": "6df71c6cfcaddca0"
+  },
+  "parametros": {
+    "temperature": 0,
+    "recursion_limit": 60,
+    "orcamento": {
+      "max_passos": 8,
+      "max_tokens": 20000
+    }
+  },
+  "duracao_s": 5.4,
+  "turnos": [
+    {
+      "aluno": "Oi, preciso de uma declaração de matrícula pra levar no estágio.",
+      "agente": "Claro! Para eu emitir a declaração de matrícula, preciso do seu RA (registro acadêmico). Pode me passar?",
+      "saida": {
+        "resultado": "Claro! Para eu emitir a declaração de matrícula, preciso do seu RA (registro acadêmico). Pode me passar?",
+        "decisao": "sem_acao",
+        "fonte": [],
+        "suficiencia": {
+          "suficiente": false,
+          "motivo": "nenhuma ação tomada: falta informação do aluno, ou fora do escopo"
+        },
+        "protocolo": null,
+        "aguardando_humano": false,
+        "termino": "respondeu"
+      },
+      "termino": "respondeu",
+      "aguardando_humano": false
+    },
+    {
+      "aluno": "20231045",
+      "agente": "Pronto! A declaração de matrícula foi emitida com sucesso.\n\n**Protocolo:** DOC-1002\n\n**Declaração de Matrícula**\n- Aluno: Weslley Sousa\n- RA: 20231045\n- Curso: ADS\n- Situação: matrícula ativa\n- Data de emissão: 2026-11-11",
+      "saida": {
+        "resultado": "Pronto! A declaração de matrícula foi emitida com sucesso.\n\n**Protocolo:** DOC-1002\n\n**Declaração de Matrícula**\n- Aluno: Weslley Sousa\n- RA: 20231045\n- Curso: ADS\n- Situação: matrícula ativa\n- Data de emissão: 2026-11-11",
+        "decisao": "emitir_declaracao",
+        "fonte": [
+          {
+            "tipo": "ferramenta",
+            "referencia": "buscar_aluno:20231045"
+          },
+          {
+            "tipo": "ferramenta",
+            "referencia": "emitir_documento:DOC-1002"
+          }
+        ],
+        "suficiencia": {
+          "suficiente": true,
+          "motivo": "decisão tomada com o retorno de uma ferramenta"
+        },
+        "protocolo": "DOC-1002",
+        "aguardando_humano": false,
+        "termino": "respondeu"
+      },
+      "termino": "respondeu",
+      "aguardando_humano": false
+    }
+  ],
+  "trajetoria": [
+    {
+      "ferramenta": "buscar_aluno",
+      "argumentos": {
+        "ra": "20231045"
+      },
+      "resultado": {
+        "ra": "20231045",
+        "nome": "Weslley Sousa",
+        "curso": "ADS",
+        "situacao_matricula": "ativa"
+      },
+      "erro": null
+    },
+    {
+      "ferramenta": "emitir_documento",
+      "argumentos": {
+        "ra": "20231045",
+        "tipo_documento": "declaracao_matricula"
+      },
+      "resultado": {
+        "protocolo": "DOC-1002",
+        "ra": "20231045",
+        "tipo_documento": "declaracao_matricula",
+        "data_emissao": "2026-11-11",
+        "ja_existia": false
+      },
+      "erro": null
+    }
+  ],
+  "trilha_de_nos": [
+    "entrada",
+    "classificar_pedido:outro",
+    "ler_memoria:0",
+    "rotear",
+    "agente",
+    "garantir_trancamento:ok",
+    "validar:ok",
+    "montar_saida",
+    "escrever_memoria:nada",
+    "entrada",
+    "classificar_pedido:outro",
+    "ler_memoria:0",
+    "rotear",
+    "agente",
+    "ferramentas",
+    "agente",
+    "ferramentas",
+    "agente",
+    "garantir_trancamento:ok",
+    "validar:ok",
+    "montar_saida",
+    "escrever_memoria:nada"
+  ],
+  "tokens_gastos": 7606,
+  "chamadas_ao_modelo": 4,
+  "contagens": {
+    "documentos_emitidos": 2,
+    "casos_pendentes": 0,
+    "aprovacoes": 0,
+    "decisoes_humanas": 0
+  },
+  "aprovacao_humana": null
+}

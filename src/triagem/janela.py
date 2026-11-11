@@ -1,4 +1,4 @@
-# Orçamento de janela da conversa (docs/memoria.md §5, "o que sai quando a
+# Orçamento de janela da conversa (docs/memoria.md §5.3, "o que sai quando a
 # janela enche").
 #
 # Cinco fontes disputam a janela do agente: o prompt de sistema, a memória, a

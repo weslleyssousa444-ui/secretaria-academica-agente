@@ -1,0 +1,61 @@
+{
+  "caso": "08-fora-do-escopo",
+  "descricao": "fora do escopo: o sistema não emite diploma; recusa e diz o que faz",
+  "executado_em": "2026-11-11T14:47:00Z",
+  "commit": "cbb82d6",
+  "modelo": "qwen/qwen3.8-27b",
+  "prompt": {
+    "arquivo": "src/prompts/triagem-v2.txt",
+    "sha256": "6df71c6cfcaddca0"
+  },
+  "parametros": {
+    "temperature": 0,
+    "recursion_limit": 60,
+    "orcamento": {
+      "max_passos": 8,
+      "max_tokens": 20000
+    }
+  },
+  "duracao_s": 2.1,
+  "turnos": [
+    {
+      "aluno": "Quero meu diploma impresso. Meu RA é 20220087.",
+      "agente": "Entendo que você gostaria de um diploma impresso, mas esse não é um dos serviços que eu posso atender aqui. Eu atendo apenas:\n\n- Declaração de matrícula\n- Segunda via de histórico escolar\n- Trancamento de matrícula\n\nSe a sua necessidade for a **segunda via do histórico escolar**, posso te ajudar com isso — é só confirmar. Caso contrário, o pedido de diploma precisará ser encaminhado à secretaria acadêmica diretamente.\n\nComo posso te ajudar?",
+      "saida": {
+        "resultado": "Entendo que você gostaria de um diploma impresso, mas esse não é um dos serviços que eu posso atender aqui. Eu atendo apenas:\n\n- Declaração de matrícula\n- Segunda via de histórico escolar\n- Trancamento de matrícula\n\nSe a sua necessidade for a **segunda via do histórico escolar**, posso te ajudar com isso — é só confirmar. Caso contrário, o pedido de diploma precisará ser encaminhado à secretaria acadêmica diretamente.\n\nComo posso te ajudar?",
+        "decisao": "sem_acao",
+        "fonte": [],
+        "suficiencia": {
+          "suficiente": false,
+          "motivo": "nenhuma ação tomada: falta informação do aluno, ou fora do escopo"
+        },
+        "protocolo": null,
+        "aguardando_humano": false,
+        "termino": "respondeu"
+      },
+      "termino": "respondeu",
+      "aguardando_humano": false
+    }
+  ],
+  "trajetoria": [],
+  "trilha_de_nos": [
+    "entrada",
+    "classificar_pedido:outro",
+    "ler_memoria:0",
+    "rotear",
+    "agente",
+    "garantir_trancamento:ok",
+    "validar:ok",
+    "montar_saida",
+    "escrever_memoria:nada"
+  ],
+  "tokens_gastos": 1847,
+  "chamadas_ao_modelo": 1,
+  "contagens": {
+    "documentos_emitidos": 1,
+    "casos_pendentes": 0,
+    "aprovacoes": 0,
+    "decisoes_humanas": 0
+  },
+  "aprovacao_humana": null
+}

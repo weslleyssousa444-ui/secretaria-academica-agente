@@ -1,0 +1,88 @@
+{
+  "caso": "05-fora-do-corpus",
+  "descricao": "dúvida de domínio que o Regimento não responde: recusa e oferece encaminhar",
+  "executado_em": "2026-11-11T14:44:55Z",
+  "commit": "cbb82d6",
+  "modelo": "qwen/qwen3.8-27b",
+  "prompt": {
+    "arquivo": "src/prompts/triagem-v2.txt",
+    "sha256": "6df71c6cfcaddca0"
+  },
+  "parametros": {
+    "temperature": 0,
+    "recursion_limit": 60,
+    "orcamento": {
+      "max_passos": 8,
+      "max_tokens": 20000
+    }
+  },
+  "duracao_s": 17.9,
+  "turnos": [
+    {
+      "aluno": "Quanto custa emitir a segunda via do histórico escolar?",
+      "agente": "O Regimento Acadêmico não informa valor de taxa para a segunda via do histórico escolar. O que ele trata é a condição de emissão:\n\n- **Art. 4º**: a segunda via do histórico exige quitação financeira total do aluno, apurada na data do pedido. Qualquer mensalidade em aberto impede a emissão até a regularização ou a confirmação do pagamento pela secretaria.\n\nOu seja, o Regimento não trata de custo/taxa — apenas da exigência de estar em dia com as mensalidades. Se você quiser, posso encaminhar o caso à secretaria para que ela informe se há cobrança de taxa.",
+      "saida": {
+        "resultado": "O Regimento Acadêmico não informa valor de taxa para a segunda via do histórico escolar. O que ele trata é a condição de emissão:\n\n- **Art. 4º**: a segunda via do histórico exige quitação financeira total do aluno, apurada na data do pedido. Qualquer mensalidade em aberto impede a emissão até a regularização ou a confirmação do pagamento pela secretaria.\n\nOu seja, o Regimento não trata de custo/taxa — apenas da exigência de estar em dia com as mensalidades. Se você quiser, posso encaminhar o caso à secretaria para que ela informe se há cobrança de taxa.",
+        "decisao": "sem_acao",
+        "fonte": [],
+        "suficiencia": {
+          "suficiente": false,
+          "motivo": "o agente declarou que o Regimento não responde à pergunta"
+        },
+        "protocolo": null,
+        "aguardando_humano": false,
+        "termino": "respondeu"
+      },
+      "termino": "respondeu",
+      "aguardando_humano": false
+    }
+  ],
+  "trajetoria": [
+    {
+      "ferramenta": "consultar_regimento",
+      "argumentos": {
+        "pergunta": "Quanto custa emitir a segunda via do histórico escolar? Existe taxa?"
+      },
+      "resultado": {
+        "trechos": [
+          {
+            "id": "Art. 4º",
+            "texto": "[Capítulo II — Declaração de Matrícula e Segunda Via]\nArt. 4º A segunda via do histórico escolar exige quitação financeira total do aluno, apurada na data do pedido. A existência de qualquer mensalidade em aberto impede a emissão até a regularização ou a confirmação do pagamento pela secretaria."
+          },
+          {
+            "id": "Art. 3º",
+            "texto": "[Capítulo II — Declaração de Matrícula e Segunda Via]\nArt. 3º A declaração de matrícula é emitida a qualquer aluno com situação de matrícula ativa, independentemente de pendência financeira, e tem validade de 90 dias a partir da emissão."
+          },
+          {
+            "id": "Art. 5º",
+            "texto": "[Capítulo II — Declaração de Matrícula e Segunda Via]\nArt. 5º Não há segunda via de diploma por este canal. Pedidos de segunda via de diploma seguem processo próprio, junto à secretaria de registros acadêmicos, e não são tratados por este Regimento."
+          }
+        ],
+        "total": 3
+      },
+      "erro": null
+    }
+  ],
+  "trilha_de_nos": [
+    "entrada",
+    "classificar_pedido:outro",
+    "ler_memoria:0",
+    "rotear",
+    "agente",
+    "ferramentas",
+    "agente",
+    "garantir_trancamento:ok",
+    "validar:ok",
+    "montar_saida",
+    "escrever_memoria:nada"
+  ],
+  "tokens_gastos": 3997,
+  "chamadas_ao_modelo": 2,
+  "contagens": {
+    "documentos_emitidos": 1,
+    "casos_pendentes": 0,
+    "aprovacoes": 0,
+    "decisoes_humanas": 0
+  },
+  "aprovacao_humana": null
+}

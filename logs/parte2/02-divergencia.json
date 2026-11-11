@@ -1,0 +1,177 @@
+{
+  "caso": "02-divergencia",
+  "descricao": "o sistema mostra pendência e o aluno diz que pagou: não emite, escala",
+  "executado_em": "2026-11-11T14:41:56Z",
+  "commit": "cbb82d6",
+  "modelo": "qwen/qwen3.8-27b",
+  "prompt": {
+    "arquivo": "src/prompts/triagem-v2.txt",
+    "sha256": "6df71c6cfcaddca0"
+  },
+  "parametros": {
+    "temperature": 0,
+    "recursion_limit": 60,
+    "orcamento": {
+      "max_passos": 8,
+      "max_tokens": 20000
+    }
+  },
+  "duracao_s": 69.1,
+  "turnos": [
+    {
+      "aluno": "Já paguei tudo, preciso da segunda via do meu histórico.",
+      "agente": "Entendo. Para eu verificar sua situação e emitir a segunda via do histórico, preciso do seu RA (registro acadêmico). Pode me informar?",
+      "saida": {
+        "resultado": "Entendo. Para eu verificar sua situação e emitir a segunda via do histórico, preciso do seu RA (registro acadêmico). Pode me informar?",
+        "decisao": "sem_acao",
+        "fonte": [],
+        "suficiencia": {
+          "suficiente": false,
+          "motivo": "nenhuma ação tomada: falta informação do aluno, ou fora do escopo"
+        },
+        "protocolo": null,
+        "aguardando_humano": false,
+        "termino": "respondeu"
+      },
+      "termino": "respondeu",
+      "aguardando_humano": false
+    },
+    {
+      "aluno": "20230198",
+      "agente": "Marina, verifiquei seus dados: sua matrícula está ativa, mas o sistema mostra **2 mensalidades em aberto, totalizando R$ 890,00**.\n\nComo você afirma que já pagou tudo, há uma divergência entre o que você informa e o que o sistema registra. Você tem um comprovante de pagamento em mãos? Se sim, me informe os detalhes (data, valor, forma de pagamento) para que eu possa encaminhar o caso corretamente.",
+      "saida": {
+        "resultado": "Marina, verifiquei seus dados: sua matrícula está ativa, mas o sistema mostra **2 mensalidades em aberto, totalizando R$ 890,00**.\n\nComo você afirma que já pagou tudo, há uma divergência entre o que você informa e o que o sistema registra. Você tem um comprovante de pagamento em mãos? Se sim, me informe os detalhes (data, valor, forma de pagamento) para que eu possa encaminhar o caso corretamente.",
+        "decisao": "sem_acao",
+        "fonte": [
+          {
+            "tipo": "ferramenta",
+            "referencia": "buscar_aluno:20230198"
+          },
+          {
+            "tipo": "ferramenta",
+            "referencia": "consultar_financeiro:20230198"
+          }
+        ],
+        "suficiencia": {
+          "suficiente": false,
+          "motivo": "nenhuma ação tomada: falta informação do aluno, ou fora do escopo"
+        },
+        "protocolo": null,
+        "aguardando_humano": false,
+        "termino": "respondeu"
+      },
+      "termino": "respondeu",
+      "aguardando_humano": false
+    },
+    {
+      "aluno": "Não tenho o comprovante aqui agora, paguei ontem no banco.",
+      "agente": "Marina, como não há comprovante em mãos e o sistema ainda registra 2 mensalidades em aberto (R$ 890,00), não posso emitir a segunda via do histórico agora.\n\nSeu caso foi **encaminhado à secretaria** para análise da divergência financeira.\n\n- **Protocolo:** CASO-3001\n- **Prazo de retorno:** 48h\n\nAssim que a secretaria confirmar o pagamento, a segunda via será providenciada.",
+      "saida": {
+        "resultado": "Marina, como não há comprovante em mãos e o sistema ainda registra 2 mensalidades em aberto (R$ 890,00), não posso emitir a segunda via do histórico agora.\n\nSeu caso foi **encaminhado à secretaria** para análise da divergência financeira.\n\n- **Protocolo:** CASO-3001\n- **Prazo de retorno:** 48h\n\nAssim que a secretaria confirmar o pagamento, a segunda via será providenciada.",
+        "decisao": "escalar_divergencia",
+        "fonte": [
+          {
+            "tipo": "ferramenta",
+            "referencia": "escalar_para_humano:CASO-3001"
+          }
+        ],
+        "suficiencia": {
+          "suficiente": true,
+          "motivo": "decisão tomada com o retorno de uma ferramenta"
+        },
+        "protocolo": "CASO-3001",
+        "aguardando_humano": false,
+        "termino": "respondeu"
+      },
+      "termino": "respondeu",
+      "aguardando_humano": false
+    }
+  ],
+  "trajetoria": [
+    {
+      "ferramenta": "buscar_aluno",
+      "argumentos": {
+        "ra": "20230198"
+      },
+      "resultado": {
+        "ra": "20230198",
+        "nome": "Marina Alves",
+        "curso": "ADS",
+        "situacao_matricula": "ativa"
+      },
+      "erro": null
+    },
+    {
+      "ferramenta": "consultar_financeiro",
+      "argumentos": {
+        "ra": "20230198"
+      },
+      "resultado": {
+        "ra": "20230198",
+        "mensalidades_em_aberto": 2,
+        "valor_em_aberto": 890.0
+      },
+      "erro": null
+    },
+    {
+      "ferramenta": "escalar_para_humano",
+      "argumentos": {
+        "chave": "20230198:segunda_via_historico:divergencia_financeira",
+        "motivo": "divergência financeira não resolvida",
+        "ra": "20230198",
+        "tipo_pedido": "segunda_via_historico"
+      },
+      "resultado": {
+        "protocolo": "CASO-3001",
+        "ra": "20230198",
+        "tipo_pedido": "segunda_via_historico",
+        "motivo": "divergência financeira não resolvida",
+        "prazo": "48h",
+        "ja_existia": false
+      },
+      "erro": null
+    }
+  ],
+  "trilha_de_nos": [
+    "entrada",
+    "classificar_pedido:outro",
+    "ler_memoria:0",
+    "rotear",
+    "agente",
+    "garantir_trancamento:ok",
+    "validar:ok",
+    "montar_saida",
+    "escrever_memoria:nada",
+    "entrada",
+    "classificar_pedido:outro",
+    "ler_memoria:0",
+    "rotear",
+    "agente",
+    "ferramentas",
+    "agente",
+    "garantir_trancamento:ok",
+    "validar:ok",
+    "montar_saida",
+    "escrever_memoria:nada",
+    "entrada",
+    "classificar_pedido:outro",
+    "ler_memoria:0",
+    "rotear",
+    "agente",
+    "ferramentas",
+    "agente",
+    "garantir_trancamento:ok",
+    "validar:ok",
+    "montar_saida",
+    "escrever_memoria:nada"
+  ],
+  "tokens_gastos": 10294,
+  "chamadas_ao_modelo": 5,
+  "contagens": {
+    "documentos_emitidos": 1,
+    "casos_pendentes": 1,
+    "aprovacoes": 0,
+    "decisoes_humanas": 0
+  },
+  "aprovacao_humana": null
+}

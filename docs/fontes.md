@@ -16,3 +16,18 @@
 ## O que ainda falta consultar
 
 - O Regimento Acadêmico interno (fonte real das regras de trancamento e das exceções de bolsista/convênio/liminar) — não consultado porque o grupo não tem acesso a um documento real; as regras usadas em `docs/case.md` §2.1 e em `dados/regimento_dados.py` (Exercício 7) são uma simplificação razoável, não uma transcrição de norma real.
+
+## Consultado na Parte 2
+
+Registro do que sustenta as decisões do sistema em grafo. **Não há páginas da web novas aqui**: o que não veio do material da disciplina foi **medido** no código instalado.
+
+| Fonte | O que sustentou |
+|---|---|
+| Enunciados do trabalho (`00-visao-geral`, `01-primeira-entrega`, `02-segunda-entrega`) | o que cada frente da Parte 2 exige e como é avaliada |
+| Notas de aula citadas nos comentários do código: Aula 05 (idempotência por chave derivada do conteúdo, orçamento de quatro moedas, estado × lista de mensagens), Aula 06 (degraus de decisão, chunking por estrutura), Aula 07 (as cinco formas de recuperar), Aula 08 (as três memórias, as três causas de esquecimento, verificação da remoção), Aula 09 (grafo, reducer, `interrupt`) | as decisões de desenho, que estão referenciadas nos arquivos em que se aplicam |
+| `langgraph==1.2.12`, `langgraph-checkpoint-sqlite==3.1.1`, `langchain-core==1.7.7` (código instalado) | o comportamento de reducer, `interrupt`, checkpoint e `recursion_limit` foi **executado**, e não lido: `tests/test_estado.py` e a medição de `docs/grafo.md` §5.3. O valor padrão do `recursion_limit` (25) vem de `langchain_core.runnables.config.DEFAULT_RECURSION_LIMIT` |
+| SQLite 3.53.1 (módulo `sqlite3` do Python 3.11.18), extensão FTS5 | a busca textual (`regimento.py`): tokenizador `unicode61 remove_diacritics 2` e `bm25`, **testados** em `tests/test_regimento.py` |
+| `exercicios/aula-07-resposta-que-cita.md` e `exercicios/aula-08-memoria-do-case.md` (Exercícios 7 e 8, do próprio grupo) | a alternativa vetorial do RAG (recall medido) e a decisão original de memória (`docs/memoria-ex8.md`) |
+| Logs da Groq (mensagens de erro 429 de 18/10/2026) | o limite de saída por minuto do `qwen/qwen3.8-27b` e a cota diária de 200.000 tokens (`docs/prompts.md` §3) |
+
+**O que NÃO foi consultado e fica registrado:** nenhum regimento acadêmico real (o grupo não tem acesso, `docs/case.md` §2.11); nenhuma conversa com atendente de secretaria; nenhuma documentação online do LangGraph nesta etapa (o comportamento relevante foi medido).

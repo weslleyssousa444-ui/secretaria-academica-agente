@@ -1,0 +1,134 @@
+{
+  "caso": "04-trancamento-nao-e-decidido",
+  "descricao": "trancamento: o agente encaminha e nunca decide (o grafo pausa, ver caso 6)",
+  "executado_em": "2026-11-11T14:44:22Z",
+  "commit": "cbb82d6",
+  "modelo": "qwen/qwen3.8-27b",
+  "prompt": {
+    "arquivo": "src/prompts/triagem-v2.txt",
+    "sha256": "6df71c6cfcaddca0"
+  },
+  "parametros": {
+    "temperature": 0,
+    "recursion_limit": 60,
+    "orcamento": {
+      "max_passos": 8,
+      "max_tokens": 20000
+    }
+  },
+  "duracao_s": 49.5,
+  "turnos": [
+    {
+      "aluno": "Quero trancar minha matrícula esse semestre.",
+      "agente": "Entendido. Para eu encaminhar seu pedido de trancamento de matrícula, preciso do seu RA (registro acadêmico). Pode me informar?",
+      "saida": {
+        "resultado": "Entendido. Para eu encaminhar seu pedido de trancamento de matrícula, preciso do seu RA (registro acadêmico). Pode me informar?",
+        "decisao": "sem_acao",
+        "fonte": [],
+        "suficiencia": {
+          "suficiente": false,
+          "motivo": "nenhuma ação tomada: falta informação do aluno, ou fora do escopo"
+        },
+        "protocolo": null,
+        "aguardando_humano": false,
+        "termino": "respondeu"
+      },
+      "termino": "respondeu",
+      "aguardando_humano": false
+    },
+    {
+      "aluno": "20229012",
+      "agente": "Seu pedido de trancamento de matrícula foi encaminhado à secretaria para análise.\n\n- Protocolo: **CASO-3001**\n- Prazo de retorno: **48h**\n\nVocê será informado assim que houver uma decisão.",
+      "saida": {
+        "resultado": "Seu pedido de trancamento de matrícula foi encaminhado à secretaria para análise.\n\n- Protocolo: **CASO-3001**\n- Prazo de retorno: **48h**\n\nVocê será informado assim que houver uma decisão.",
+        "decisao": "escalar_trancamento",
+        "fonte": [
+          {
+            "tipo": "ferramenta",
+            "referencia": "buscar_aluno:20229012"
+          },
+          {
+            "tipo": "ferramenta",
+            "referencia": "escalar_para_humano:CASO-3001"
+          }
+        ],
+        "suficiencia": {
+          "suficiente": true,
+          "motivo": "decisão tomada com o retorno de uma ferramenta"
+        },
+        "protocolo": "CASO-3001",
+        "aguardando_humano": true,
+        "termino": "respondeu"
+      },
+      "termino": "respondeu",
+      "aguardando_humano": true
+    }
+  ],
+  "trajetoria": [
+    {
+      "ferramenta": "buscar_aluno",
+      "argumentos": {
+        "ra": "20229012"
+      },
+      "resultado": {
+        "ra": "20229012",
+        "nome": "Bruno Castro",
+        "curso": "Direito",
+        "situacao_matricula": "ativa"
+      },
+      "erro": null
+    },
+    {
+      "ferramenta": "escalar_para_humano",
+      "argumentos": {
+        "chave": "20229012:trancamento_matricula:pedido",
+        "motivo": "Pedido de trancamento de matrícula — decisão reservada à secretaria",
+        "ra": "20229012",
+        "tipo_pedido": "trancamento_matricula"
+      },
+      "resultado": {
+        "protocolo": "CASO-3001",
+        "ra": "20229012",
+        "tipo_pedido": "trancamento_matricula",
+        "motivo": "Pedido de trancamento de matrícula — decisão reservada à secretaria",
+        "prazo": "48h",
+        "ja_existia": false
+      },
+      "erro": null
+    }
+  ],
+  "trilha_de_nos": [
+    "entrada",
+    "classificar_pedido:trancamento",
+    "ler_memoria:0",
+    "rotear",
+    "agente",
+    "garantir_trancamento:ok",
+    "validar:ok",
+    "montar_saida",
+    "escrever_memoria:nada",
+    "entrada",
+    "classificar_pedido:outro",
+    "ler_memoria:0",
+    "rotear",
+    "agente",
+    "ferramentas",
+    "agente",
+    "ferramentas",
+    "agente",
+    "garantir_trancamento:ok",
+    "validar:ok",
+    "montar_saida",
+    "escrever_memoria:nada",
+    "registrar_espera"
+  ],
+  "tokens_gastos": 7706,
+  "chamadas_ao_modelo": 4,
+  "contagens": {
+    "documentos_emitidos": 1,
+    "casos_pendentes": 1,
+    "aprovacoes": 1,
+    "decisoes_humanas": 0
+  },
+  "aprovacao_humana": null
+}

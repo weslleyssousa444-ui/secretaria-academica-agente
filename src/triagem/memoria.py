@@ -137,7 +137,7 @@ class Memoria:
                   teto_tokens: int = ORCAMENTO_TOKENS_MEMORIA) -> dict:
         """O bloco MEMÓRIA que entra no contexto. Ordem de montagem: procedural
         (estável) -> semântica -> episódica (a mais volumosa, perto da conversa).
-        Estourou o teto: a episódica sai primeiro (docs/memoria.md §5)."""
+        Estourou o teto: a episódica sai primeiro (docs/memoria.md §5.3)."""
         procedural = self.procedural.como_system_prompt()
         semantica = episodica = ""
         episodios: list[dict] = []

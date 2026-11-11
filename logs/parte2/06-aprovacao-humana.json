@@ -1,0 +1,131 @@
+{
+  "caso": "06-aprovacao-humana",
+  "descricao": "o grafo pausa; a coordenação aprova editando; a segunda aprovação não grava",
+  "executado_em": "2026-11-11T14:45:43Z",
+  "commit": "cbb82d6",
+  "modelo": "qwen/qwen3.8-27b",
+  "prompt": {
+    "arquivo": "src/prompts/triagem-v2.txt",
+    "sha256": "6df71c6cfcaddca0"
+  },
+  "parametros": {
+    "temperature": 0,
+    "recursion_limit": 60,
+    "orcamento": {
+      "max_passos": 8,
+      "max_tokens": 20000
+    }
+  },
+  "duracao_s": 33.1,
+  "turnos": [
+    {
+      "aluno": "Quero trancar minha matrícula esse semestre. Meu RA é 20229012.",
+      "agente": "Olá, Bruno. Seu pedido de trancamento de matrícula foi encaminhado à secretaria para análise e decisão.\n\n- Protocolo: CASO-3001\n- Prazo de retorno: 48h\n\nVocê será informado assim que houver uma decisão.",
+      "saida": {
+        "resultado": "Olá, Bruno. Seu pedido de trancamento de matrícula foi encaminhado à secretaria para análise e decisão.\n\n- Protocolo: CASO-3001\n- Prazo de retorno: 48h\n\nVocê será informado assim que houver uma decisão.",
+        "decisao": "escalar_trancamento",
+        "fonte": [
+          {
+            "tipo": "ferramenta",
+            "referencia": "buscar_aluno:20229012"
+          },
+          {
+            "tipo": "ferramenta",
+            "referencia": "escalar_para_humano:CASO-3001"
+          }
+        ],
+        "suficiencia": {
+          "suficiente": true,
+          "motivo": "decisão tomada com o retorno de uma ferramenta"
+        },
+        "protocolo": "CASO-3001",
+        "aguardando_humano": true,
+        "termino": "respondeu"
+      },
+      "termino": "respondeu",
+      "aguardando_humano": true
+    }
+  ],
+  "trajetoria": [
+    {
+      "ferramenta": "buscar_aluno",
+      "argumentos": {
+        "ra": "20229012"
+      },
+      "resultado": {
+        "ra": "20229012",
+        "nome": "Bruno Castro",
+        "curso": "Direito",
+        "situacao_matricula": "ativa"
+      },
+      "erro": null
+    },
+    {
+      "ferramenta": "escalar_para_humano",
+      "argumentos": {
+        "chave": "20229012:trancamento_matricula:pedido",
+        "motivo": "Pedido de trancamento de matrícula; decisão sempre reservada à secretaria humana.",
+        "ra": "20229012",
+        "tipo_pedido": "trancamento_matricula"
+      },
+      "resultado": {
+        "protocolo": "CASO-3001",
+        "ra": "20229012",
+        "tipo_pedido": "trancamento_matricula",
+        "motivo": "Pedido de trancamento de matrícula; decisão sempre reservada à secretaria humana.",
+        "prazo": "48h",
+        "ja_existia": false
+      },
+      "erro": null
+    }
+  ],
+  "trilha_de_nos": [
+    "entrada",
+    "classificar_pedido:trancamento",
+    "ler_memoria:0",
+    "rotear",
+    "agente",
+    "ferramentas",
+    "agente",
+    "ferramentas",
+    "agente",
+    "garantir_trancamento:ok",
+    "validar:ok",
+    "montar_saida",
+    "escrever_memoria:nada",
+    "registrar_espera",
+    "aprovacao_coordenacao:retomado",
+    "registrar_decisao"
+  ],
+  "tokens_gastos": 5832,
+  "chamadas_ao_modelo": 3,
+  "contagens": {
+    "documentos_emitidos": 1,
+    "casos_pendentes": 1,
+    "aprovacoes": 1,
+    "decisoes_humanas": 1
+  },
+  "aprovacao_humana": {
+    "primeira_aprovacao": {
+      "protocolo": "CASO-3001",
+      "ja_decidido": false,
+      "decisao": "aprovado",
+      "conflito": false
+    },
+    "segunda_aprovacao": {
+      "protocolo": "CASO-3001",
+      "ja_decidido": true,
+      "decisao": "aprovado",
+      "conflito": false
+    },
+    "decisoes_gravadas": 1,
+    "gravada": {
+      "chave": "CASO-3001:decisao",
+      "protocolo": "CASO-3001",
+      "decisao": "aprovado",
+      "edicao": "{\"semestre_efetivo\": \"2027.1\"}",
+      "decidido_por": "coord-demo",
+      "decidido_em": "2026-11-11T14:45:43Z"
+    }
+  }
+}

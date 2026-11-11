@@ -12,6 +12,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import time
 from pathlib import Path
 
 from langgraph.types import interrupt
@@ -25,6 +26,14 @@ from triagem.regimento import consultar_regimento
 RAIZ = Path(__file__).resolve().parents[2]
 SYSTEM = (Path(__file__).resolve().parents[1] / "prompts" / "triagem-v2.txt"
           ).read_text(encoding="utf-8")
+
+# Teto de TEMPO por turno, conferido ENTRE chamadas ao modelo. O Orcamento da
+# Parte 1 (agente.Orcamento) guarda um instante de início e nunca o confere; e o
+# retry de transporte chega a 8 tentativas de até 90 s. Sem este teto, um
+# provedor lento segurava o turno por minutos (e, na API, a trava global do
+# processo, com todos os outros alunos). LIMITE: uma única chamada em retry pode
+# passar do teto; ele impede a PRÓXIMA volta, e não interrompe a em curso.
+MAX_SEGUNDOS_POR_TURNO = 120.0
 
 SAUDACAO_FIXA = (
     "Olá! Sou o assistente da secretaria acadêmica. Posso ajudar com "
@@ -148,9 +157,11 @@ class Nos:
     """Os nós, ligados a uma memória. A memória é criada na primeira leitura,
     para que importar o grafo (conferir_grafo.py) não toque em arquivo."""
 
-    def __init__(self, memoria: Memoria | None = None, orcamento: Orcamento | None = None):
+    def __init__(self, memoria: Memoria | None = None, orcamento: Orcamento | None = None,
+                 max_segundos: float = MAX_SEGUNDOS_POR_TURNO):
         self._memoria = memoria
         self.orcamento = orcamento or Orcamento()
+        self.max_segundos = max_segundos
 
     @property
     def memoria(self) -> Memoria:
@@ -161,7 +172,8 @@ class Nos:
 
     # 1. ENTRADA — código. Reinicia o que vale por turno.
     def entrada(self, estado: dict) -> dict:
-        return {"inicio_do_turno": len(estado.get("passos", [])), "tipo_pedido": None,
+        return {"inicio_do_turno": len(estado.get("passos", [])),
+                "turno_iniciado_em": time.monotonic(), "tipo_pedido": None,
                 "memoria_bloco": "", "correcoes": 0, "termino": None, "motivo": None,
                 "saida": None, "caso_trancamento": None, "decisao_humana": None,
                 "eventos": ["entrada"]}
@@ -202,6 +214,11 @@ class Nos:
         if estado.get("tokens_gastos", 0) >= self.orcamento.max_tokens:
             return {"termino": "orcamento_esgotado",
                     "motivo": f"tokens {estado['tokens_gastos']}/{self.orcamento.max_tokens}",
+                    "eventos": ["agente:orcamento"]}
+        decorrido = time.monotonic() - estado.get("turno_iniciado_em", time.monotonic())
+        if decorrido > self.max_segundos:
+            return {"termino": "orcamento_esgotado",
+                    "motivo": f"tempo {decorrido:.0f}s/{self.max_segundos:.0f}s",
                     "eventos": ["agente:orcamento"]}
         if laco_detectado(passos):
             return {"termino": "laco_detectado",

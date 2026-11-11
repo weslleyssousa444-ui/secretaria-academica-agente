@@ -119,6 +119,7 @@ Agente: Entendo — o sistema pode não ter processado ainda. Não posso
 | `consultar_financeiro` | consulta mensalidades em aberto pelo RA | leitura | — | banco SQLite `academico.db`, tabela `financeiro` |
 | `emitir_documento` | gera declaração de matrícula ou segunda via de histórico, valida a regra de negócio antes de emitir | **escrita** | reversível (pode reemitir) | banco SQLite `academico.db`, tabela `documentos_emitidos` |
 | `escalar_para_humano` | registra o caso na fila de atendimento humano, com motivo | **escrita** | reversível (fila pode ser reaberta) | banco SQLite `academico.db`, tabela `casos_pendentes` |
+| `consultar_regimento` *(Parte 2)* | devolve os artigos do Regimento que tratam de uma dúvida | leitura | — | índice FTS5 em memória, sobre `dados/regimento_dados.py` (`docs/rag.md`) |
 
 ## 2.5 A justificativa de negócio
 
@@ -178,13 +179,42 @@ Sim: o tema toca dado **financeiro** (mensalidades, valores em aberto) e **acad�
 
 ## 2.10 Espaço para o que ainda vem
 
-- [x] **RAG** (Parte 2) — o Regimento Acadêmico interno (normas de trancamento, prazos, exceções de bolsista/convênio/liminar), hoje um PDF de ~20 páginas, seria a base consultada para o agente parar de escalar toda exceção por padrão e passar a resolver as que o regimento já cobre.
-- [x] **MCP** (Parte 2) — a consulta ao sistema acadêmico (hoje as 4 ferramentas contra o SQLite) vira um servidor MCP, para poder ser reaproveitada por outros agentes da secretaria (ex.: um agente de cobrança).
-- [x] **LangChain** (Parte 2) — a orquestração do laço de ferramentas e da memória de conversa (hoje um laço manual em `src/agente.py`) migraria para um agente LangChain, para ganhar gerenciamento de memória multi-turno de fábrica.
-- [x] **Multiagente** (Parte 3) — um agente de **triagem** (o atual), um agente **especialista em regras financeiras/regimento** (consultado quando a triagem encontra uma exceção) e um agente de **redação de documentos** (formata a declaração/segunda via no padrão oficial da instituição) — três responsabilidades hoje misturadas num único prompt.
+O que cada item virou na Parte 2, com a decisão e a razão, inclusive o que **não** foi feito:
+
+- [x] **RAG** — **feito**, como busca **textual** (SQLite FTS5) sobre o Regimento Acadêmico simulado, exposta como a ferramenta `consultar_regimento`. O objetivo original (o agente passar a resolver o que o regimento cobre, em vez de escalar toda exceção) vale para **dúvidas de regra**; o **pedido** do aluno continua decidido pelo cadastro e pelo financeiro, e a exceção (bolsista, convênio, liminar) continua indo à coordenação. Formas, corpus, números e limites: [`docs/rag.md`](rag.md).
+- [ ] **MCP** — **não feito**, e declarado. A ideia (a consulta ao sistema acadêmico virar um servidor reaproveitável por outros agentes) só se justifica com **mais de um agente** consumindo a mesma ferramenta, e o sistema tem um. O servidor MCP do Exercício 10 (CNPJ e CEP, BrasilAPI) é um exercício independente, **não ligado** ao sistema. Fica como frente opcional da Parte 3, se houver um segundo consumidor.
+- [x] **LangChain / LangGraph** — **feito, com LangGraph** (e não um agente LangChain pronto): o laço virou um grafo de estado de 15 nós, com estado tipado, reducers, checkpoint em arquivo e uma pausa (`interrupt`). A migração **não** trouxe "gerenciamento de memória multi-turno de fábrica" no sentido que o plano previa: o histórico é um campo do estado e a memória de longo prazo é nossa (`docs/memoria.md`). Desenho: [`docs/arquitetura.md`](arquitetura.md), [`docs/grafo.md`](grafo.md).
+- [ ] **Multiagente** — **não feito**. O plano de três agentes (triagem, regras financeiras, redação de documentos) **não se sustentou**: as "regras financeiras" são duas comparações em código dentro da ferramenta de emissão, e a "redação" é um texto curto que o próprio agente de triagem escreve. Separar criaria *handoffs* (e contratos, e custo de tokens) sem um critério de especialização ou de isolamento de contexto que o case apresente. É opcional na Parte 3; fica sem ser feito, e a razão é esta.
 
 ## 2.11 O maior risco
 
 O risco real não é "o modelo pode errar" — é que **a base de regras deste protótipo é uma simplificação do regimento acadêmico real**, e o grupo não tem acesso a um regimento real para validar contra ele (dado sensível, §2.9). Isso significa que casos de exceção genuínos (bolsista, convênio empresarial, liminar judicial) que existem na vida real não estão cobertos pelo catálogo de regras testado aqui.
 
 **Plano B:** o comportamento padrão do agente diante de qualquer tipo de pedido ou situação que não reconhece é **sempre escalar para a secretaria**, nunca decidir por conta própria (`escalar_para_humano` é o caminho seguro por padrão — ver `src/agente.py`, a ferramenta `emitir_documento` recusa qualquer tipo de documento fora do catálogo de dois itens). Isso limita a cobertura real (§2.5), mas evita o erro caro: o agente aprovando algo que não devia.
+
+## 2.12 Complemento da Parte 2: o que o domínio ensinou
+
+O que o grupo aprendeu **trabalhando** o domínio e que não estava na descrição original do case. Cada item aponta para onde isso apareceu no repositório; nada aqui vem de uma conversa com a secretaria real, porque o grupo **não teve acesso a uma** (§2.5, §2.11): o complemento é o que os dados, os testes e as execuções ensinaram.
+
+**O vocabulário que ninguém de fora entende.**
+
+| Termo | O que quer dizer no case |
+|---|---|
+| **pendência** | mensalidade em aberto **no sistema**. É dado do cadastro financeiro |
+| **divergência** | o aluno **alega** que pagou e o sistema **mostra** pendência. Não é a mesma coisa que pendência: é um conflito entre duas fontes, e a regra é **não decidir a favor do aluno** sem comprovante |
+| **trancamento** × **cancelamento** | o aluno diz "cancelar a matrícula"; o catálogo só tem trancamento. O agente real, no caso 7 de `docs/io.md`, **escolheu e declarou** a interpretação |
+| **situação de matrícula** | `ativa`, `trancada` ou `formado`; **só `ativa` recebe declaração de matrícula** |
+
+**A regra que todo mundo da área sabe e nenhum documento do case registrava.**
+
+- A **declaração de matrícula independe de pendência financeira** (Regimento, Art. 3º); a **segunda via do histórico exige quitação total** (Art. 4º). A pergunta "tenho pendência, isso me impede?" tem **resposta diferente por documento**, e é a primeira dúvida que o aluno faz.
+- **O comprovante de pagamento que vale** é o extrato ou recibo emitido pela instituição financeira; **o print do aplicativo do banco não vale** (Art. 7º §2º). É uma regra de **negação**: o artigo menciona o aplicativo só para excluí-lo, e uma busca por "aplicativo do banco" acha o artigo que diz que **não** vale.
+- **O prazo de 48 h não corre enquanto o pedido aguarda dado do próprio aluno** (Art. 9º §2º), e existiu uma redação anterior de 72 h, revogada. O "prazo de resposta" que o agente promete depende de qual redação o sistema leu: por isso a curadoria exclui a revogada (`docs/rag.md` §3).
+
+**A exceção que decide a arquitetura.** O trancamento tem **três exceções** no Regimento (bolsista integral, convênio empresarial, liminar judicial: Art. 8º §1º a §3º) que mudam **o que o aluno precisa apresentar** e **se o pedido espera na fila normal**. Nenhuma muda quem decide: **é sempre a coordenação** (Art. 6º). É por isso que o sistema **não tenta resolver a exceção**: ele a encaminha, com a pausa para a decisão humana (`docs/humano.md`), e não tenta ser mais esperto que a regra.
+
+**O passo que parecia um e são três.** "Trancamento" parecia um pedido só. São **três momentos distintos**: (1) o **agente encaminha** e dá o protocolo e o prazo ao aluno; (2) a **coordenação decide** (aprova, rejeita, ou aprova editando o semestre de efetivação); (3) a **efetivação na matrícula**, que o case deixa fora do sistema (§2.3: a ação irreversível "sempre fica com a coordenação, fora do escopo do agente"). O agente faz o (1), o grafo espera o (2), e o (3) não existe no sistema de propósito (o agente não tem ferramenta que altere matrícula). O aluno **não é avisado** do (2): é um canal que o sistema não tem (`docs/humano.md` §6).
+
+**A precedência que o conjunto de teste revelou.** Um aluno que pede trancamento com um **RA que não existe** tem **duas** razões de escalar (é trancamento, e o RA não foi encontrado). O classificador da Parte 1 rotula como trancamento, e o caso `r03` do verificador carrega essa ambiguidade, documentada em `docs/modelos.md` §3.5: o agente escala certo; o rótulo é que conflita. A categoria **que nunca pode passar despercebida** (trancamento) vence.
+
+**O que este complemento NÃO contém, e o grupo deve acrescentar se souber:** o que uma atendente real sente falta quando recebe o caso escalado, qual parte do relato do aluno é mais ruidosa, que exceções aparecem na prática e com que frequência. Nada disso foi medido, e a linha de base de §2.5 continua uma **estimativa declarada**.

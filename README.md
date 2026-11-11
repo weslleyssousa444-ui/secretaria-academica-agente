@@ -1,4 +1,4 @@
-# Atendimento de secretaria acadêmica — agente de triagem (Parte 1)
+# Atendimento de secretaria acadêmica — sistema de triagem (Partes 1 e 2)
 
 > **Quer só rodar e testar?** Veja o [`START.md`](START.md): um caminho sem chave de API (testes e relatórios já gravados) e um com a chave gratuita da Groq (chat, demo, API).
 
@@ -12,74 +12,104 @@ A pesquisa completa do case está em [`docs/case.md`](docs/case.md) (usuários, 
 
 ## Como rodar
 
-Testado do zero, em menos de 5 minutos.
+O sistema (Parte 2) usa LangGraph e exige **Python 3.10 ou mais novo** (o ambiente do projeto foi montado em 3.11). Os scripts da Parte 1 (`demo.py`, `verificador.py`) continuam rodando em 3.9.
 
 ```bash
-git clone <url-do-repo-do-grupo>
+git clone https://github.com/weslleyssousa444-ui/secretaria-academica-agente.git
 cd secretaria-academica-agente
 
-python3 -m venv .venv
+python3.11 -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\Activate.ps1
 
-pip install -r requirements.txt
+pip install -r requirements-dev.txt     # o sistema + os testes, com versões fixadas
 
 cp .env.example .env
-# edite .env e cole sua chave da Groq em OPENAI_API_KEY
+# edite .env: OPENAI_API_KEY=<sua chave da Groq>
 # (crie a chave em https://console.groq.com/keys — free tier, sem cartão)
+
+python src/dados.py              # cria e semeia o banco simulado (idempotente)
+python -m pytest                 # 147 testes offline, sem chave e sem rede
 ```
 
-Crie e semeie o banco simulado (idempotente — pode rodar de novo sem duplicar dados):
-
-```bash
-python src/dados.py
-```
+A instalação de `requirements-agente.txt` (o que a imagem Docker usa) foi verificada num ambiente limpo. O `requirements.txt` da raiz traz também as dependências dos Exercícios 7 e 8 (`torch`, `sentence-transformers`, ~2 GB), que **o sistema não usa**.
 
 ## Como usar
 
-O agente conversa em texto livre, em português, como o widget de chat do portal do aluno faria. Não há interface gráfica nesta Parte 1 — as três formas de interagir são scripts de linha de comando:
+O sistema conversa em **texto livre, em português**, como o widget de chat do portal do aluno faria, e devolve um **objeto validado**. Há três formas de interagir:
 
-| Script | O que faz |
-|---|---|
-| `python src/demo.py` | roda os **4 casos de demonstração** exigidos (§4.5): simples, divergência, RA inexistente, trancamento — e grava o log de cada um em `logs/` |
-| `python src/verificador.py` | roda os **40 casos rotulados** (`dados/casos_verificador.json`) e reporta a taxa de acerto contra o critério de sucesso (`docs/case.md` §2.7) |
-| `python src/comparar_modelos.py` | roda 5 casos nos 3 modelos candidatos, para preencher `docs/modelos.md` §3.5 |
+| Quem | Comando | O que faz |
+|---|---|---|
+| **o aluno** (terminal) | `python src/chat.py --dica` | conversa com o sistema; `--trilha` mostra os nós do grafo, `--ra 20231045` simula a sessão autenticada do portal (a memória só abre com ela) |
+| **o aluno** (HTTP) | `python -m uvicorn api:app --app-dir src --port 8000` | `POST /mensagens` com `{"mensagem": "...", "conversa_id": "..."}` |
+| **a coordenação** | `python src/coordenacao.py listar` · `decidir CASO-3001 aprovar --por coord-1` | decide os trancamentos que o grafo deixou **esperando** |
 
-> O agente roda por padrão na **Groq**, modelo `qwen/qwen3.8-27b` (free tier, `docs/modelos.md` §3.5 — 35/40 no verificador, 0 falsos negativos em trancamento) — a análise original comparando os três modelos Mistral (§3.1-3.4) continua no repositório e pode ser reativada trocando as três variáveis comentadas no fim do `.env.example`.
+Outros comandos: `python src/demo_grafo.py` (as 8 demonstrações da Parte 2, contra o modelo real, com log em `logs/parte2/`) · `python conferir_grafo.py` (nós e arestas do grafo entregue) · `python src/verificador.py` (os 40 casos da Parte 1).
 
-**O que a pessoa digita:** uma mensagem em português descrevendo o pedido — com ou sem o RA já incluído. Exemplo: *"Preciso de uma declaração de matrícula. Meu RA é 20231045."* ou, em partes, *"Oi, preciso de uma declaração de matrícula pra levar no estágio."* seguido de *"20231045"* quando o agente perguntar.
+> O modelo padrão é o `qwen/qwen3.8-27b` na **Groq** (free tier, `docs/modelos.md` §3.5). O free tier tem cota diária por modelo: se acabar (`tokens per day`), espere ou troque `LLM_MODELO` no `.env`.
 
-**O que o sistema faz com aquilo:** identifica o tipo de pedido e o RA, consulta o sistema acadêmico simulado (cadastro + financeiro, em SQLite), e decide — segundo as regras de `docs/case.md` §2.1 — se emite o documento na hora ou encaminha o caso para a secretaria humana.
+**O que a pessoa digita:** uma mensagem em português descrevendo o pedido, com ou sem o RA. Exemplos: *"Preciso de uma declaração de matrícula. Meu RA é 20231045."*; *"Quero trancar minha matrícula esse semestre. Meu RA é 20229012."*; *"O que vale como comprovante de pagamento?"*.
 
-**Que saída ela recebe:** texto em português. Se aprovado: o protocolo do documento (`DOC-xxxx`) e o texto da declaração/segunda via. Se escalado: o protocolo do caso (`CASO-xxxx`), o motivo do encaminhamento e o prazo de resposta (48h).
+**O que o sistema faz com aquilo:** identifica o pedido, consulta o sistema acadêmico simulado (cadastro e financeiro, em SQLite) e o Regimento (busca textual), e **decide** segundo as regras de `docs/case.md` §2.1: emite o documento, ou encaminha o caso à secretaria. Toda resposta ao aluno é conferida em código contra o que as ferramentas devolveram (protocolo, prazo, artigo citado) antes de sair.
 
-**Exemplo completo (entrada e saída reais, copiadas de [`logs/01-caso-simples-695426dc.json`](logs/01-caso-simples-695426dc.json)):**
+**Que saída ela recebe** (`docs/io.md`): o texto da resposta, mais um objeto com a **decisão**, a **fonte** que a sustenta e a **suficiência** (se o sistema teve base para responder). Se emitiu: o protocolo `DOC-xxxx`. Se escalou: o protocolo `CASO-xxxx` e o prazo de 48 h.
 
-> **Aluno:** Oi, preciso de uma declaração de matrícula pra levar no estágio.
+**Exemplo completo, copiado de uma execução real** ([`logs/parte2/06-aprovacao-humana.json`](logs/parte2/06-aprovacao-humana.json), commit `cbb82d6`, 2026-11-11T14:45:43Z, modelo `qwen/qwen3.8-27b`):
+
+> **Aluno:** Quero trancar minha matrícula esse semestre. Meu RA é 20229012.
 >
-> **Agente:** Olá! Para emitir a declaração de matrícula, preciso confirmar seu número de RA. Poderia me informar, por favor?
->
-> **Aluno:** 20231045
->
-> **Agente:**
-> **Protocolo:** DOC‑1002
-> **Documento emitido:** Declaração de Matrícula
->
-> > *Declaração de Matrícula*
-> >
-> > Eu, responsável pela Secretaria Acadêmica, certifico que o aluno Weslley Sousa, RA 20231045, está regularmente matriculado no curso de Análise e Desenvolvimento de Sistemas (ADS) e encontra-se em situação ativa.
-> >
-> > Esta declaração é válida para fins de comprovação de matrícula em estágio.
->
-> Caso precise de mais alguma coisa, estou à disposição.
+> **Agente:** Olá, Bruno. Seu pedido de trancamento de matrícula foi encaminhado à secretaria para análise e decisão.
+> 
+> - Protocolo: CASO-3001
+> - Prazo de retorno: 48h
+> 
+> Você será informado assim que houver uma decisão.
 
-Término: `respondeu` · 4.263 tokens gastos · modelo `openai/gpt-oss-20b` (Groq). Os outros 3 casos exigidos (divergência, RA inexistente, trancamento) estão em `logs/02-*.json` a `logs/04-*.json`.
+A saída inteira que o sistema devolveu nesse turno:
+
+```json
+{
+  "resultado": "Olá, Bruno. Seu pedido de trancamento de matrícula foi encaminhado à secretaria para análise e decisão.\n\n- Protocolo: CASO-3001\n- Prazo de retorno: 48h\n\nVocê será informado assim que houver uma decisão.",
+  "decisao": "escalar_trancamento",
+  "fonte": [
+    {
+      "tipo": "ferramenta",
+      "referencia": "buscar_aluno:20229012"
+    },
+    {
+      "tipo": "ferramenta",
+      "referencia": "escalar_para_humano:CASO-3001"
+    }
+  ],
+  "suficiencia": {
+    "suficiente": true,
+    "motivo": "decisão tomada com o retorno de uma ferramenta"
+  },
+  "protocolo": "CASO-3001",
+  "aguardando_humano": true,
+  "termino": "respondeu"
+}
+```
+
+**O que acontece quando o grafo para e espera alguém.** Esse pedido é um **trancamento**, e o agente **nunca decide trancamento**: ele abre o caso (`CASO-3001`), responde ao aluno **na hora**, e o grafo **para** (`aguardando_humano: true`) até a coordenação decidir. Enquanto espera, qualquer mensagem do aluno na mesma conversa devolve o estado do pedido, sem chamar o modelo e sem abrir outro caso. A coordenação vê a tela do caso (`listar`) e responde `aprovar`, `rejeitar` ou `aprovar_editando`:
+
+```text
+$ python src/coordenacao.py decidir CASO-3001 aprovar_editando --por coord-1 --editar semestre_efetivo=2027.1
+{"protocolo": "CASO-3001", "ja_decidido": false, "decisao": "aprovado", "conflito": false}
+$ (a mesma decisão, repetida)
+{"protocolo": "CASO-3001", "ja_decidido": true, "decisao": "aprovado", "conflito": false}
+```
+
+A segunda chamada **não grava nada** (`ja_decidido: true`). Se ninguém responder em 48 h, o caso **vence** e volta à fila da secretaria (`python src/coordenacao.py expirar`, rodado por rotina). Detalhes: [`docs/humano.md`](docs/humano.md).
 
 **O que o sistema não faz:**
 
-- não decide trancamento de matrícula sozinho — todo pedido desse tipo é sempre encaminhado para a coordenação, mesmo que o aluno esteja em situação regular;
-- não confia na palavra do aluno quando ela contradiz o sistema financeiro sem comprovante — nesse caso, sempre escala em vez de emitir;
-- não emite nenhum documento fora dos dois do catálogo (declaração de matrícula, segunda via de histórico);
-- quando não consegue confirmar o RA depois de uma segunda tentativa, não insiste indefinidamente — encaminha o caso e informa o aluno.
+- **não decide trancamento**: todo pedido é encaminhado, mesmo para aluno em situação regular, e a decisão é da coordenação; o sistema também não altera a matrícula;
+- **não confia na palavra do aluno** quando ela contradiz o sistema financeiro sem comprovante: escala em vez de emitir;
+- **não emite documento fora do catálogo** (declaração de matrícula, segunda via de histórico);
+- **não verifica quem é o aluno**: qualquer RA digitado é atendido (lacuna L01 do [model card](docs/model-card.md)); por isso só use dados sintéticos;
+- **não avisa o aluno** da decisão da coordenação (não há canal de saída).
+
+**Quando o sistema não sabe responder** (`suficiencia.suficiente = false`, com o motivo): falta o RA (ele pergunta); o RA não existe (confirma uma vez e escala); a dúvida não está no Regimento (diz o que o Regimento trata e oferece encaminhar); o pedido está fora do escopo (diz o que atende). Se o provedor falhar, a conversa termina com `erro_fatal` e o aluno é orientado a procurar a secretaria: ele nunca fica sem resposta.
 
 ## Exercício 7 — RAG sobre o Regimento Acadêmico
 
@@ -95,7 +125,7 @@ Resultado: recall@k 100%, citações verificáveis 100%, fidelidade 80%, 0 recus
 
 ## Exercício 8 — Memória do agente de triagem
 
-Complementar (Aula 08): episódica, semântica e procedural, com idempotência, desempate de contradição por carimbo de tempo, decaimento e esquecimento seletivo verificado. Decisão de projeto em [`docs/memoria.md`](docs/memoria.md); relatório da implementação em [`exercicios/aula-08-memoria-do-case.md`](exercicios/aula-08-memoria-do-case.md).
+Complementar (Aula 08): episódica, semântica e procedural, com idempotência, desempate de contradição por carimbo de tempo, decaimento e esquecimento seletivo verificado. Decisão de projeto em [`docs/memoria-ex8.md`](docs/memoria-ex8.md); relatório da implementação em [`exercicios/aula-08-memoria-do-case.md`](exercicios/aula-08-memoria-do-case.md).
 
 ```bash
 python src/memoria_demo.py   # roda tudo: fronteira, idempotência, contradição, não reprodutibilidade, esquecimento
@@ -105,7 +135,7 @@ Resultado: memória muda a resposta do agente para a mesma pergunta (não reprod
 
 ## Exercício 9 — Agente de triagem em LangGraph
 
-Sem enunciado formal (Aula 09). Reescreve o núcleo do Ex.6 como `StateGraph`, com checkpointer em arquivo e `interrupt()`/`Command(resume=...)` para a aprovação de trancamento pela coordenação. Ambiente Python 3.11 à parte (`exercicios/requirements-aula9-10.txt` — `mcp`/`langgraph` exigem >=3.10). Detalhes em [`exercicios/aula09-langgraph/README.md`](exercicios/aula09-langgraph/README.md).
+Sem enunciado formal (Aula 09; o sistema integrado da Parte 2 está em `src/triagem/`). Reescreve o núcleo do Ex.6 como `StateGraph`, com checkpointer em arquivo e `interrupt()`/`Command(resume=...)` para a aprovação de trancamento pela coordenação. Ambiente Python 3.11 à parte (`exercicios/requirements-aula9-10.txt` — `mcp`/`langgraph` exigem >=3.10). Detalhes em [`exercicios/aula09-langgraph/README.md`](exercicios/aula09-langgraph/README.md).
 
 ## Exercício 10 — Servidor e cliente MCP (CNPJ + CEP, BrasilAPI)
 
@@ -166,6 +196,25 @@ O plano de um agente de trocas de loja virtual (perguntas, árvore de *spans* na
 ## Estrutura do repositório
 
 ```
+# Parte 2 — o sistema em grafo
+src/triagem/             o sistema: grafo (grafo.py), nós (nos.py), estado (estado.py), contrato de saída
+                         (saida.py), validação (validacao.py), RAG (regimento.py), memória (memoria.py),
+                         janela (janela.py), aprovação humana (humano.py), ponto de entrada (sistema.py)
+src/prompts/             os prompts, versionados (triagem-v1 da Parte 1, triagem-v2 do grafo)
+src/api.py, src/chat.py, src/coordenacao.py   as três formas de usar (aluno em HTTP, aluno em terminal, coordenação)
+src/demo_grafo.py        as 8 demonstrações contra o modelo real (logs em logs/parte2/)
+src/ablacao_prompt.py    a "regra da frase" (docs/prompts.md §5)
+conferir_grafo.py        nós e arestas do grafo entregue, para conferir contra o desenho
+docs/io.md               entrada, saída e os exemplos reais
+docs/prompts.md          o plano de prompt engineering
+docs/arquitetura.md      o diagrama, as seis perguntas, a defesa do nível de autonomia, o estado
+docs/grafo.md            quem decide cada aresta, os reducers, o que o framework não deu
+docs/rag.md              as formas de recuperar, o corpus, os números medidos
+docs/memoria.md          a fronteira, as três memórias, o esquecimento, a conversa
+docs/humano.md           onde o grafo para, a tela, o prazo, a aprovação repetida
+logs/parte2/             as execuções reais citadas nos documentos
+
+# Parte 1 e exercícios
 docs/case.md          o tema, os usuários, o workflow, a justificativa de negócio
 docs/modelos.md        a análise e a escolha do modelo
 docs/fontes.md         tudo que foi consultado
@@ -198,13 +247,13 @@ src/avaliar_rag.py         recall@k, fidelidade, varredura do limiar
 src/modos_de_falha.py      reproduz os 4 modos de falha + corpus desatualizado
 exercicios/aula-07-resposta-que-cita.md  o relatório do Exercício 7
 
-# Exercício 8 — Memória do agente (exercicios/aula-08-*.md, docs/memoria.md)
+# Exercício 8 — Memória do agente (exercicios/aula-08-*.md, docs/memoria-ex8.md)
 src/memoria_episodica.py   índice vetorial de episódios passados, por RA, com decaimento
 src/memoria_semantica.py   chave-valor idempotente, com campo `substituiu`
 src/memoria_procedural.py  regras aprendidas de erro, com aprovação humana
 src/memoria.py             orçamento de janela, remoção sob solicitação com verificação
 src/memoria_demo.py        roda a demonstração completa
-docs/memoria.md                          a decisão de projeto (avaliada na Parte 2)
+docs/memoria-ex8.md                      a decisão de projeto do Ex.8 (a memória integrada é docs/memoria.md)
 exercicios/aula-08-memoria-do-case.md    o relatório da implementação
 ```
 

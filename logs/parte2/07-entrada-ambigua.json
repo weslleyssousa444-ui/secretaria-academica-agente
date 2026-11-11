@@ -1,0 +1,61 @@
+{
+  "caso": "07-entrada-ambigua",
+  "descricao": "entrada ambígua: cancelar não é pedido do catálogo; o agente desambigua ou declara a escolha",
+  "executado_em": "2026-11-11T14:46:43Z",
+  "commit": "cbb82d6",
+  "modelo": "qwen/qwen3.8-27b",
+  "prompt": {
+    "arquivo": "src/prompts/triagem-v2.txt",
+    "sha256": "6df71c6cfcaddca0"
+  },
+  "parametros": {
+    "temperature": 0,
+    "recursion_limit": 60,
+    "orcamento": {
+      "max_passos": 8,
+      "max_tokens": 20000
+    }
+  },
+  "duracao_s": 0.9,
+  "turnos": [
+    {
+      "aluno": "Quero cancelar minha matrícula, como faço?",
+      "agente": "Entendo que você deseja cancelar sua matrícula. Esse pedido é tratado como **trancamento de matrícula** e, por regra, precisa ser analisado pela secretaria — não posso concluí-lo diretamente por aqui.\n\nPara eu encaminhar seu caso corretamente, preciso de uma informação:\n\n**Qual é o seu RA (registro acadêmico)?**\n\nAssim que você me informar, eu verifico seus dados e encaminho o pedido à secretaria para análise.",
+      "saida": {
+        "resultado": "Entendo que você deseja cancelar sua matrícula. Esse pedido é tratado como **trancamento de matrícula** e, por regra, precisa ser analisado pela secretaria — não posso concluí-lo diretamente por aqui.\n\nPara eu encaminhar seu caso corretamente, preciso de uma informação:\n\n**Qual é o seu RA (registro acadêmico)?**\n\nAssim que você me informar, eu verifico seus dados e encaminho o pedido à secretaria para análise.",
+        "decisao": "sem_acao",
+        "fonte": [],
+        "suficiencia": {
+          "suficiente": false,
+          "motivo": "nenhuma ação tomada: falta informação do aluno, ou fora do escopo"
+        },
+        "protocolo": null,
+        "aguardando_humano": false,
+        "termino": "respondeu"
+      },
+      "termino": "respondeu",
+      "aguardando_humano": false
+    }
+  ],
+  "trajetoria": [],
+  "trilha_de_nos": [
+    "entrada",
+    "classificar_pedido:outro",
+    "ler_memoria:0",
+    "rotear",
+    "agente",
+    "garantir_trancamento:ok",
+    "validar:ok",
+    "montar_saida",
+    "escrever_memoria:nada"
+  ],
+  "tokens_gastos": 1833,
+  "chamadas_ao_modelo": 1,
+  "contagens": {
+    "documentos_emitidos": 1,
+    "casos_pendentes": 0,
+    "aprovacoes": 0,
+    "decisoes_humanas": 0
+  },
+  "aprovacao_humana": null
+}

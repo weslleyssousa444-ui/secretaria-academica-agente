@@ -100,7 +100,7 @@ def tela_da_aprovacao(protocolo: str) -> dict:
         "motivo_registrado": caso["motivo"] if caso else None,
         "prazo_ate": espera["prazo_ate"] if espera else None,
         "consequencia": ("Aprovar ou rejeitar grava a decisão no caso. O agente não "
-                         "altera a matrícula: a efetivação é da secretaria. Sem "
+                         "altera a matrícula: a efetivação fica fora do sistema. Sem "
                          f"resposta em {PRAZO_HORAS} h, o caso vence e volta à fila "
                          "da secretaria com prioridade."),
         "respostas_aceitas": ["aprovar", "rejeitar", "aprovar_editando"],

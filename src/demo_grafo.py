@@ -8,6 +8,12 @@
 #   5  fora do corpus            o Regimento não responde; recusa útil
 #   6  a ação que para e espera  o grafo pausa, a coordenação aprova editando,
 #                                e a segunda aprovação não grava nada
+#   7  entrada ambígua           (exemplo de docs/io.md §3: "cancelar" não é
+#                                nenhum dos três pedidos do catálogo)
+#   8  fora do escopo            (exemplo de docs/io.md §3: documento que o
+#                                sistema não emite)
+#
+# O caso 1, no primeiro turno, é o exemplo de entrada INCOMPLETA (falta o RA).
 #
 # Uso (a partir da raiz, com OPENAI_API_KEY no .env):
 #   python src/demo_grafo.py            # os seis
@@ -55,6 +61,10 @@ DEMOS = {
         "trancamento: o agente encaminha e nunca decide (o grafo pausa, ver caso 6)"),
     5: ("05-fora-do-corpus", [CASOS_RAG["s01"]["pergunta"]],
         "dúvida de domínio que o Regimento não responde: recusa e oferece encaminhar"),
+    7: ("07-entrada-ambigua", ["Quero cancelar minha matrícula, como faço?"],
+        "entrada ambígua: cancelar não é pedido do catálogo; o agente desambigua ou declara a escolha"),
+    8: ("08-fora-do-escopo", ["Quero meu diploma impresso. Meu RA é 20220087."],
+        "fora do escopo: o sistema não emite diploma; recusa e diz o que faz"),
     6: ("06-aprovacao-humana", ["Quero trancar minha matrícula esse semestre. Meu RA é 20229012."],
         "o grafo pausa; a coordenação aprova editando; a segunda aprovação não grava"),
 }

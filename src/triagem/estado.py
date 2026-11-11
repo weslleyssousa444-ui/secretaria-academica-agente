@@ -36,7 +36,8 @@ class Estado(TypedDict, total=False):
 
     # ---- por turno (reiniciados no nó `entrada`) ---------------------------
     inicio_do_turno: int           # índice em `passos` onde o turno começou
-    tipo_pedido: str | None        # saudacao | trancamento | duvida | outro
+    turno_iniciado_em: float       # time.monotonic() do início do turno (teto de tempo)
+    tipo_pedido: str | None        # saudacao | trancamento | outro
     memoria_bloco: str
     correcoes: int                 # quantas vezes o validador devolveu a resposta
     termino: str | None            # respondeu | orcamento_esgotado | laco_detectado | erro_fatal

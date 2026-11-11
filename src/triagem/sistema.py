@@ -2,7 +2,7 @@
 # validado sai. É o que `src/chat.py`, a API, a suíte de avaliação e as
 # demonstrações chamam.
 #
-# O QUE IDENTIFICA UMA CONVERSA (docs/memoria.md §5.5): o `thread_id`, que é o
+# O QUE IDENTIFICA UMA CONVERSA (docs/memoria.md §5.1): o `thread_id`, que é o
 # endereço do checkpoint. Mesma chave, mesma conversa; chave nova, histórico
 # vazio. A mesma pessoa abrindo duas conversas ao mesmo tempo tem dois
 # `thread_id` e dois históricos independentes; o que as liga é a memória de
@@ -16,10 +16,11 @@ from __future__ import annotations
 
 import os
 import sqlite3
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 
 from langgraph.checkpoint.sqlite import SqliteSaver
+from langgraph.errors import GraphRecursionError
 from langgraph.types import Command
 
 import dados
@@ -33,6 +34,11 @@ RAIZ = Path(__file__).resolve().parents[2]
 MAX_ENTRADA = 2000  # caracteres: o mesmo teto da API da Parte 1
 
 
+class ConversaEncerrada(Exception):
+    """A execução anterior parou no meio (limite de passos do grafo) e deixou o
+    checkpoint incompleto: a conversa não continua; o aluno abre outra."""
+
+
 class Sistema:
     def __init__(self, checkpoint: Path | str | None = None,
                  memoria_dir: Path | str | None = None):
@@ -42,6 +48,9 @@ class Sistema:
         self._conexao = sqlite3.connect(self.caminho_checkpoint, check_same_thread=False)
         self.memoria = Memoria(Path(memoria_dir or os.environ.get(
             "TRIAGEM_MEMORIA_DIR", RAIZ / "dados" / "memoria")))
+        # Decaimento (docs/memoria.md §4.2): a rotina roda ao subir o processo,
+        # que no contêiner é o que reinicia a cada implantação. Não há agendador.
+        self.memoria.episodica.aplicar_decaimento(date.today())
         # O grafo é compilado UMA vez, aqui, e reaproveitado em todo turno.
         self.app = construir(n.Nos(self.memoria)).compile(
             checkpointer=SqliteSaver(self._conexao))
@@ -67,12 +76,28 @@ class Sistema:
 
         config = self._config(thread_id)
         instantaneo = self.app.get_state(config)
-        if instantaneo.next:  # pausada num interrupt
+        if any(tarefa.interrupts for tarefa in instantaneo.tasks):  # pausada num interrupt
             return self._resposta_de_espera(thread_id, instantaneo.values)
+        if instantaneo.next:  # parou no meio, sem ser pausa: não há como continuar
+            raise ConversaEncerrada(thread_id)
 
-        resultado = self.app.invoke(
-            {"thread_id": thread_id, "ra_autenticado": ra_autenticado,
-             "mensagens": [{"role": "user", "content": texto}]}, config)
+        try:
+            resultado = self.app.invoke(
+                {"thread_id": thread_id, "ra_autenticado": ra_autenticado,
+                 "mensagens": [{"role": "user", "content": texto}]}, config)
+        except GraphRecursionError:
+            # `recursion_limit` é a rede de segurança POR BAIXO do orçamento de
+            # passos do agente (docs/grafo.md §5.3): só estoura se o grafo girar
+            # sem o orçamento o ter parado. O aluno não fica sem resposta.
+            saida = SaidaTriagem(
+                resultado="Não consegui concluir seu atendimento. Abra uma nova "
+                          "solicitação ou procure a secretaria.",
+                decisao="sem_acao", fonte=[],
+                suficiencia=Suficiencia(suficiente=False, motivo="o grafo atingiu o limite de passos"),
+                termino="erro_fatal")
+            return {"thread_id": thread_id, "saida": saida.model_dump(),
+                    "aguardando_humano": False, "termino": "erro_fatal",
+                    "motivo": f"limite de {RECURSION_LIMIT} passos do grafo (recursion_limit)"}
         return {"thread_id": thread_id, "saida": resultado["saida"],
                 "aguardando_humano": "__interrupt__" in resultado,
                 "termino": resultado["termino"], "motivo": resultado.get("motivo")}

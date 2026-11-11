@@ -13,7 +13,7 @@ python exercicios/aula09-langgraph/agente_langgraph.py
 **O que prova:**
 - O laço `while/if` do Ex.6 vira `StateGraph` com 3 nós (`agente`, `ferramentas`, `aprovacao_trancamento`) e arestas condicionais — mesma lógica, declarada em vez de escrita.
 - Caso simples (RA 20231045, declaração): `agente → ferramentas → agente → ferramentas → agente`, emitiu DOC-1687.
-- Caso trancamento (RA 20229012): `interrupt()` pausa o grafo, mostra a ação exata (`escalar_para_humano`, argumentos), e `Command(resume=...)` retoma de onde parou — fecha a lacuna que `docs/memoria.md` §1.1 registrava (hoje o Ex.6 encerra com `HUMANO` sem retomar).
+- Caso trancamento (RA 20229012): `interrupt()` pausa o grafo, mostra a ação exata (`escalar_para_humano`, argumentos), e `Command(resume=...)` retoma de onde parou — fecha a lacuna que `docs/memoria-ex8.md` §1.1 registrava (hoje o Ex.6 encerra com `HUMANO` sem retomar).
 - Checkpointer em arquivo (`checkpoints.sqlite`, não commitado — efêmero), não em memória: sobrevive a reiniciar o processo.
 
 **O que o framework não deu de graça** (nota desta aula, §9): motivo de término, detector de laço, orçamento de 4 moedas, classificação erro recuperável×fatal — nenhum disso está neste arquivo. O Ex.6 (`src/agente.py`) já tem os quatro; portá-los para cá é trabalho adicional não feito aqui, por tempo.

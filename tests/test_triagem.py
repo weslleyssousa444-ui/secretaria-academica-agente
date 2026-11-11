@@ -15,6 +15,7 @@ import pytest
 
 from conftest import RAIZ, ModeloRoteirizado, chamada, contar, resposta
 from triagem import humano, nos
+from triagem.grafo import construir
 from triagem.humano import DecisaoHumana
 from triagem.sistema import Sistema
 
@@ -125,6 +126,43 @@ def test_orcamento_de_passos_interrompe(sistema, modelo):
     modelo([resposta([chamada("buscar_aluno", ra=f"2023{i:04d}")]) for i in range(20)])
     r = sistema.conversar("t1", "consulte vários RAs")
     assert r["termino"] == "orcamento_esgotado"
+
+
+def test_estourar_o_limite_de_passos_do_grafo_nao_derruba_nem_confunde_com_pausa(sistema, modelo, monkeypatch):
+    """`recursion_limit` é um parâmetro com padrão do framework (docs/grafo.md
+    §5.3). Estourado, o aluno recebe resposta, e a conversa NÃO é confundida
+    com uma pausa para a coordenação no turno seguinte."""
+    from triagem import sistema as modulo
+    from triagem.sistema import ConversaEncerrada
+    monkeypatch.setattr(modulo, "RECURSION_LIMIT", 5)
+    modelo([resposta([chamada("buscar_aluno", ra=f"2023{i:04d}")]) for i in range(20)])
+    r = sistema.conversar("t1", "consulte vários RAs")
+    assert r["termino"] == "erro_fatal" and r["aguardando_humano"] is False
+    assert "recursion_limit" in r["motivo"] and r["saida"]["resultado"]
+    with pytest.raises(ConversaEncerrada):
+        sistema.conversar("t1", "e agora?")
+
+
+def test_teto_de_tempo_por_turno_interrompe_antes_da_proxima_chamada(banco, tmp_path, modelo):
+    """O provedor lento: depois da primeira chamada o turno já passou do teto, e
+    o agente NÃO faz a segunda (o que o Orcamento da Parte 1 nunca conferia)."""
+    import time as relogio
+    s = Sistema(checkpoint=tmp_path / "cp.sqlite", memoria_dir=tmp_path / "mem")
+    s.app = construir(nos.Nos(s.memoria, max_segundos=0.05)).compile(checkpointer=s.app.checkpointer)
+    falso = modelo([resposta([chamada("buscar_aluno", ra="20231045")]), resposta(content="nunca chega")])
+    original = falso._create
+
+    def lento(**kwargs):
+        relogio.sleep(0.1)  # a chamada demora mais que o teto
+        return original(**kwargs)
+
+    falso.chat.completions.create = lento
+    try:
+        r = s.conversar("t1", "Declaração, RA 20231045.")
+    finally:
+        s.fechar()
+    assert r["termino"] == "orcamento_esgotado" and r["motivo"].startswith("tempo")
+    assert falso.chamadas == 1
 
 
 def test_erro_fatal_do_provedor_termina_sem_escrita(sistema, modelo):
@@ -333,6 +371,26 @@ def test_artigo_de_ruido_com_recusa_declarada_e_sem_acao(sistema, modelo):
     assert r["saida"]["suficiencia"] == {
         "suficiente": False, "motivo": "o agente declarou que o Regimento não responde à pergunta"}
     assert r["saida"]["fonte"] == [] and "[SUFICIENTE" not in r["saida"]["resultado"]
+
+
+def test_marcacao_no_meio_do_texto_e_aceita_e_removida():
+    """O modelo real, sem uma frase da regra 7, escreveu a marcação e continuou
+    o texto depois dela. A posição não importa; a marcação sai do texto."""
+    from triagem.validacao import separar_suficiencia
+    texto, declarada = separar_suficiencia(
+        "O Regimento não prevê isso (Art. 10).\n\n[SUFICIENTE: não]\n\nPosso encaminhar o caso.")
+    assert declarada is False and "[SUFICIENTE" not in texto
+    assert texto == "O Regimento não prevê isso (Art. 10).\n\nPosso encaminhar o caso."
+    assert separar_suficiencia("sem marcação")[1] is None
+    assert separar_suficiencia("a [SUFICIENTE: sim] depois [SUFICIENTE: não]")[1] is False  # vale a última
+
+
+def test_contingencia_de_duvida_do_regimento_nao_pede_o_ra():
+    from triagem.validacao import resposta_de_contingencia
+    passos = [{"ferramenta": "consultar_regimento", "erro": None, "argumentos": {},
+               "resultado": {"trechos": [{"id": "Art. 4º", "texto": "x"}], "total": 1}}]
+    assert "RA" not in resposta_de_contingencia(passos)
+    assert "dúvida" in resposta_de_contingencia(passos)
 
 
 def test_resposta_do_regimento_sem_a_marcacao_volta_ao_agente_uma_vez(sistema, modelo):

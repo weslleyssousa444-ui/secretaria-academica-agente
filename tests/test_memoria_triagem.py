@@ -175,3 +175,15 @@ def test_remocao_do_titular_sai_de_todas_as_estruturas(banco, tmp_path, monkeypa
         assert restante == {"procedural"}
     finally:
         s.fechar()
+
+
+def test_o_sistema_aplica_o_decaimento_ao_subir(banco, tmp_path):
+    """A rotina de decaimento não fica só na função: o Sistema a roda ao iniciar."""
+    antigo = Memoria(tmp_path / "mem")
+    antigo.episodica.gravar("20231045", "2020-01-01", "t", "Episódio de anos atrás.")
+    antigo.episodica.gravar("20231045", date.today().isoformat(), "t", "Episódio de hoje.")
+    s = Sistema(checkpoint=tmp_path / "cp.sqlite", memoria_dir=tmp_path / "mem")
+    try:
+        assert [e["resumo"] for e in s.memoria.episodica.episodios] == ["Episódio de hoje."]
+    finally:
+        s.fechar()
