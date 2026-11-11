@@ -28,12 +28,19 @@ RUN useradd --create-home --uid 10001 agente \
 # ---------------------------------------------------------------- 4
 # Só os arquivos que o agente usa, por nome — segunda barreira contra o .env,
 # além do .dockerignore.
-COPY src/agente.py src/dados.py src/api.py src/chat.py ./src/
-COPY src/prompts/triagem-v1.txt ./src/prompts/
+COPY src/agente.py src/dados.py src/api.py src/chat.py src/coordenacao.py \
+     src/chunking.py src/memoria_semantica.py src/memoria_procedural.py ./src/
+COPY src/triagem/ ./src/triagem/
+# agente.py ainda lê a v1 (laço da Parte 1, motor das ferramentas); o grafo lê a v2.
+COPY src/prompts/triagem-v1.txt src/prompts/triagem-v2.txt ./src/prompts/
+# O Regimento simulado, fonte do RAG (src/triagem/regimento.py).
+COPY dados/regimento_dados.py ./dados/
 
 # ---------------------------------------------------------------- 5
 ENV ACADEMICO_DB=/dados/academico.db \
-    LOGS_DIR=/dados/logs
+    LOGS_DIR=/dados/logs \
+    TRIAGEM_CHECKPOINT=/dados/triagem.sqlite \
+    TRIAGEM_MEMORIA_DIR=/dados/memoria
 USER agente
 EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=3s --retries=3 \

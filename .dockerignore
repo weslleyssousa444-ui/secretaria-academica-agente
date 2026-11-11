@@ -10,6 +10,7 @@
 .github
 .venv
 .venv311
+.venv39
 .pytools
 __pycache__
 *.pyc
@@ -20,6 +21,7 @@ dados/*.db
 dados/*.json
 dados/*.npz
 checkpoints
+dados/memoria
 logs
 
 # o que a imagem não usa

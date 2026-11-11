@@ -108,7 +108,8 @@ def protocolo_da_trajetoria(passos: list[dict]) -> str | None:
 
 
 def suficiencia_da_trajetoria(decisao: str, passos: list[dict], termino: str,
-                              artigos_citados: list[str]) -> Suficiencia:
+                              artigos_citados: list[str],
+                              declarada: bool | None = None) -> Suficiencia:
     if termino != "respondeu":
         return Suficiencia(suficiente=False,
                            motivo=f"a execução terminou por {termino}, sem conclusão")
@@ -116,11 +117,15 @@ def suficiencia_da_trajetoria(decisao: str, passos: list[dict], termino: str,
         return Suficiencia(suficiente=True,
                            motivo="decisão tomada com o retorno de uma ferramenta")
     if decisao == "responder_regimento":
-        achou = any(p["ferramenta"] == "consultar_regimento" and p.get("resultado")
-                    and p["resultado"].get("total", 0) > 0 for p in passos)
-        if achou and artigos_citados:
-            return Suficiencia(suficiente=True, motivo="resposta com artigo do Regimento citado")
+        # Suficiente = o agente DECLAROU que os artigos respondem E o texto cita
+        # ao menos um artigo devolvido (a citação é conferida em código).
+        if declarada is True and artigos_citados:
+            return Suficiencia(suficiente=True,
+                               motivo="resposta com artigo do Regimento citado e conferido")
         return Suficiencia(suficiente=False,
-                           motivo="o Regimento não trata do assunto, ou a resposta não cita artigo")
+                           motivo="a resposta não cita artigo devolvido ou não declara suficiência")
+    if declarada is False:
+        return Suficiencia(suficiente=False,
+                           motivo="o agente declarou que o Regimento não responde à pergunta")
     return Suficiencia(suficiente=False,
                        motivo="nenhuma ação tomada: falta informação do aluno, ou fora do escopo")

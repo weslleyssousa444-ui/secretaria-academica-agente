@@ -262,7 +262,9 @@ class Nos:
 
     # 7. VALIDAR — código. O "avaliador" do avaliador-otimizador.
     def validar_resposta(self, estado: dict) -> dict:
-        problemas = validacao.validar_resposta(_ultima_do_assistente(estado), estado.get("passos", []))
+        turno = estado.get("passos", [])[estado.get("inicio_do_turno", 0):]
+        problemas = validacao.validar_resposta(
+            _ultima_do_assistente(estado), estado.get("passos", []), turno)
         if not problemas:
             return {"eventos": ["validar:ok"]}
         if estado.get("correcoes", 0) < 1:
@@ -284,13 +286,16 @@ class Nos:
         todos = estado.get("passos", [])
         turno = todos[estado.get("inicio_do_turno", 0):]
         termino = estado.get("termino") or "respondeu"
-        texto = _ultima_do_assistente(estado) or TEXTO_SEM_CONCLUSAO
+        bruto = _ultima_do_assistente(estado) or TEXTO_SEM_CONCLUSAO
+        texto, declarada = validacao.separar_suficiencia(bruto)  # a marcação não vai ao aluno
         citados = validacao.artigos_citados(texto, validacao.artigos_devolvidos(todos))
         decisao = contrato.decisao_da_trajetoria(turno)
+        if decisao == "responder_regimento" and declarada is False:
+            decisao = "sem_acao"  # o agente disse que o Regimento não responde: é recusa
         objeto = contrato.SaidaTriagem(
-            resultado=texto, decisao=decisao,
-            fonte=contrato.fontes_da_trajetoria(turno, citados),
-            suficiencia=contrato.suficiencia_da_trajetoria(decisao, turno, termino, citados),
+            resultado=texto or TEXTO_SEM_CONCLUSAO, decisao=decisao,
+            fonte=contrato.fontes_da_trajetoria(turno, citados if declarada else []),
+            suficiencia=contrato.suficiencia_da_trajetoria(decisao, turno, termino, citados, declarada),
             protocolo=contrato.protocolo_da_trajetoria(turno), termino=termino)
         caso = next((p["resultado"]["protocolo"] for p in turno
                      if p["ferramenta"] == "escalar_para_humano" and p["erro"] is None

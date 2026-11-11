@@ -22,6 +22,7 @@ from pathlib import Path
 from langgraph.checkpoint.sqlite import SqliteSaver
 from langgraph.types import Command
 
+import dados
 from triagem import humano
 from triagem import nos as n
 from triagem.grafo import RECURSION_LIMIT, construir
@@ -74,11 +75,11 @@ class Sistema:
              "mensagens": [{"role": "user", "content": texto}]}, config)
         return {"thread_id": thread_id, "saida": resultado["saida"],
                 "aguardando_humano": "__interrupt__" in resultado,
-                "termino": resultado["termino"]}
+                "termino": resultado["termino"], "motivo": resultado.get("motivo")}
 
     def _resposta_de_espera(self, thread_id: str, valores: dict) -> dict:
         protocolo = valores.get("caso_trancamento")
-        con = __import__("dados").conectar()
+        con = dados.conectar()
         espera = con.execute("SELECT prazo_ate FROM aprovacoes WHERE protocolo = ?",
                              (protocolo,)).fetchone()
         con.close()
@@ -90,7 +91,7 @@ class Sistema:
             suficiencia=Suficiencia(suficiente=True, motivo="caso já aberto, aguardando a coordenação"),
             protocolo=protocolo, aguardando_humano=True, termino="respondeu")
         return {"thread_id": thread_id, "saida": saida.model_dump(),
-                "aguardando_humano": True, "termino": "respondeu"}
+                "aguardando_humano": True, "termino": "respondeu", "motivo": None}
 
     # ----------------------------------------------------- a coordenação decide
     def decidir(self, protocolo: str, decisao: humano.DecisaoHumana) -> dict:
@@ -102,7 +103,7 @@ class Sistema:
             return {"protocolo": protocolo, "ja_decidido": True,
                     "decisao": gravada["decisao"],
                     "conflito": gravada["decisao"] != novo_status}
-        con = __import__("dados").conectar()
+        con = dados.conectar()
         espera = con.execute("SELECT thread_id FROM aprovacoes WHERE protocolo = ?",
                              (protocolo,)).fetchone()
         con.close()

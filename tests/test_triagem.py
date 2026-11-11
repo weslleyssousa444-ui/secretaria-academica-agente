@@ -310,18 +310,42 @@ def duvida(caso: str, resposta_final: str):
 
 
 def test_duvida_do_regimento_cita_o_artigo_e_a_fonte_e_conferivel(sistema, modelo):
-    roteiro, pergunta = duvida("r03", "Vale o que o Regimento diz no Art. 6º, conforme a consulta.")
+    roteiro, pergunta = duvida("r03", "Vale o que o Regimento diz no Art. 6º, conforme a consulta.\n[SUFICIENTE: sim]")
     modelo(roteiro)
     r = sistema.conversar("t1", pergunta)
     assert r["saida"]["decisao"] == "responder_regimento"
     assert {"tipo": "regimento", "referencia": "Art. 6º"} in r["saida"]["fonte"]
     assert r["saida"]["suficiencia"]["suficiente"] is True
+    assert "[SUFICIENTE" not in r["saida"]["resultado"]  # a marcação não vai ao aluno
     assert contar("casos_pendentes") == 0
+
+
+def test_artigo_de_ruido_com_recusa_declarada_e_sem_acao(sistema, modelo):
+    """O defeito que o modelo real expôs (caso 5): a busca textual devolve
+    artigo para uma pergunta que o Regimento NÃO responde, e o modelo o cita
+    para explicar isso. Sem a declaração, o contrato marcaria 'suficiente'."""
+    roteiro, pergunta = duvida(
+        "s01", "O Regimento não trata de custo; o Art. 4º só fala da quitação. "
+               "Posso encaminhar à secretaria.\n[SUFICIENTE: não]")
+    modelo(roteiro)
+    r = sistema.conversar("t1", pergunta)
+    assert r["saida"]["decisao"] == "sem_acao"
+    assert r["saida"]["suficiencia"] == {
+        "suficiente": False, "motivo": "o agente declarou que o Regimento não responde à pergunta"}
+    assert r["saida"]["fonte"] == [] and "[SUFICIENTE" not in r["saida"]["resultado"]
+
+
+def test_resposta_do_regimento_sem_a_marcacao_volta_ao_agente_uma_vez(sistema, modelo):
+    roteiro, pergunta = duvida("r03", "Vale o Art. 6º.")
+    modelo([*roteiro, resposta(content="Vale o Art. 6º.\n[SUFICIENTE: sim]")])
+    r = sistema.conversar("t1", pergunta)
+    assert sistema.estado("t1")["correcoes"] == 1
+    assert r["saida"]["suficiencia"]["suficiente"] is True
 
 
 def test_artigo_citado_que_a_ferramenta_nao_devolveu_e_reprovado(sistema, modelo):
     roteiro, pergunta = duvida("r03", "Segundo o Art. 12, o prazo é longo.")
-    modelo([*roteiro, resposta(content="Segundo o Art. 6º, vale a regra consultada.")])
+    modelo([*roteiro, resposta(content="Segundo o Art. 6º, vale a regra consultada.\n[SUFICIENTE: sim]")])
     r = sistema.conversar("t1", pergunta)
     assert "Art. 12" not in r["saida"]["resultado"] and sistema.estado("t1")["correcoes"] == 1
 

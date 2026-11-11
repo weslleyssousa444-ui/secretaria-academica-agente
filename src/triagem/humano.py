@@ -154,3 +154,12 @@ def vencidos(agora: datetime | None = None) -> list[dict]:
         (iso(agora),)).fetchall()
     con.close()
     return [dict(l) for l in linhas]
+
+
+def pendentes() -> list[dict]:
+    """O que está esperando a coordenação agora, com a tela de cada caso."""
+    con = dados.conectar()
+    linhas = con.execute(
+        "SELECT protocolo FROM aprovacoes WHERE estado = 'aguardando' ORDER BY criado_em").fetchall()
+    con.close()
+    return [tela_da_aprovacao(l["protocolo"]) for l in linhas]

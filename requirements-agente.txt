@@ -1,8 +1,17 @@
-# Dependências da IMAGEM do agente de triagem (Exercício 13) — só o que
-# src/agente.py, src/dados.py, src/api.py e src/chat.py importam, com versão
+# Dependências da IMAGEM do sistema de triagem — só o que src/agente.py,
+# src/dados.py, src/api.py, src/chat.py e src/triagem/ importam, com versão
 # exata. O requirements.txt da raiz reúne os Exercícios 7-8 (torch,
 # sentence-transformers, ~2 GB) e não entra na imagem.
+#
+# Parte 2: o framework (langgraph) e o checkpointer em arquivo passaram a ser
+# parte do COMPORTAMENTO do sistema (reducers, interrupt, recursion_limit):
+# por isso a versão é exata, e uma atualização é uma mudança de versão do
+# sistema (docs/grafo.md §5.3). O pydantic já vinha com o fastapi e agora é
+# importado direto (contrato de saída, src/triagem/saida.py).
 openai==2.48.0
 python-dotenv==1.2.1
 fastapi==0.143.3
 uvicorn==0.54.0
+pydantic==2.14.3
+langgraph==1.2.12
+langgraph-checkpoint-sqlite==3.1.1

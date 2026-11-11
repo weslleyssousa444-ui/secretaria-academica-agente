@@ -21,6 +21,25 @@ PRAZO_PROMETIDO_HORAS = 48
 _PROTOCOLO = re.compile(r"\b(?:DOC|CASO)-\d+\b")
 _ARTIGO = re.compile(r"Art\.?\s*\d+\s*º?(?:\s*§\s*\d+\s*º?)?", re.IGNORECASE)
 _PRAZO = re.compile(r"\b(\d+)\s*(h|horas?|dias?|semanas?)\b", re.IGNORECASE)
+# O agente declara, no fim da resposta a uma dúvida do Regimento, se os artigos
+# devolvidos respondem à pergunta. A busca textual não tem piso de relevância
+# (docs/rag.md §4): ela devolve artigo de ruído para uma pergunta sem resposta,
+# e só o modelo, lendo o texto, sabe dizer que o artigo não responde. O CÓDIGO
+# exige a marcação, confere o resto e a remove antes de mostrar ao aluno.
+_MARCACAO = re.compile(r"\s*\[SUFICIENTE:\s*(sim|n[aã]o)\]\s*$", re.IGNORECASE)
+
+
+def separar_suficiencia(texto: str) -> tuple[str, bool | None]:
+    """(texto sem a marcação, declarada). `None` quando o texto não a traz."""
+    achou = _MARCACAO.search(texto)
+    if not achou:
+        return texto.strip(), None
+    return texto[:achou.start()].rstrip(), achou.group(1).lower() == "sim"
+
+
+def consultou_regimento_com_artigo(passos: list[dict]) -> bool:
+    return any(p["ferramenta"] == "consultar_regimento" and p.get("erro") is None
+               and (p.get("resultado") or {}).get("total", 0) > 0 for p in passos)
 
 
 def normalizar_artigo(rotulo: str) -> str:
@@ -49,9 +68,13 @@ def artigos_citados(texto: str, devolvidos: list[str]) -> list[str]:
             if any(normalizar_artigo(d).startswith(c) for c in citados)]
 
 
-def validar_resposta(texto: str, passos: list[dict]) -> list[str]:
+def validar_resposta(texto: str, passos: list[dict],
+                     passos_do_turno: list[dict] | None = None) -> list[str]:
     """Lista de problemas; vazia quando a resposta passa."""
     problemas: list[str] = []
+    if consultou_regimento_com_artigo(passos_do_turno if passos_do_turno is not None else passos) \
+            and separar_suficiencia(texto)[1] is None:
+        problemas.append("falta a linha final [SUFICIENTE: sim] ou [SUFICIENTE: não]")
 
     inventados = set(_PROTOCOLO.findall(texto)) - protocolos_devolvidos(passos)
     if inventados:
