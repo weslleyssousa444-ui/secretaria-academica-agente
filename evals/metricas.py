@@ -74,8 +74,14 @@ def metricas(spans: list[dict]) -> dict:
                 ferramentas[nome]["total"] += 1
                 ferramentas[nome]["erros"] += f["status"] == "ERROR"
                 ferramentas[nome]["recusadas"] += bool(f["attributes"].get("agente.ferramenta.recusada"))
+        # O provedor pode servir OUTRO modelo sob o mesmo nome (docs/observabilidade.md §3):
+        # `gen_ai.response.model` é o modelo SERVIDO, e só ele denuncia a troca silenciosa.
+        chats = [f for f in filhos if f["name"].startswith("chat ")]
+        divergentes = [f for f in chats if f["attributes"].get("gen_ai.response.model")
+                       and f["attributes"]["gen_ai.response.model"] != f["attributes"].get("gen_ai.request.model")]
         validas = [r for r in raizes if valida(r)]
         resultado[versao] = {
+            "chamadas_ao_modelo": len(chats), "modelo_divergente": len(divergentes),
             "n": len(raizes), "latencia_p50_ms": percentil(latencias, 50), "latencia_p95_ms": percentil(latencias, 95),
             "tokens_medios": sum(tokens) / len(tokens) if tokens else 0.0, "tokens_p95": percentil(tokens, 95),
             "termino": Counter(r["attributes"].get("agente.termino") for r in raizes),
@@ -95,6 +101,7 @@ def imprimir(m: dict, slo: float | None = None) -> str:
                    f"  tokens       média {v['tokens_medios']:>8.0f}   p95 {v['tokens_p95']:>8.0f}  "
                    "(custo em US$: 0 no free tier da Groq; ver docs/observabilidade.md §4.3)",
                    "  término      " + ", ".join(f"{k} {n} ({100 * n / v['n']:.0f}%)" for k, n in v["termino"].most_common()),
+                   f"  modelo       {v['chamadas_ao_modelo']} chamada(s); servido diferente do pedido em {v['modelo_divergente']}",
                    "  ferramentas  " + ("; ".join(f"{k} {d['erros']}/{d['total']} erro(s), {d['recusadas']} recusada(s)"
                                                   for k, d in sorted(v["ferramentas"].items())) or "nenhuma"),
                    f"  SLI de qualidade  {sli['boas']}/{sli['validas']} = {100 * sli['valor']:.1f}%"]

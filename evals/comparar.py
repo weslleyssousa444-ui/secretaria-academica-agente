@@ -39,7 +39,7 @@ def carregar(caminho: Path) -> tuple[dict, dict]:
 def comparar(a: Path, b: Path, dataset: Path | None = None) -> dict:
     ra, meta_a = carregar(a)
     rb, meta_b = carregar(b)
-    caminho_dataset = dataset or RAIZ / (meta_b.get("dataset", {}).get("arquivo") or "evals/dataset/golden_v1.1.0.json")
+    caminho_dataset = dataset or RAIZ / (meta_b.get("dataset", {}).get("arquivo") or "evals/dataset/golden_v1.2.0.json")
     ds = json.loads(caminho_dataset.read_text(encoding="utf-8"))
     casos = {c["id"]: c for c in ds["casos"]}
     avaliacao = {"A": {}, "B": {}}

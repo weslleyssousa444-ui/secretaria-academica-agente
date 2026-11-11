@@ -17,7 +17,7 @@ from evals.avaliadores import avaliar, avaliar_identidade, avaliar_regimento
 from triagem import telemetria
 from triagem.sistema import Sistema
 
-DATASET = json.loads((RAIZ / "evals" / "dataset" / "golden_v1.1.0.json").read_text(encoding="utf-8"))
+DATASET = json.loads((RAIZ / "evals" / "dataset" / "golden_v1.2.0.json").read_text(encoding="utf-8"))
 CASOS = {c["id"]: c for c in DATASET["casos"]}
 MODULOS = {"dados": dados, "agente": agente, "Sistema": Sistema}
 
@@ -36,6 +36,23 @@ def test_o_dataset_cumpre_a_composicao_que_o_enunciado_pede():
         assert sum(c["classe"] == classe for c in casos) > 1   # mais de um caso por classe
     assert len({c["id"] for c in casos}) == len(casos)
     assert "revisao_dos_sinteticos" in DATASET  # quem revisou os sintéticos está declarado
+
+
+def test_os_casos_demonstrados_na_parte_2_estao_no_dataset_com_o_texto_exato():
+    """O enunciado: os casos do §9 da Parte 2 (os seis: simples, divergência, RA
+    inexistente, trancamento, fora do corpus e aprovação humana) entram no golden
+    dataset. Os casos 7 e 8 de logs/parte2/ são exemplos de docs/io.md §4, não do §9."""
+    mensagens = {tuple(c["mensagens"]) for c in DATASET["casos"]}
+    for log in sorted((RAIZ / "logs" / "parte2").glob("0[1-6]-*.json")):
+        d = json.loads(log.read_text(encoding="utf-8"))
+        if d["caso"].startswith("06"):          # a aprovação humana é pausa + decisão: coberta por teste, não por caso de uma rodada
+            continue
+        assert tuple(t["aluno"] for t in d["turnos"]) in mensagens, d["caso"]
+
+
+def test_o_v1_1_0_foi_mantido_porque_a_rodada_a_rodou_sobre_ele():
+    v11 = json.loads((RAIZ / "evals" / "dataset" / "golden_v1.1.0.json").read_text(encoding="utf-8"))
+    assert len(v11["casos"]) == 33 and {c["id"] for c in v11["casos"]} <= {c["id"] for c in DATASET["casos"]}
 
 
 def test_os_24_casos_do_v1_nao_foram_alterados_alem_da_sessao():
@@ -123,7 +140,7 @@ def test_o_runner_e_o_comparador_de_ponta_a_ponta(banco, modelo, tmp_path, capsy
         pasta = tmp_path / f"rodada-{rotulo}"
         pasta.mkdir()
         (pasta / "metadados.json").write_text(json.dumps({"rotulo": rotulo, "dataset": {
-            "arquivo": "evals/dataset/golden_v1.1.0.json"}}), encoding="utf-8")
+            "arquivo": "evals/dataset/golden_v1.2.0.json"}}), encoding="utf-8")
         with (pasta / "execucoes.jsonl").open("w", encoding="utf-8") as f:
             for id_ in ("id01", "rg01"):
                 if id_ == "id01":
@@ -137,14 +154,14 @@ def test_o_runner_e_o_comparador_de_ponta_a_ponta(banco, modelo, tmp_path, capsy
     assert por_classe["identidade"] == (0.0, 100.0) and por_classe["regimento"] == (100.0, 100.0)
     assert r["acessos_a_terceiro"] == {"A": ["id01"], "B": []}
     texto = comparador.imprimir(r, tmp_path / "rodada-A", tmp_path / "rodada-B")
-    assert "DATASET v1.1.0" in texto and "identidade" in texto and "MÉDIA" in texto
+    assert "DATASET v1.2.0" in texto and "identidade" in texto and "MÉDIA" in texto
 
 
 def test_o_comparador_exclui_do_pareamento_o_caso_que_caiu_por_infra(banco, modelo, tmp_path):
     for rotulo in ("A", "B"):
         pasta = tmp_path / rotulo
         pasta.mkdir()
-        (pasta / "metadados.json").write_text(json.dumps({"dataset": {"arquivo": "evals/dataset/golden_v1.1.0.json"}}), encoding="utf-8")
+        (pasta / "metadados.json").write_text(json.dumps({"dataset": {"arquivo": "evals/dataset/golden_v1.2.0.json"}}), encoding="utf-8")
         modelo([resposta(content="Qual é o seu RA?")])
         reg = rodar.executar_caso(CASOS["em01"], rotulo, 1, True, MODULOS)
         if rotulo == "B":
@@ -224,3 +241,45 @@ def test_todo_arquivo_de_prompt_citado_no_codigo_existe():
     for arquivo in ("triagem-v1.txt", "triagem-v2.txt", "historico/juiz-rubrica-v1.0.0.txt"):
         assert (RAIZ / "src" / "prompts" / arquivo).exists(), arquivo
     assert not (RAIZ / "prompts").exists()   # a pasta antiga não voltou
+
+
+# ------------------------------------------------------------------ nenhum número digitado à mão
+
+def test_atualizar_docs_substitui_so_o_bloco_marcado():
+    from evals import atualizar_docs
+    texto = "antes\n<!-- BLOCO:comparacao -->\nPENDENTE\n<!-- /BLOCO:comparacao -->\ndepois"
+    novo = atualizar_docs.substituir(texto, "comparacao", atualizar_docs.bloco("cmd", "saída da ferramenta"))
+    assert novo.startswith("antes\n<!-- BLOCO:comparacao -->\n```text\n$ cmd\nsaída da ferramenta\n```") and novo.endswith("depois")
+    assert "PENDENTE" not in novo
+    with pytest.raises(SystemExit):
+        atualizar_docs.substituir("sem marcador", "comparacao", "x")
+
+
+# ------------------------------------------------------------------ reconstruir uma decisão só pelo trace
+
+def test_a_decisao_se_reconstroi_so_a_partir_do_trace(banco, modelo, tmp_path):
+    """Trancamento com a escrita feita pelo CÓDIGO (L02) e a aprovação da coordenação:
+    o trace sozinho explica quem decidiu o quê, sem banco, sem log, sem checkpoint."""
+    from evals import reconstruir
+    from triagem import humano
+    destino = tmp_path / "traces.jsonl"
+    telemetria.configurar(destino=destino)
+    try:
+        s = Sistema(checkpoint=tmp_path / "cp.sqlite", memoria_dir=tmp_path / "mem")
+        modelo([resposta([chamada("buscar_aluno", ra="20229012")]),
+                resposta(content="Seu trancamento foi registrado."),
+                resposta(content="Encaminhei. Protocolo: CASO-3001. Prazo: 48h.")])
+        s.conversar("conv-1", "Quero trancar. Meu RA é 20229012.", ra_autenticado="20229012")
+        s.decidir("CASO-3001", humano.DecisaoHumana(decisao="aprovar_editando", por="coord-1",
+                                                    edicao={"semestre_efetivo": "2027.1"}))
+        s.fechar()
+    finally:
+        telemetria.desligar()
+    texto = reconstruir.reconstruir(metricas.carregar([destino]), "conv-1")
+    assert "Quero trancar. Meu RA é 20229012." in texto and "identidade: autenticada" in texto
+    assert "buscar_aluno" in texto and "escalar_para_humano" in texto
+    assert "executada PELO CÓDIGO" in texto               # quem abriu o caso: o código, não o modelo
+    assert "escalar_trancamento" in texto and "CASO-3001" in texto and "aguardando humano: True" in texto
+    assert "coord-1" in texto and "aprovado" in texto      # a aprovação humana
+    assert "editou:" in texto and "2027.1" in texto        # o que a pessoa corrigiu: aprovar editando não é carimbo
+    assert "nenhum trace" in reconstruir.reconstruir(metricas.carregar([destino]), "outra-conversa")

@@ -14,6 +14,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import sqlite3
 from datetime import date, datetime
@@ -161,6 +162,8 @@ class Sistema:
                 **{"agente.aprovacao.protocolo": protocolo, "agente.aprovacao.pedida": decisao.decisao,
                    "agente.aprovacao.por": decisao.por}) as span:
             resultado = self._decidir(protocolo, decisao)
+            if decisao.edicao and telemetria.conteudo_ligado():  # o que a pessoa CORRIGIU: aprovação não é carimbo
+                span.set_attribute("agente.aprovacao.edicao", json.dumps(decisao.edicao, ensure_ascii=False))
             span.set_attributes({
                 "agente.termino": "vencido" if resultado["decisao"] == "vencido" else "respondeu",
                 "agente.aprovacao.decisao": resultado["decisao"],

@@ -213,3 +213,41 @@ def test_sem_configuracao_o_trace_e_noop_e_nada_quebra(sistema, modelo):
     emitir(modelo)
     r = sistema.conversar("t1", "Declaração, RA 20231045.")
     assert r["saida"]["decisao"] == "emitir_declaracao"
+
+
+def test_o_modelo_servido_diferente_do_pedido_e_contado(sistema, modelo, traces):
+    """Falha silenciosa do plano (docs/observabilidade.md §3): o provedor serve outro
+    modelo sob o mesmo nome. Só `gen_ai.response.model` a denuncia."""
+    from evals import metricas
+    from types import SimpleNamespace
+    r = resposta(content="Qual é o seu RA?")
+    r.model = "qwen/qwen3.8-27b-OUTRA-REVISAO"            # o provedor servindo outra coisa
+    modelo([r])
+    sistema.conversar("t1", "Preciso de uma declaração.")
+    chat = por_nome(traces, "chat ")[0].attributes
+    assert chat["gen_ai.request.model"] == "qwen/qwen3.8-27b"
+    assert chat["gen_ai.response.model"] == "qwen/qwen3.8-27b-OUTRA-REVISAO"
+    spans = [telemetria_dict(s) for s in traces.get_finished_spans()]
+    v = next(iter(metricas.metricas(spans).values()))
+    assert v["chamadas_ao_modelo"] == 1 and v["modelo_divergente"] == 1
+
+
+def telemetria_dict(span):
+    return telemetria.span_para_dict(span)
+
+
+def test_a_contingencia_aparece_na_raiz_do_trace_so_no_turno_em_que_ocorreu(sistema, modelo, traces):
+    """Falha silenciosa do plano (docs/observabilidade.md §3): o validador reprova duas
+    vezes, a resposta sai do molde, e NADA dá erro. Só `agente.contingencia` a denuncia,
+    e só no turno em que aconteceu (a trilha acumula os turnos da conversa)."""
+    modelo([resposta([chamada("buscar_aluno", ra="20231045")]),
+            resposta([chamada("emitir_documento", ra="20231045", tipo_documento="declaracao_matricula")]),
+            resposta(content="Emitida. Protocolo: DOC-9999."),    # inventado
+            resposta(content="Emitida de novo. Protocolo: DOC-8888.")])
+    sistema.conversar("t1", "Declaração, RA 20231045.")
+    modelo([resposta(content="Qual é o seu RA?")])
+    sistema.conversar("t1", "obrigado!")
+    raizes = sorted(por_nome(traces, "invoke_agent"), key=lambda s: s.start_time)
+    assert raizes[0].attributes["agente.contingencia"] is True and raizes[0].attributes["agente.termino"] == "respondeu"
+    assert raizes[0].status.status_code.name != "ERROR"          # não deu erro nenhum: é a falha silenciosa
+    assert raizes[1].attributes["agente.contingencia"] is False   # o turno seguinte não herda

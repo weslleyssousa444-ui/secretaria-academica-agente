@@ -13,6 +13,7 @@ import sqlite3
 
 import pytest
 
+import agente
 from conftest import RAIZ, ModeloRoteirizado, chamada, contar, resposta
 from triagem import humano, nos
 from triagem.grafo import construir
@@ -446,3 +447,34 @@ def test_janela_omite_retorno_antigo_e_preserva_o_resto():
     assert msgs[2]["content"] != janela.MARCADOR                    # a conversa original não é alterada
     assert [m["role"] for m in novas] == [m["role"] for m in msgs]  # a estrutura continua válida
     assert all(m["content"] != janela.MARCADOR for m in novas[-4:]) # os mais recentes ficam
+
+
+# ------------------------------------------------------------ a autoridade do sistema em grafo (docs/model-card.md, campo 3)
+
+def test_o_sistema_tem_exatamente_cinco_ferramentas_e_nenhuma_de_trancamento():
+    esperadas = {"buscar_aluno", "consultar_financeiro", "consultar_regimento", "emitir_documento", "escalar_para_humano"}
+    assert set(nos.FERRAMENTAS) == esperadas
+    assert {d["function"]["name"] for d in nos.DECLARACOES} == esperadas   # o que o modelo VÊ = o que o código executa
+    assert agente.ESCRITA == {"emitir_documento", "escalar_para_humano"}   # as duas únicas escritas
+
+
+def test_as_ferramentas_do_agente_nao_alteram_nem_apagam_nada():
+    """A3: o agente só insere. O UPDATE da decisão da coordenação existe (humano.py), mas
+    fica num nó que só roda DEPOIS do `interrupt`, e nenhuma ferramenta do modelo chega a ele."""
+    import inspect
+    from triagem import regimento
+    for modulo in (agente, regimento):
+        fonte = inspect.getsource(modulo).upper()
+        assert "UPDATE " not in fonte and "DELETE " not in fonte and "DROP " not in fonte, modulo.__name__
+    fonte_das_ferramentas = "".join(inspect.getsource(f) for f in nos.FERRAMENTAS.values())
+    for so_da_coordenacao in ("registrar_decisao", "decisoes_humanas", "aprovacoes", "DecisaoHumana"):
+        assert so_da_coordenacao not in fonte_das_ferramentas, so_da_coordenacao
+    # topologia: `registrar_decisao` só é alcançável a partir de `aprovacao_coordenacao`
+    arestas = nos_do_grafo().get_graph().edges
+    origens = {e.source for e in arestas if e.target == "registrar_decisao"}
+    assert origens == {"aprovacao_coordenacao"}
+
+
+def nos_do_grafo():
+    from triagem.grafo import GRAFO
+    return GRAFO.compile()

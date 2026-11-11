@@ -1,3 +1,7 @@
 regra_de_promocao_p3.json  sha256 5b33728a0d72457df253e59737fa40618b6a2b68a171f2116284673a347f6784
 golden_v1.1.0.json         sha256 4ea9778a61d6797683015d54615d2aa4754b10e41cddf98f916674884c6ccd48
 declarada em 2026-11-11T15:33:00Z, antes de qualquer execução da versão B.
+
+ATUALIZAÇÃO 2026-11-11T15:35:04Z, ainda antes de qualquer execução da versão B:
+golden_v1.2.0.json         sha256 8db018d935b413a769f0fd3e58644922373adfb4c984a67405d8bb392d999d24
+O dataset ganhou 4 casos (dm01 a dm04: os casos demonstrados da Parte 2, texto exato). A regra de promoção NÃO foi alterada (o sha256 da regra, acima, é o mesmo); o texto dela cita 'golden v1.1.0' e vale para o v1.2.0. O v1.1.0 foi mantido, porque a rodada A parcial rodou sobre ele.

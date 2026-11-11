@@ -1,4 +1,4 @@
-# Atendimento de secretaria acadêmica — sistema de triagem (Partes 1 e 2)
+# Atendimento de secretaria acadêmica — sistema de triagem (Partes 1, 2 e 3)
 
 > **Quer só rodar e testar?** Veja o [`START.md`](START.md): um caminho sem chave de API (testes e relatórios já gravados) e um com a chave gratuita da Groq (chat, demo, API).
 
@@ -162,10 +162,10 @@ Os rótulos de validação do juiz são **provisórios, do assistente de IA, nã
 
 ## Exercício 12 — Model card do agente, com evidência
 
-Governança (Aula 12): o *model card* do agente de triagem em [`docs/model-card.md`](docs/model-card.md), com 12 campos. Cada afirmação aponta para a linha de código, o teste, o log ou a saída de comando que a sustenta, ou está marcada como **LACUNA** (lista no fim do documento, com correção e prioridade). As saídas de comando citadas estão em [`docs/evidencias/`](docs/evidencias/).
+Governança (Aula 12): o *model card* do agente de triagem em [`docs/model-card.md`](docs/model-card.md), com 12 campos (**reescrito na Parte 3 para o sistema em grafo**; a versão do Exercício 12 está no histórico do git, `b3f4596`). Cada afirmação aponta para a linha de código, o teste, o log ou a saída de comando que a sustenta, ou está marcada como **LACUNA** (lista no fim do documento, com correção e prioridade). As saídas de comando citadas estão em [`docs/evidencias/`](docs/evidencias/).
 
 ```bash
-python -m pytest tests -v   # 34 testes offline (Python 3.10+), sem chave de API
+python -m pytest -q   # 210 passed, 1 deselected (Python 3.10+), sem chave de API
 ```
 
 `tests/test_autoridade.py` prova os limites aplicados fora do modelo (o roteiro de teste faz o "modelo" desobedecer o prompt e verifica que o código barra). `tests/test_lacunas.py` fixa o comportamento atual de cada lacuna; quando uma for corrigida, o teste dela falha e deve ser invertido.
@@ -191,6 +191,25 @@ python -m pytest tests/test_seguranca.py tests/test_api_seguranca.py -v   # 17 +
 
 O plano de um agente de trocas de loja virtual (perguntas, árvore de *spans* nas convenções GenAI do OpenTelemetry, modos de falha, SLOs e alertas), com um apêndice que aponta o que o agente de triagem já tem e o que falta para a Parte 3. Em [`exercicios/aula15-plano-de-observabilidade.md`](exercicios/aula15-plano-de-observabilidade.md).
 
+## Parte 3 — avaliar, governar, proteger e observar
+
+O mesmo sistema da Parte 2, agora com **evidência** de que se comporta como o grupo diz. Tudo roda offline, exceto a suíte com o modelo real (precisa da chave e da cota da Groq).
+
+| O quê | Onde | Como ver |
+|---|---|---|
+| **Avaliação**: *golden dataset* v1.2.0 (37 casos), níveis de checagem, regra de promoção assinada **antes** da versão B, juiz e rotulagem humana | [`docs/evals.md`](docs/evals.md), [`evals/`](evals/) | `python -m evals.rodar --help`, `python -m evals.comparar --help` |
+| **Governança**: *model card* do sistema entregue, com lacunas e riscos aceitos | [`docs/model-card.md`](docs/model-card.md), [`docs/mudancas.md`](docs/mudancas.md) | |
+| **Segurança**: riscos ASI do case, três controles **fora do prompt** (identidade da sessão, modelo aprovado, teto de chamadas), dados pessoais, chave fora do repositório | [`docs/seguranca.md`](docs/seguranca.md), [`src/triagem/modelos.py`](src/triagem/modelos.py), [`tests/test_controles.py`](tests/test_controles.py) | `python -m pytest tests/test_controles.py -v` |
+| **Observabilidade**: trace OpenTelemetry (GenAI), modos de falha, SLI e SLO | [`docs/observabilidade.md`](docs/observabilidade.md), [`src/triagem/telemetria.py`](src/triagem/telemetria.py) | `TRIAGEM_TRACES_DIR=traces python src/chat.py` e depois `python -m evals.reconstruir traces/traces.jsonl --conversa <id>` |
+
+```bash
+python -m pytest -q                         # 210 passed, 1 deselected; sem chave
+# com a chave da Groq e cota nova (cada rodada completa custa ~170 mil tokens): ver docs/evals.md §4.4
+python -m evals.rodar --rotulo B --run 1 --pasta evals/resultados/2026-11-11-B-r1
+```
+
+**O que está medido e o que está pendente, sem arredondar:** o ataque de identidade foi medido com o modelo real na versão **sem** o controle (3 de 3 casos emitiram a declaração de outra aluna: `evals/resultados/2026-11-11-A-r1`). **A rodada B não rodou** (a cota diária do modelo acabou), então **a comparação A × B, as métricas e o SLO medido estão PENDENTES**, e os documentos dizem isso nos blocos próprios. Dependem **do grupo**: rotular 20 saídas do juiz (`evals/rotulagem/LEIA-ME.md`) e o aceite de risco de Erick (`docs/seguranca.md` §4). Os opcionais do enunciado (multiagente, MCP, multimídia) **não foram feitos**.
+
 ---
 
 ## Estrutura do repositório
@@ -213,6 +232,16 @@ docs/rag.md              as formas de recuperar, o corpus, os números medidos
 docs/memoria.md          a fronteira, as três memórias, o esquecimento, a conversa
 docs/humano.md           onde o grafo para, a tela, o prazo, a aprovação repetida
 logs/parte2/             as execuções reais citadas nos documentos
+
+# Parte 3 — avaliar, governar, proteger, observar
+evals/                   suíte: dataset (dataset/golden_v1.2.0.json), runner (rodar.py), comparador, métricas, juiz,
+                         rotulagem humana, reconstrução de decisão pelo trace (reconstruir.py), resultados/
+src/triagem/modelos.py   lista de modelos aprovados (ASI10)
+src/triagem/telemetria.py  trace OpenTelemetry nas convenções GenAI
+docs/evals.md            o dataset, os níveis, o juiz, a regra de promoção, o estado das rodadas
+docs/seguranca.md        riscos ASI, controles fora do prompt, riscos aceitos, dados pessoais
+docs/observabilidade.md  as perguntas, o trace, modos de falha, métricas, SLI e SLO
+docs/mudancas.md         o histórico por commit e os defeitos que a entrega achou em si mesma
 
 # Parte 1 e exercícios
 docs/case.md          o tema, os usuários, o workflow, a justificativa de negócio

@@ -186,7 +186,9 @@ def registrar_resultado(span, resultado: dict, estado: dict) -> None:
     que permite RECONSTRUIR a decisão (docs/model-card.md)."""
     saida = resultado["saida"]
     turno = estado.get("passos", [])[estado.get("inicio_do_turno", 0):]
-    eventos = estado.get("eventos", [])
+    # A trilha acumula os turnos da conversa; o do turno começa no último `entrada`.
+    todos = estado.get("eventos", [])
+    eventos = todos[max((i for i, e in enumerate(todos) if e == "entrada"), default=0):]
     artigos = [t["id"] for p in turno if p["ferramenta"] == "consultar_regimento" and p.get("resultado")
                for t in p["resultado"].get("trechos", [])]
     # Taxonomia da Aula 05: a execução que PAROU esperando uma pessoa não é a que
@@ -202,7 +204,7 @@ def registrar_resultado(span, resultado: dict, estado: dict) -> None:
         "agente.termino": termino, "agente.motivo": resultado.get("motivo") or "",
         "agente.decisao": saida["decisao"], "agente.suficiente": saida["suficiencia"]["suficiente"],
         "agente.protocolo": saida["protocolo"] or "", "agente.aguardando_humano": resultado["aguardando_humano"],
-        "agente.contingencia": "validar:contingencia" in eventos[-6:] or "contingencia" in eventos[-6:],
+        "agente.contingencia": "contingencia" in eventos,
         "agente.correcoes": estado.get("correcoes", 0),
         "agente.chamadas_modelo": estado.get("n_chamadas_modelo", 0),
         "agente.tokens_gastos": estado.get("tokens_gastos", 0),

@@ -1,23 +1,23 @@
-# Model card — agente de triagem da secretaria acadêmica
+# Model card — sistema de triagem da secretaria acadêmica
 
-**Exercício 12 — Governança: o *model card* do agente, com evidência.**
+**Governança do sistema entregue (Partes 2 e 3), com evidência.** Reescreve o *model card* do Exercício 12, que descrevia o agente da Parte 1 (4 ferramentas, sem grafo, sem memória, sem RAG, sem pausa humana). Aquele texto está no histórico do git (`b3f4596`).
 **Grupo:** Weslley Soares de Sousa, Pedro Akira, Henrique Gomes Matos e Erick.
-**Data:** 16/10/2026. **Commit-base auditado:** `9bc9f8f` (o *model card* e os testes entram no commit seguinte).
+**Data:** 11/11/2026. **Commit-base auditado:** `57d5fa1` (o que muda depois dele entra no commit que traz este arquivo; `git log -- docs/model-card.md` o identifica).
 
 ## Como ler este documento
 
 Cada campo traz **a afirmação** e **a evidência**. Os tipos de evidência são:
 
-- `arquivo:linha`, com link para o trecho exato no repositório;
-- `teste::nome`: um teste em [`tests/`](../tests/) que roda offline, sem chave de API (`python -m pytest tests -v`). A saída de 16/10/2026 está em [`docs/evidencias/pytest.txt`](evidencias/pytest.txt);
-- `log`: o registro de uma execução real em [`logs/`](../logs/);
-- `saída de comando`: arquivo em [`docs/evidencias/`](evidencias/), com o comando e a saída copiados.
+- `arquivo:linha`, com link para o trecho exato no repositório (as linhas foram **calculadas por script** sobre o commit-base, não digitadas);
+- `teste::nome`: um teste em [`tests/`](../tests/) que roda offline, sem chave de API (`python -m pytest -q`; **210 passed, 1 deselected** em 11/11/2026, Python 3.11.18);
+- `log`: o registro de uma execução real com o modelo real em [`logs/parte2/`](../logs/parte2/) ou [`evals/resultados/`](../evals/resultados/);
+- `saída de comando`: arquivo em [`docs/evidencias/`](evidencias/), com o comando e a saída copiados. **Os de [`autoridade-efetiva.txt`](evidencias/autoridade-efetiva.txt), [`inventario-dados-pessoais.txt`](evidencias/inventario-dados-pessoais.txt) e [`historico-git.txt`](evidencias/historico-git.txt) são de 16/10/2026 e descrevem o agente da Parte 1**: valem como história, não como retrato do sistema atual (L26).
 
-**LACUNA L-xx** marca uma afirmação sem evidência ou um controle que não existe. Todas estão reunidas, com a correção e a prioridade, na seção [Lacunas](#lacunas). Os testes de [`tests/test_lacunas.py`](../tests/test_lacunas.py) **passam descrevendo o defeito**. Quando uma lacuna for corrigida, o teste dela passa a falhar e deve ser invertido.
+**LACUNA L-xx** marca uma afirmação sem evidência ou um controle que não existe. Todas estão reunidas, com a situação, na seção [Lacunas](#lacunas). Os testes de [`tests/test_lacunas.py`](../tests/test_lacunas.py) exercitam **o motor da Parte 1** (`src/agente.py`) chamado direto, e continuam passando descrevendo o defeito dele; **o sistema entregue o contorna** nos pontos que a seção Lacunas indica (L01, L02). O teste de cada controle novo está em [`tests/test_controles.py`](../tests/test_controles.py), e os de [`tests/test_api_seguranca.py`](../tests/test_api_seguranca.py) **também passam descrevendo defeitos da API** (§8).
 
-**O que é "o sistema" aqui.** É o agente de triagem: o laço em [`src/agente.py`](../src/agente.py), o prompt [`src/prompts/triagem-v1.txt`](../src/prompts/triagem-v1.txt) e o banco simulado [`src/dados.py`](../src/dados.py). Os pontos de entrada são [`src/chat.py`](../src/chat.py) (conversa), [`src/demo.py`](../src/demo.py) e [`src/verificador.py`](../src/verificador.py). O RAG (Ex.7), a memória (Ex.8), o grafo LangGraph (Ex.9) e o servidor MCP (Ex.10) existem no repositório, mas **não estão ligados ao agente**: `src/agente.py` importa só `dados` ([`src/agente.py:29`](../src/agente.py#L29)), e nenhum arquivo de `src/` menciona MCP ([`autoridade-efetiva.txt`](evidencias/autoridade-efetiva.txt), último comando). Esses componentes aparecem neste documento só onde tratam dado pessoal ou dividem a credencial com o agente.
+**O que é "o sistema" aqui.** O pacote [`src/triagem/`](../src/triagem/): um grafo LangGraph de 15 nós e 24 arestas (12 condicionais) que usa [`src/agente.py`](../src/agente.py) como motor de ferramentas, o RAG do Regimento ([`regimento.py`](../src/triagem/regimento.py)), a memória de três tipos ([`memoria.py`](../src/triagem/memoria.py)), a pausa para a coordenação ([`humano.py`](../src/triagem/humano.py)), o contrato de saída ([`saida.py`](../src/triagem/saida.py)) e o trace ([`telemetria.py`](../src/triagem/telemetria.py)). Pontos de entrada: [`src/api.py`](../src/api.py), [`src/chat.py`](../src/chat.py), [`src/demo_grafo.py`](../src/demo_grafo.py) e a suíte [`evals/`](../evals/). Prompt: [`src/prompts/triagem-v2.txt`](../src/prompts/triagem-v2.txt). O servidor MCP do Ex.10 e a variante LangGraph do Ex.9 continuam **fora** do sistema ([`exercicios/`](../exercicios/)).
 
-> **Todos os dados do repositório são sintéticos** ([`docs/case.md` §2.9](case.md)). Base legal, prazos e transferência internacional são avaliados **como se** o sistema fosse implantado com dados reais de alunos. É para isso que o documento serve.
+> **Todos os dados do repositório são sintéticos** ([`docs/case.md` §2.9](case.md)). Base legal, prazos e transferência internacional são avaliados **como se** o sistema fosse implantado com dados reais de alunos. É para isso que o documento serve. O sistema **não está em produção**.
 
 ---
 
@@ -25,11 +25,11 @@ Cada campo traz **a afirmação** e **a evidência**. Os tipos de evidência sã
 
 | Afirmação | Evidência |
 |---|---|
-| Nome: agente de triagem da secretaria acadêmica (repositório `secretaria-academica-agente`). | [`README.md:1`](../README.md#L1) |
-| Versão do sistema: **não há número de versão nem tag.** A versão é identificada pelo commit: base `9bc9f8f`, prompt `v1`. | [`historico-git.txt`](evidencias/historico-git.txt) (`git tag --list` vazio); [`src/prompts/triagem-v1.md`](../src/prompts/triagem-v1.md). **LACUNA L21** |
-| Data deste documento: 16/10/2026. | — |
+| Nome: sistema de triagem da secretaria acadêmica (repositório `secretaria-academica-agente`). | [`README.md:1`](../README.md#L1) |
+| Versão do sistema: **não há número de versão, mas há um carimbo calculado.** Todo trace e toda métrica carregam `<commit>/<hash do prompt>/<modelo>` (ex.: `57d5fa1/p-6df71c6c/qwen/qwen3.8-27b`). Não há *tag* de lançamento. | [`src/triagem/telemetria.py:145`](../src/triagem/telemetria.py#L145); `teste::test_a_raiz_traz_o_termino_e_a_versao`. Parcial: **L21** |
+| Data deste documento: 11/11/2026. | — |
 | Grupo: Weslley Soares de Sousa, Pedro Akira, Henrique Gomes Matos, Erick. | [`README.md:3`](../README.md#L3) |
-| Responsáveis nomeados **por papel** (produto, desenvolvimento, operação, risco), isto é, quem responde quando algo dá errado: **nomeados pelo grupo em 30/10/2026** (matriz abaixo). Até então não havia ninguém: todos os commits são de um único autor e nenhum documento atribuía papéis. Nomear não basta: o procedimento de interrupção e o teste dele continuam abertos (**L16**). | [`historico-git.txt`](evidencias/historico-git.txt). **L15 fechada quanto aos nomes; L16 aberta** |
+| Responsáveis por papel, **nomeados pelo grupo em 30/10/2026** (matriz abaixo). Nomear não basta: o procedimento de interrupção e o aceite de risco continuam abertos (L15, L16). | **L15 fechada quanto aos nomes; aberta quanto ao aceite** |
 
 Matriz informada pelo grupo em 30/10/2026 (os nomes vieram do grupo, não do documento):
 
@@ -37,275 +37,312 @@ Matriz informada pelo grupo em 30/10/2026 (os nomes vieram do grupo, não do doc
 |---|---|---|
 | Produto | finalidade, escopo, limiar de escalonamento | Weslley Soares de Sousa |
 | Desenvolvimento | ferramentas, limites em código, registro | Pedro Akira |
-| Operação | monitorar, interromper o agente | Henrique Gomes Matos |
+| Operação | monitorar, interromper o sistema | Henrique Gomes Matos |
 | Risco | aprovar esta especificação, aceitar riscos | Erick |
 
 ## 2. Finalidade
 
 | Afirmação | Evidência |
 |---|---|
-| Para cada solicitação no chat do portal, o agente decide se emite na hora a **declaração de matrícula** ou a **segunda via de histórico**, ou se encaminha o caso à secretaria humana. | [`docs/case.md` §2.1, §2.4](case.md); [`src/agente.py:144`](../src/agente.py#L144) |
-| Usuário principal: a atendente da secretaria, cuja fila o agente reduz. Quem conversa com o agente é o aluno. | [`docs/case.md` §2.2](case.md) |
-| Regras de negócio: declaração exige matrícula ativa; segunda via exige zero mensalidades em aberto; trancamento é sempre humano. | [`docs/case.md` §2.1](case.md); aplicação no campo 3 |
+| Para cada mensagem do aluno, o sistema decide entre: emitir **declaração de matrícula** ou **segunda via de histórico**; responder uma dúvida **citando o artigo do Regimento**; pedir o que falta; ou encaminhar à secretaria. O **trancamento** abre um caso e **pausa o grafo** até a coordenação decidir. | [`docs/case.md` §2.1, §2.4, §2.12](case.md); [`docs/grafo.md`](grafo.md); [`src/triagem/nos.py:412`](../src/triagem/nos.py#L412) |
+| Usuário principal: a atendente da secretaria, cuja fila o sistema reduz. Quem conversa com o sistema é o aluno. Quem decide o trancamento é a coordenação. | [`docs/case.md` §2.2](case.md); [`docs/humano.md`](humano.md) |
+| Regras de negócio: declaração exige matrícula ativa; segunda via exige zero mensalidades em aberto; trancamento é sempre humano. | [`docs/case.md` §2.1](case.md); campo 3 |
 
-**Usos fora de escopo.** O agente não deve ser usado para:
+**Usos fora de escopo.** O sistema não deve ser usado para:
 
-- **decidir ou executar trancamento de matrícula.** Não existe ferramenta para isso: `teste::test_nao_existe_ferramenta_de_trancamento`;
+- **decidir ou executar trancamento.** Não existe ferramenta para isso, e o grafo **só tem ponte para a coordenação**: `teste::test_o_sistema_tem_exatamente_cinco_ferramentas_e_nenhuma_de_trancamento`;
 - **emitir qualquer documento** fora dos dois do catálogo: `teste::test_emitir_recusa_documento_fora_do_catalogo`;
-- **conferir comprovante de pagamento.** Anexos não são lidos ([`docs/arquitetura-v1.md` §1](arquitetura-v1.md)), e a alegação do aluno não substitui o registro financeiro;
-- **decidir exceções** (bolsista, liminar, convênio). Elas sempre vão para humano ([`docs/case.md` §2.11](case.md));
-- **responder sobre o Regimento.** O RAG do Ex.7 não está ligado ao agente;
-- **operar com dados reais de alunos** enquanto L01 (identidade), L05–L07 (registro) e L14 (provedor) estiverem abertas.
+- **conferir comprovante de pagamento.** Anexos não são lidos, e a alegação do aluno não substitui o registro financeiro;
+- **decidir exceções** (bolsista, liminar, convênio): vão sempre para humano ([`docs/case.md` §2.11](case.md));
+- **responder fora do Regimento curado.** Pergunta sem artigo que a sustente é recusada com `suficiencia=false` (`teste::test_pergunta_fora_do_corpus_e_recusa_com_suficiencia_falsa`); o artigo revogado (Art. 9º) fica **fora do corpus** ([`docs/rag.md`](rag.md));
+- **operar com dados reais** enquanto L06 e L26 (logs e traces com dado pessoal), L14 (provedor) e a premissa do portal (ASI03, §9) estiverem abertas.
 
-**Classificação regulatória** (critérios da nota sobre legislação, situação de out. 2026):
+**Classificação regulatória** (critérios da nota sobre legislação, situação de out. 2026; **sem parecer jurídico**):
 
 | Regime | Conclusão | Justificativa |
 |---|---|---|
-| LGPD | Aplica-se a uma implantação real: o agente trata RA, nome, curso, situação de matrícula e situação financeira. | Campo 6 |
-| LGPD, art. 20 | O agente **não toma, por desenho, decisão final adversa**: o que é negativo para o aluno (pendência, divergência, RA não encontrado, trancamento) vai para a fila humana. O que ele decide sozinho é favorável (emitir). Para trancamento, o código garante o escalonamento mesmo que o modelo não chame `escalar_para_humano` (L02 fechada); para divergência, RA não encontrado e pendência, a propriedade ainda depende do modelo (L11). | `teste::test_trancamento_escalado_pelo_codigo_se_modelo_nao_escalar` |
-| ECA Digital | **Provavelmente não se aplica.** O serviço é interno ao portal, o acesso depende de matrícula, não há atratividade para crianças nem interação social entre usuários (art. 1º, parágrafo único, I–III). Um aluno de 16 ou 17 anos atendido continua protegido pela LGPD, art. 14. | Avaliação do grupo, sem parecer da ANPD. **LACUNA L23** |
+| LGPD | Aplica-se a uma implantação real: o sistema trata RA, nome, curso, situação de matrícula e financeira, o texto livre do aluno e, agora, **memória entre conversas** e **traces**. | Campo 6 |
+| LGPD, art. 20 | O sistema **não toma, por desenho, decisão final adversa**: o que é negativo para o aluno vai à fila humana. O que decide sozinho é favorável (emitir). Para trancamento, o **código** garante o escalonamento mesmo que o modelo não chame a ferramenta (L02); para pendência, divergência e RA não encontrado a propriedade ainda depende do modelo (L11). | `teste::test_trancamento_escalado_pelo_codigo_e_o_grafo_pausa` |
+| ECA Digital | **Provavelmente não se aplica**: serviço interno ao portal, acesso por matrícula. Aluno de 16 ou 17 anos continua protegido pela LGPD, art. 14. Avaliação do grupo, sem parecer da ANPD. | **L23** |
 | AI Act | Não se aplica: o resultado não é usado na União Europeia. | — |
 | PL 2338/2023 | Não é lei; não cria obrigação. | — |
 
 ## 3. Autoridade
 
-O que o agente pode fazer, e **onde cada limite é aplicado** (ausência de ferramenta, código, credencial, plataforma ou prompt). Limite aplicado só no prompt é marcado como LACUNA.
+O que o sistema pode fazer, e **onde cada limite é aplicado** (ausência de ferramenta, código, credencial, plataforma ou prompt). Limite aplicado só no prompt é marcado como LACUNA.
 
 ### 3.1 Escopo, ações proibidas e obrigações
 
 | # | Limite | Onde é aplicado | Evidência |
 |---|---|---|---|
-| A1 | O agente tem exatamente 4 ferramentas: `buscar_aluno`, `consultar_financeiro` (leitura), `emitir_documento`, `escalar_para_humano` (escrita). | ausência de ferramenta + código | [`src/agente.py:253-260`](../src/agente.py#L253-L260); `teste::test_nao_existe_ferramenta_de_trancamento` |
-| A2 | Uma ferramenta que o modelo invente (ex.: `trancar_matricula`) não é executada: o laço devolve erro e nada é gravado. | código | [`src/agente.py:408-412`](../src/agente.py#L408-L412); `teste::test_modelo_pede_ferramenta_inexistente_nada_e_executado` |
-| A3 | **Proibido** trancar matrícula, efetivar pagamento ou alterar cadastro e financeiro. | ausência de ferramenta | Só há `INSERT` em `documentos_emitidos` e `casos_pendentes`; nenhum `UPDATE` nem `DELETE` ([`autoridade-efetiva.txt`](evidencias/autoridade-efetiva.txt)) |
+| A1 | O sistema tem **exatamente 5 ferramentas**: `buscar_aluno`, `consultar_financeiro`, `consultar_regimento` (leitura), `emitir_documento`, `escalar_para_humano` (escrita). | ausência de ferramenta + código | [`src/agente.py:253-258`](../src/agente.py#L253-L258), [`src/triagem/nos.py:64`](../src/triagem/nos.py#L64); `teste::test_o_sistema_tem_exatamente_cinco_ferramentas_e_nenhuma_de_trancamento` |
+| A2 | Uma ferramenta que o modelo invente (ex.: `trancar_matricula`) não é executada: o nó devolve erro como dado e nada é gravado. | código | [`src/triagem/nos.py:143`](../src/triagem/nos.py#L143); `teste::test_ferramenta_inventada_nao_executa_nada` |
+| A3 | **Proibido** trancar matrícula, efetivar pagamento ou alterar cadastro e financeiro. As ferramentas do modelo só **inserem**. O único `UPDATE` do sistema (a decisão da coordenação no caso) fica num nó que **só é alcançável depois do `interrupt`**. | ausência de ferramenta + topologia do grafo | `teste::test_as_ferramentas_do_agente_nao_alteram_nem_apagam_nada` (o código do agente e do RAG não tem `UPDATE`/`DELETE`/`DROP`; `registrar_decisao` só tem aresta vinda de `aprovacao_coordenacao`) |
 | A4 | **Proibido** emitir `trancamento_matricula` ou documento fora do catálogo. | código | [`src/agente.py:182-186`](../src/agente.py#L182-L186); `teste::test_emitir_recusa_trancamento`, `teste::test_emitir_recusa_documento_fora_do_catalogo` |
-| A5 | **Proibido** emitir segunda via com mensalidade em aberto, mesmo que o aluno diga que pagou. | código (a ferramenta revalida no momento da escrita) | [`src/agente.py:202-212`](../src/agente.py#L202-L212); `teste::test_segunda_via_bloqueada_com_pendencia`, `teste::test_modelo_desobedece_prompt_e_codigo_barra_emissao` |
+| A5 | **Proibido** emitir segunda via com mensalidade em aberto, mesmo que o aluno diga que pagou. | código (a ferramenta revalida na escrita) | [`src/agente.py:202-212`](../src/agente.py#L202-L212); `teste::test_segunda_via_com_pendencia_nao_emite_mesmo_se_o_modelo_tentar`, `teste::test_modelo_desobedece_prompt_e_codigo_barra_emissao` |
 | A6 | **Proibido** emitir declaração sem matrícula ativa. | código | [`src/agente.py:195-200`](../src/agente.py#L195-L200); `teste::test_declaracao_bloqueada_matricula_nao_ativa` |
-| A7 | **Proibido** emitir para RA inexistente. | código | [`src/agente.py:191-193`](../src/agente.py#L191-L193); `teste::test_emitir_ra_inexistente` |
-| A8 | **Proibido** consultar ou emitir para o RA **de outra pessoa**. | **não aplicado.** Nenhuma ferramenta recebe a identidade de quem está no chat; qualquer RA digitado é atendido. | `teste::test_L01_sem_verificacao_de_identidade`; [`docs/arquitetura-v1.md` §2](arquitetura-v1.md) ("integração prevista, não existente"). **LACUNA L01** |
-| A9 | Emitir o mesmo documento duas vezes devolve o mesmo protocolo (`ja_existia=true`). | código | [`src/agente.py:214-219`](../src/agente.py#L214-L219); `teste::test_emitir_idempotente` |
-| A10 | Escalar duas vezes com a mesma chave não duplica o caso. | código, **mas a chave é escrita pelo modelo** | [`src/agente.py:237-241`](../src/agente.py#L237-L241); `teste::test_escalar_idempotente_pela_chave`; `teste::test_L03_chave_de_idempotencia_vem_do_modelo`. **LACUNA L03** |
-| A11 | Trancamento é **sempre** escalado. | **código** (pós-condição em `conversar()`: abre o caso se o modelo não abriu) e prompt. "Não executa" é garantido por A3/A4. Só vale com RA confirmado por `buscar_aluno`; sem RA, o diálogo segue com o modelo. | [`src/agente.py:436-476`](../src/agente.py#L436-L476); [`src/prompts/triagem-v1.txt:13-14`](../src/prompts/triagem-v1.txt#L13-L14); `teste::test_trancamento_escalado_pelo_codigo_se_modelo_nao_escalar`, `teste::test_trancamento_nao_duplica_caso_aberto_pelo_modelo`, `teste::test_trancamento_sem_ra_confirmado_nao_abre_caso`. L02 fechada |
-| A12 | Divergência ("já paguei" com pendência): pedir comprovante e, sem ele, escalar. | **só prompt** para pedir e escalar; a proibição de emitir é código (A5) | [`src/prompts/triagem-v1.txt:15-19`](../src/prompts/triagem-v1.txt#L15-L19). **LACUNA L11** |
-| A13 | Pedir o RA antes de qualquer ferramenta; confirmar o RA uma vez e depois escalar. | **só prompt** (mais a sugestão no erro da ferramenta) | [`src/prompts/triagem-v1.txt:12`](../src/prompts/triagem-v1.txt#L12), [`:20-22`](../src/prompts/triagem-v1.txt#L20-L22); [`src/agente.py:153-157`](../src/agente.py#L153-L157). **LACUNA L11** |
-| A14 | Não inventar protocolo, prazo diferente de 48h nem canal de entrega. | **só prompt**: a resposta final ao aluno não é validada contra o resultado das ferramentas | [`src/prompts/triagem-v1.txt:26-38`](../src/prompts/triagem-v1.txt#L26-L38). **LACUNA L11** |
+| A7 | **Proibido** emitir para RA inexistente. | código | [`src/agente.py:191-194`](../src/agente.py#L191-L194); `teste::test_emitir_ra_inexistente` |
+| A8 | **Proibido** consultar ou emitir para o RA **de outra pessoa** que a sessão autenticada. | **código (ASI03), com uma premissa:** a identidade vem da sessão (`ra_autenticado`), não do texto do aluno; as ferramentas que recebem RA recusam RA diferente do autenticado, em código. **Premissa aberta:** não há portal que defina a sessão (§9). | [`src/triagem/nos.py:148-156`](../src/triagem/nos.py#L148-L156); [`src/triagem/sistema.py:101`](../src/triagem/sistema.py#L101); [`src/api.py:117`](../src/api.py#L117); `teste::test_ASI03_o_ra_de_outro_aluno_e_barrado_em_toda_ferramenta`, `teste::test_ASI03_sem_identidade_e_fail_closed_quando_exigida`, `teste::test_ASI03_a_api_responde_401_sem_identidade_quando_exigida`. Fechada em código; premissa **L01** |
+| A9 | Emitir o mesmo documento duas vezes devolve o mesmo protocolo (`ja_existia=true`). | código | [`src/agente.py:214-218`](../src/agente.py#L214-L218); `teste::test_emitir_idempotente` |
+| A10 | Escalar duas vezes não duplica o caso. Para **trancamento** a chave é calculada pelo **código** (`ra:tipo:trancamento`). Para os demais casos, a chave ainda é escrita pelo modelo. | código; parcial | [`src/agente.py:232-250`](../src/agente.py#L232-L250); `teste::test_modelo_que_escala_sozinho_nao_duplica_o_caso`; `teste::test_L03_chave_de_idempotencia_vem_do_modelo` (o motor). **L03** |
+| A11 | Trancamento é **sempre** escalado, e o grafo **pausa** esperando a coordenação. | **código** (nó `garantir_trancamento`: abre o caso se o modelo não abriu) e prompt. Só vale com RA confirmado por `buscar_aluno`. | [`src/triagem/nos.py:174-190`](../src/triagem/nos.py#L174-L190), [`:324`](../src/triagem/nos.py#L324); `teste::test_trancamento_escalado_pelo_codigo_e_o_grafo_pausa`, `teste::test_trancamento_escalado_pelo_codigo_se_modelo_nao_escalar`, `teste::test_trancamento_sem_ra_confirmado_nao_abre_caso`. L02 fechada |
+| A12 | A resposta final não pode citar **protocolo** que nenhuma ferramenta devolveu, **prazo** diferente de 48h nem **artigo** que a consulta não retornou. Resposta reprovada volta ao agente **uma vez**; reprovada de novo, sai de um molde em código, sem o modelo. | **código** (validador) | [`src/triagem/validacao.py:80`](../src/triagem/validacao.py#L80); `teste::test_protocolo_inventado_e_devolvido_ao_agente_uma_vez`, `teste::test_prazo_prometido_diferente_de_48h_e_reprovado`, `teste::test_artigo_citado_que_a_ferramenta_nao_devolveu_e_reprovado`, `teste::test_reprovou_duas_vezes_a_resposta_sai_do_molde_sem_o_modelo` |
+| A13 | A suficiência (`[SUFICIENTE: sim\|não]`) é **declarada pelo modelo e exigida pelo código**; sem a marca, a resposta volta uma vez. | código (exige) e modelo (declara) | `teste::test_resposta_do_regimento_sem_a_marcacao_volta_ao_agente_uma_vez`, `teste::test_artigo_de_ruido_com_recusa_declarada_e_sem_acao` |
+| A14 | Pedir o RA antes de qualquer ferramenta; pedir comprovante na divergência; confirmar o RA uma vez. | **só prompt** | [`src/prompts/triagem-v2.txt`](../src/prompts/triagem-v2.txt). **LACUNA L11** |
+| A15 | **Não inventar canal nem passo do processo** (ex.: "a secretaria entrará em contato"). | **só prompt** e contrato de saída; o validador **não pega**. **Risco aceito (proposto)**, §9. | [`logs/parte2/04-trancamento-nao-e-decidido.json`](../logs/parte2/04-trancamento-nao-e-decidido.json); [`docs/seguranca.md` §4](seguranca.md). **LACUNA L11** |
 
 ### 3.2 Credenciais e privilégios
 
 | # | Limite | Onde é aplicado | Evidência |
 |---|---|---|---|
-| C1 | Chave do provedor de modelo fora do repositório (`.env` ignorado pelo git). | plataforma (git) | [`.gitignore:1`](../.gitignore#L1); [`.env.example:11`](../.env.example#L11) vazio |
-| C2 | Chave **própria** do agente. | **não aplicado.** Agente, RAG, juiz de fidelidade, memória e LangGraph usam a mesma `OPENAI_API_KEY`. | `teste::test_L08_uma_unica_chave_para_todos_os_componentes`; [`autoridade-efetiva.txt`](evidencias/autoridade-efetiva.txt). **LACUNA L08** |
-| C3 | Privilégio mínimo no banco (leitura em `alunos`/`financeiro`, escrita só em `documentos_emitidos`/`casos_pendentes`). | **só código.** O SQLite não tem usuário nem permissão; o processo pode ler e escrever tudo, e o limite é o SQL fixo de cada ferramenta. | [`src/dados.py:67-71`](../src/dados.py#L67-L71); [`autoridade-efetiva.txt`](evidencias/autoridade-efetiva.txt). **LACUNA L12** |
+| C1 | Chave do provedor fora do repositório (`.env` ignorado pelo git). Uma chave exposta num arquivo local foi **apagada antes de qualquer commit**; revogá-la no console é do usuário. | plataforma (git) | [`.gitignore:1`](../.gitignore#L1); [`docs/seguranca.md` §6](seguranca.md) |
+| C2 | Chave **própria** do sistema. | **não aplicado.** Agente, RAG, juiz e memória usam a mesma `OPENAI_API_KEY`. | `teste::test_L08_uma_unica_chave_para_todos_os_componentes`. **LACUNA L08** |
+| C3 | Privilégio mínimo no banco. | **só código.** O SQLite não tem usuário nem permissão; o limite é o SQL fixo de cada ferramenta (A3). | [`src/dados.py:67-71`](../src/dados.py#L67-L71). **LACUNA L12** |
+| C4 | Endpoint de decisão da coordenação protegido por token; **sem `COORDENACAO_TOKEN`, responde 503** e não funciona. | código (fail-closed) | [`src/api.py:147-152`](../src/api.py#L147-L152); testes em [`tests/test_api.py`](../tests/test_api.py) |
 
-**Revisão do que o agente precisa contra o que ele tem:**
+**Revisão do que o sistema precisa contra o que tem:**
 
 | Concessão | Precisa? | Decisão |
 |---|---|---|
-| `consultar_financeiro` devolve `valor_em_aberto` (R$) | **Não.** A regra usa só a contagem de mensalidades ([`src/agente.py:204-207`](../src/agente.py#L204-L207)), mas o valor vai ao provedor e ao log. | remover o campo: **L12** |
-| `buscar_aluno` faz `SELECT *` | Parcial. Nome e curso só servem para o texto do documento, que hoje o modelo redige. | gerar o documento por template em código e tirar o nome do prompt: **L12** |
-| Acesso a qualquer RA | **Não.** Só ao RA da sessão autenticada. | **L01** |
-| `motivo` livre em `escalar_para_humano` | Parcial. Texto escrito pelo modelo pode carregar dado que o aluno contou (ex.: motivo de saúde para trancar). | enum de motivos: **L03** |
+| `consultar_financeiro` devolve `valor_em_aberto` (R$) | **Não.** A regra usa só a contagem de mensalidades, mas o valor vai ao provedor e ao trace. | remover o campo: **L12** (continua aberto) |
+| `buscar_aluno` faz `SELECT *` | Parcial. Nome e curso só servem ao texto do documento. | **L12** |
+| Acesso a qualquer RA | **Não.** Só ao RA da sessão. | **Fechado em código** (A8) |
+| `motivo` livre em `escalar_para_humano` | Parcial. Pode carregar dado que o aluno contou (ex.: motivo de saúde). | enum de motivos: **L03** |
 
 ### 3.3 Orçamento e gasto
 
 | # | Limite | Onde é aplicado | Evidência |
 |---|---|---|---|
-| O1 | Por execução: no máximo 8 passos, 20.000 tokens e US$ 0,05. | código | [`src/agente.py:121-137`](../src/agente.py#L121-L137), [`:446-449`](../src/agente.py#L446-L449); `teste::test_orcamento_de_passos_interrompe`, `teste::test_orcamento_de_tokens_interrompe` |
-| O2 | O limite em dinheiro (US$ 0,05) **não tem efeito** nos modelos Groq (preço 0), nem em modelo fora da tabela de preços. | código, inerte | [`src/agente.py:47-64`](../src/agente.py#L47-L64); `teste::test_L04_limite_de_custo_inerte_nos_modelos_groq`. **LACUNA L04** |
-| O3 | Laço: a mesma chamada com os mesmos argumentos 3 vezes seguidas interrompe a execução. | código | [`src/agente.py:429-433`](../src/agente.py#L429-L433), [`:451-454`](../src/agente.py#L451-L454); `teste::test_laco_detectado` |
-| O4 | Limite por janela (dia ou mês) e por chave. | **não aplicado no código.** O único teto agregado é a cota do *free tier* da Groq, que o grupo não configurou e não controla (200 mil tokens/dia observados em `gpt-oss-20b`). | [`docs/modelos.md` §3.5](modelos.md). **LACUNA L04** |
-| O5 | Modelos permitidos. | **não aplicado.** `LLM_MODELO` aceita qualquer valor; não há lista de modelos aprovados. | [`src/agente.py:37`](../src/agente.py#L37). **LACUNA L13** |
+| O1 | Por execução: no máximo 8 passos, 20.000 tokens e US$ 0,05, **e 120 s por turno**. | código | [`src/agente.py:122-138`](../src/agente.py#L122-L138), [`src/triagem/nos.py:249-265`](../src/triagem/nos.py#L249-L265), [`:36`](../src/triagem/nos.py#L36); `teste::test_orcamento_de_passos_interrompe`, `teste::test_teto_de_tempo_por_turno_interrompe_antes_da_proxima_chamada` |
+| O2 | **Por volta do modelo (ASI02):** no máximo 4 chamadas de ferramenta e **1 escrita**; as demais recebem resposta de recusa (toda chamada recebe resposta, senão o provedor rejeita a conversa). | código | [`src/triagem/nos.py:45-46`](../src/triagem/nos.py#L45-L46); `teste::test_ASI02_doze_escritas_numa_resposta_executam_so_uma`, `teste::test_ASI02_toda_chamada_recebe_resposta_mesmo_a_recusada` |
+| O3 | Laço: a mesma chamada, com os mesmos argumentos, 3 vezes seguidas interrompe. | código | [`src/triagem/nos.py:108-112`](../src/triagem/nos.py#L108-L112); `teste::test_laco_detectado_termina_com_o_motivo` |
+| O4 | Teto de passos **do grafo** (`recursion_limit=60`), rede de segurança por baixo de O1: estourar não derruba (termina em `erro_fatal`) nem se confunde com a pausa. | código | [`src/triagem/sistema.py:119`](../src/triagem/sistema.py#L119); `teste::test_estourar_o_limite_de_passos_do_grafo_nao_derruba_nem_confunde_com_pausa` |
+| O5 | O limite em dinheiro **não tem efeito** no provedor atual (preço 0), nem em modelo fora da tabela. Não há limite por **dia** ou **mês**. | inerte | [`src/agente.py:47-53`](../src/agente.py#L47-L53); `teste::test_L04_limite_de_custo_inerte_nos_modelos_groq`. **LACUNA L04** |
+| O6 | Modelos permitidos (ASI10): **só `qwen/qwen3.8-27b`**; o sistema e a API **não sobem** com outro (o runner do eval é a única exceção, e o candidato fica marcado no trace). | código | [`src/triagem/modelos.py:19-25`](../src/triagem/modelos.py#L19-L25), [`src/triagem/sistema.py:55`](../src/triagem/sistema.py#L55), [`src/api.py:65`](../src/api.py#L65); `teste::test_ASI10_o_sistema_nao_sobe_com_modelo_fora_da_lista`, `teste::test_ASI10_a_api_nao_sobe_com_modelo_fora_da_lista`. L13 fechada quanto à lista |
 
 ### 3.4 Quando um controle falha
 
 | # | Comportamento | Onde é aplicado | Evidência |
 |---|---|---|---|
-| F1 | Erro 4xx do provedor: termina em `erro_fatal`, sem nenhuma escrita (*fail-closed*). | código | [`src/agente.py:380-384`](../src/agente.py#L380-L384), [`:481-483`](../src/agente.py#L481-L483); `teste::test_erro_da_api_termina_sem_escrita` |
-| F2 | 429, 5xx ou falha de conexão: até 8 novas tentativas, com espera de até 90 s lida do cabeçalho; depois, `erro_fatal`. | código | [`src/agente.py:345-385`](../src/agente.py#L345-L385) |
-| F3 | Erro do banco dentro de uma ferramenta não é tratado: a exceção derruba o processo. Não há escrita parcial, mas também não há término registrado nem resposta ao aluno. | código, por omissão | [`src/agente.py:414-421`](../src/agente.py#L414-L421) (só `ErroRecuperavel` e `TypeError` são capturados). **LACUNA L16** |
-| F4 | Modelo de reserva (*fallback*). | não existe; não há desvio para provedor não aprovado | [`src/agente.py:33-37`](../src/agente.py#L33-L37) |
+| F1 | Erro 4xx do provedor: termina em `erro_fatal`, sem nenhuma escrita (*fail-closed*). | código | [`src/agente.py:384`](../src/agente.py#L384); `teste::test_erro_fatal_do_provedor_termina_sem_escrita` |
+| F2 | 429, 5xx ou conexão: até 8 novas tentativas, com espera lida do cabeçalho; depois, `erro_fatal`. | código | [`src/agente.py:345-385`](../src/agente.py#L345-L385) |
+| F3 | **Exceção dentro de uma ferramenta** é capturada e vira resultado de erro (dado), não derruba o turno. | código | [`src/triagem/nos.py:162`](../src/triagem/nos.py#L162); `teste::test_excecao_dentro_da_ferramenta_nao_derruba_o_turno`. Corrige a F3 de 16/10 |
+| F4 | Identidade ausente com `TRIAGEM_EXIGE_IDENTIDADE=1`: recusa, nenhuma chamada ao modelo (*fail-closed*); a API responde 401. | código | [`src/triagem/sistema.py:101`](../src/triagem/sistema.py#L101); `teste::test_recusa_de_identidade_e_um_termino_com_erro` |
+| F5 | Modelo de reserva (*fallback*): não existe; não há desvio para provedor não aprovado. | — | [`src/agente.py:33-37`](../src/agente.py#L33-L37) |
+| F6 | Se o modelo **servido** diferir do pedido, a divergência é **contada** nas métricas (não bloqueia). | trace | `teste::test_o_modelo_servido_diferente_do_pedido_e_contado` |
 
-### 3.5 Quem pode suspender o agente
+### 3.5 Quem pode suspender o sistema
 
-**Responsável designado: Henrique Gomes Matos (Operação). Mecanismo próprio: não há.** Hoje só existem dois caminhos: encerrar o processo, ou revogar a chave no console da Groq. Essa revogação derruba juntos o RAG e a memória (C2), e nunca foi testada. **L15 fechada quanto ao nome; LACUNA L16 (procedimento e teste) aberta.**
+**Responsável designado: Henrique Gomes Matos (Operação). Mecanismo próprio: não há.** Hoje existem só: encerrar o processo, ou revogar a chave no console da Groq (isso derruba juntos o RAG, o juiz e a memória, e nunca foi testado). **L15 fechada quanto ao nome; LACUNA L16 (interruptor lido a cada volta, procedimento e exercício) aberta.**
 
 ## 4. Ferramentas e integrações
 
 | Ferramenta / integração | Permissão | Contra o quê | Evidência |
 |---|---|---|---|
-| `buscar_aluno(ra)` | leitura | `alunos` | [`src/agente.py:147-158`](../src/agente.py#L147-L158) |
-| `consultar_financeiro(ra)` | leitura | `alunos`, `financeiro` | [`src/agente.py:161-175`](../src/agente.py#L161-L175) |
-| `emitir_documento(ra, tipo_documento)` | **escrita**: grava em `documentos_emitidos`. É corrigível por reemissão, mas uma cópia entregue não se recolhe. | `alunos`, `financeiro`, `documentos_emitidos` | [`src/agente.py:178-229`](../src/agente.py#L178-L229); [`docs/arquitetura-v1.md` §7](arquitetura-v1.md) |
-| `escalar_para_humano(ra, tipo_pedido, motivo, chave)` | **escrita**: grava em `casos_pendentes` | `casos_pendentes` | [`src/agente.py:232-250`](../src/agente.py#L232-L250) |
-| Provedor de modelo (Groq) | **envio a terceiro**: o prompt inteiro, com o resultado das ferramentas, sai a cada chamada | `api.groq.com` | [`src/agente.py:33-37`](../src/agente.py#L33-L37), [`:456-458`](../src/agente.py#L456-L458) |
-| Servidores MCP | **nenhum** no agente de triagem | — | [`autoridade-efetiva.txt`](evidencias/autoridade-efetiva.txt) |
-| *Fora do agente:* servidor MCP CNPJ/CEP (Ex.10) | envio a terceiro (BrasilAPI); dado de empresa, não de aluno | `brasilapi.com.br` | [`exercicios/aula10-mcp/servidor_cnpj_cep.py:27-30`](../exercicios/aula10-mcp/servidor_cnpj_cep.py#L27-L30) |
-| *Fora do agente:* embeddings do RAG e da memória | local; nenhum dado sai | `sentence-transformers` | [`src/indice_rag.py:24`](../src/indice_rag.py#L24) |
+| `buscar_aluno(ra)` | leitura, **só o RA da sessão** | `alunos` | [`src/agente.py:147-158`](../src/agente.py#L147-L158) |
+| `consultar_financeiro(ra)` | leitura, só o RA da sessão | `alunos`, `financeiro` | [`src/agente.py:161-175`](../src/agente.py#L161-L175) |
+| `consultar_regimento(consulta)` | leitura | índice FTS5 do Regimento curado (sem dado pessoal) | [`docs/rag.md`](rag.md); `teste::test_duvida_do_regimento_cita_o_artigo_e_a_fonte_e_conferivel` |
+| `emitir_documento(ra, tipo_documento)` | **escrita**: `documentos_emitidos`. Corrigível por reemissão, mas uma cópia entregue não se recolhe. | `alunos`, `financeiro`, `documentos_emitidos` | [`src/agente.py:178-229`](../src/agente.py#L178-L229) |
+| `escalar_para_humano(ra, tipo_pedido, motivo, chave)` | **escrita**: `casos_pendentes` | `casos_pendentes` | [`src/agente.py:232-250`](../src/agente.py#L232-L250) |
+| Provedor de modelo (Groq) | **envio a terceiro**: o prompt inteiro, com o resultado das ferramentas e **o bloco de memória**, sai a cada chamada | `api.groq.com` | [`src/agente.py:33-37`](../src/agente.py#L33-L37) |
+| Memória (episódica, semântica, procedural) | leitura e escrita **só com `ra_autenticado`**; política escrita em código | arquivos em `TRIAGEM_MEMORIA_DIR` | [`src/triagem/memoria.py:162`](../src/triagem/memoria.py#L162); [`docs/memoria.md`](memoria.md) |
+| Coordenação | decide casos pausados (token); grava em `decisoes_humanas` | `aprovacoes`, `decisoes_humanas` | [`src/triagem/humano.py:111-141`](../src/triagem/humano.py#L111-L141); [`src/dados.py:113-128`](../src/dados.py#L113-L128) |
+| Servidores MCP | **nenhum** no sistema | — | `grep` em `src/`: nenhum uso |
 
 ## 5. Modelo e provedor
 
 | Afirmação | Evidência |
 |---|---|
-| Modelo do agente: `qwen/qwen3.8-27b`, `temperature=0`. | [`.env.example:19`](../.env.example#L19); [`src/agente.py:37`](../src/agente.py#L37), [`:458`](../src/agente.py#L458) |
-| É um identificador fixo, não um *alias* `-latest`, mas também **não é uma versão datada**: o provedor pode trocar os pesos sob o mesmo nome. | **LACUNA L13** |
-| O **modelo efetivamente servido** (`resposta.model`) não é gravado no registro. Os 4 logs de demonstração rodaram, segundo o README, em `openai/gpt-oss-20b`, e nada no log comprova isso. | [`README.md:73`](../README.md#L73); `teste::test_L05_registro_sem_instante_modelo_prompt_nem_revisao`. **LACUNA L13** |
-| RAG, juiz de fidelidade e memória usam `openai/gpt-oss-20b`. | [`.env.example:37`](../.env.example#L37); [`src/rag.py:43`](../src/rag.py#L43) |
-| Provedor: Groq, endpoint compatível com OpenAI, *free tier* sem contrato. Antes era Mistral; a troca foi registrada em 22/09/2026. | [`.env.example:14`](../.env.example#L14); [`docs/modelos.md` §3.5](modelos.md) |
-| **Região de processamento, prazo de retenção e uso dos dados para treino: não verificados.** Nenhum documento do repositório cita os termos de serviço ou o contrato vigentes da Groq. | **LACUNA L14** |
+| Modelo do agente: `qwen/qwen3.8-27b`, `temperature=0`; **único aprovado** (O6). | [`src/triagem/modelos.py:19-25`](../src/triagem/modelos.py#L19-L25) |
+| É um identificador fixo, não um *alias* `-latest`, mas **não é uma versão datada**: o provedor pode trocar os pesos sob o mesmo nome. O que o sistema faz é **registrar o modelo servido** (`resposta.model`) e contar a divergência (F6). A reconstrução do exemplo imprime `servido ?`, porque o modelo **roteirizado** do teste não o devolve; **não verifiquei** se o provedor real o devolve, porque não há trace real (L28). | `teste::test_o_modelo_servido_diferente_do_pedido_e_contado`; [`evals/reconstruir.py`](../evals/reconstruir.py). **LACUNA L13** |
+| Juiz da fidelidade (**não adotado**): `openai/gpt-oss-120b`, de propósito outro modelo e outra cota. | [`docs/evals.md` §3](evals.md) |
+| Provedor: Groq, endpoint compatível com OpenAI, *free tier* sem contrato. | [`.env.example:14`](../.env.example#L14); [`docs/modelos.md` §3.5](modelos.md) |
+| Cota do *free tier* do modelo: 200 mil tokens por dia; **ela acabou no meio da rodada B** da suíte. | [`docs/evals.md` §4.2](evals.md) |
+| **Região de processamento, prazo de retenção e uso dos dados para treino: não verificados.** | **LACUNA L14** |
 
 ## 6. Dados
 
 ### 6.1 Inventário: onde o dado pessoal entra, fica e para onde vai
 
-Dado pessoal tratado: **RA, nome, curso, situação de matrícula, número e valor de mensalidades em aberto, e o texto livre do aluno**. Neste último pode haver dado sensível (art. 11), como "quero trancar porque estou doente". A base legal é **proposta do grupo**: a decisão é jurídica e cabe à instituição (**L19**). A fonte do inventário é [`inventario-dados-pessoais.txt`](evidencias/inventario-dados-pessoais.txt).
+Dado pessoal tratado: **RA, nome, curso, situação de matrícula, mensalidades e valor em aberto, e o texto livre do aluno** (que pode ter dado sensível, art. 11). A base legal é **proposta do grupo**: a decisão é jurídica e cabe à instituição (**L19**). O inventário detalhado de **16/10** está em [`inventario-dados-pessoais.txt`](evidencias/inventario-dados-pessoais.txt); abaixo, o que **mudou** com as Partes 2 e 3.
 
-| Lugar | Dado | Finalidade | Base legal proposta (art. 7º) | Prazo de guarda | Fere a minimização? |
-|---|---|---|---|---|---|
-| **Entrada / histórico da conversa** (`Estado.historico`) | mensagem livre do aluno, RA | identificar o pedido | V (execução do contrato educacional) | duração da conversa, em memória do processo | **sim**: o texto livre não é filtrado; dado sensível entra sem *guardrail* (**L11**) |
-| **Prompt enviado à Groq** (a cada volta do laço) | system prompt + histórico inteiro + resultado das ferramentas: nome, curso, situação, mensalidades, **valor em aberto** | o modelo decidir e redigir a resposta | V; e transferência internacional pelo art. 33, **sem hipótese demonstrada** | **desconhecido** (termos não verificados) | **sim**: valor em aberto e nome não são necessários para decidir ([`src/agente.py:170`](../src/agente.py#L170), [`:388-389`](../src/agente.py#L388-L389)). **L12, L14** |
-| **Banco** `dados/academico.db`: `alunos`, `financeiro` | cadastro e financeiro | sistema de origem (simulado) | V | indefinido (é o sistema acadêmico) | não; fora do controle de versão ([`.gitignore:8`](../.gitignore#L8)) |
-| **Banco**: `documentos_emitidos`, `casos_pendentes` | RA, tipo, data, motivo (texto do modelo) | prova da emissão; fila humana | V; II para a emissão de documento acadêmico, se for obrigação regulatória (conferir) | **indefinido**: não há expurgo | **sim** no `motivo` livre (**L03**); prazo indefinido (**L20**) |
-| **Índice RAG** (`dados/embeddings_regimento.npz`) | só o Regimento simulado; nenhum titular | responder sobre normas | — (não é dado pessoal) | — | não: o Regimento não contém RA ([`inventario-dados-pessoais.txt`](evidencias/inventario-dados-pessoais.txt), 1º comando) |
-| **Memória** (Ex.8, não ligada ao agente): `dados/memoria_episodica.json`, `memoria_semantica.json`, `memoria_procedural.json` | episódios com RA e resumo, vetor, fato `RA:situacao_financeira` | lembrar pedidos anteriores do aluno | IX (legítimo interesse), **sem teste de balanceamento** | **nenhum prazo**: o decaimento de 180 dias rebaixa o episódio, não o apaga ([`src/memoria_episodica.py:62-77`](../src/memoria_episodica.py#L62-L77)) | prazo indefinido (**L20**). A remoção a pedido existe e é verificada ([`src/memoria.py:76-111`](../src/memoria.py#L76-L111)) |
-| **Checkpoints** `checkpoints/` (Ex.8) e `exercicios/aula09-langgraph/checkpoints.sqlite` (Ex.9) | argumentos de ferramenta com RA | retomar execução | V | efêmero | o primeiro já estava fora do git ([`.gitignore:13`](../.gitignore#L13)); o do LangGraph **não estava** e foi incluído no `.gitignore` nesta entrega |
-| **Log de execução** `logs/0*.json` | histórico inteiro: nome, curso, valor em aberto e **o raciocínio do modelo em texto livre** | demonstração e depuração | IX ou VI (prova, exercício regular de direitos) | **indefinido e público**: versionado no git de um repositório público desde 04/09/2026 | **sim**: guarda conteúdo onde a referência bastaria, inclusive o raciocínio. `teste::test_L06_log_versionado_guarda_dado_pessoal_e_raciocinio`. **L06** |
-| **Relatórios** `logs/verificador.json`, `logs/avaliar_rag.json`, `logs/modos_de_falha.json` | ids de caso e perguntas; sem nome nem valor | avaliação | — | versionado | não |
-| **Saída do terminal** (`verboso=True`) | resultado das ferramentas, truncado em 90 caracteres | depuração | — | sessão do terminal | baixo ([`src/agente.py:526-529`](../src/agente.py#L526-L529)) |
+| Lugar | Dado | Prazo de guarda | Situação |
+|---|---|---|---|
+| **Prompt enviado à Groq** (a cada volta) | system prompt + janela da conversa + resultado das ferramentas (nome, curso, **valor em aberto**) + **bloco de memória** | **desconhecido** (L14) | fere a minimização: valor e nome não são necessários para decidir (L12) |
+| **Banco** `casos_pendentes`, `documentos_emitidos` | RA, tipo, motivo (texto do modelo) | indefinido | L03, L20 |
+| **Banco** `aprovacoes`, `decisoes_humanas` (novo) | protocolo, `thread_id`, prazo, **quem decidiu, quando, o quê, o que editou** | indefinido | é o registro da supervisão humana; L20 |
+| **Checkpoint** (`TRIAGEM_CHECKPOINT`, SQLite) | a conversa inteira, incluindo o texto livre e o resultado das ferramentas | **sem prazo**: a pausa precisa que ele sobreviva | fora do git; L20 |
+| **Memória** (`TRIAGEM_MEMORIA_DIR`) | episódios com resumo (TF-IDF), fato semântico, regras procedurais; **só gravada e lida com `ra_autenticado`** | **180 dias**: o decaimento **remove**, rodado **ao subir o processo** (sem agendador) | `teste::test_o_sistema_aplica_o_decaimento_ao_subir`; remoção a pedido com cobertura verificada ([`docs/memoria.md` §4.3](memoria.md)). **O trace não está nessa varredura** (L26) |
+| **Trace** (`TRIAGEM_TRACES_DIR`, JSONL) (novo) | **RA, nome, valor em aberto** nos argumentos e resultados das ferramentas; texto do aluno e resposta (`AGENTE_TRACE_CONTEUDO`, ligado por padrão) | **sem prazo** (proposta: 90 dias, não implementada) | L26. Desligar o conteúdo (`=0`) protege o dado, mas **o trace deixa de reconstruir a decisão** |
+| **Logs de demonstração** `logs/0*.json`, `logs/parte2/*.json` | histórico inteiro, nome, valor em aberto, raciocínio do modelo | **indefinido e público**: versionados em repositório público (a Parte 2 acrescentou 8 execuções reais) | `teste::test_L06_log_versionado_guarda_dado_pessoal_e_raciocinio`. **L06** |
+| **Índice do Regimento** (FTS5) | só o Regimento; nenhum titular | — | não é dado pessoal |
 
 ### 6.2 Onde a minimização falha, em resumo
 
-1. **O log guarda tudo, para sempre, em público** (L06): nome e valor em aberto, quando bastaria o RA pseudonimizado e o *hash* do documento; e o raciocínio do modelo, que não é prova de nada.
-2. **O provedor recebe mais do que a decisão usa** (L12): o valor em aberto e o nome.
-3. **Texto livre sem filtro** (L11): o que o aluno digitar vai ao provedor, ao log e, via `motivo`, à fila.
-4. **Nenhuma estrutura tem prazo de guarda** (L20): banco, memória e logs.
-5. **Os nomes "fictícios" incluem três integrantes do grupo** (`teste::test_L09_nomes_da_base_sintetica_coincidem_com_o_grupo`), o que contradiz a afirmação de [`docs/case.md` §2.9](case.md) (L09).
+1. **O log e o trace guardam tudo, sem prazo** (L06, L26): nome e valor em aberto, quando bastaria o RA pseudonimizado.
+2. **O provedor recebe mais do que a decisão usa** (L12): valor em aberto e nome; **e agora também a memória** do aluno.
+3. **Texto livre sem filtro** (L11): vai ao provedor, ao checkpoint, ao trace e, via `motivo`, à fila.
+4. **Quase nenhuma estrutura tem prazo** (L20): só a memória episódica tem (180 dias).
+5. **Os nomes "fictícios" incluem três integrantes do grupo** (`teste::test_L09_nomes_da_base_sintetica_coincidem_com_o_grupo`), o que contradiz [`docs/case.md` §2.9](case.md) (L09).
 
 ## 7. Avaliação
 
+A avaliação do sistema entregue está em [`docs/evals.md`](evals.md); aqui, só o que **foi medido** e o que **não foi**.
+
 | Afirmação | Evidência |
 |---|---|
-| Suíte: 40 casos rotulados ([`dados/casos_verificador.json`](../dados/casos_verificador.json)), rodados por [`src/verificador.py`](../src/verificador.py). O rótulo é regra de negócio determinística. Critério: ≥ 34/40 **e** 0 falsos negativos em trancamento. | [`src/verificador.py:27`](../src/verificador.py#L27), [`:80-81`](../src/verificador.py#L80-L81); [`docs/case.md` §2.7](case.md) |
-| Versão da suíte: **sem número.** O conjunto é identificado só pelo commit `ba7fb89`. | **LACUNA L18** |
-| Resultado agregado: **35/40 (87,5%), 0 falsos negativos em trancamento**, com `qwen/qwen3.8-27b`, em 23/09/2026. | [`logs/verificador.json`](../logs/verificador.json) |
-| Por fatia: declaração 8/8, segunda via 8/8, divergência 6/6, trancamento 8/8, RA inexistente 3/4, **pendência 2/6**. | [`verificador-por-fatia.txt`](evidencias/verificador-por-fatia.txt) |
-| **O relatório não é a saída direta do script.** O script grava `termino` e `n_passos` por caso e não grava modelo nem data; o arquivo versionado tem `modelo`, `data`, `metodologia` e `fonte_verificacao`, e combina duas rodadas com um reteste isolado. O número não se reproduz rodando o script uma vez. | [`verificador-por-fatia.txt`](evidencias/verificador-por-fatia.txt) (comandos 2 e 3); [`src/verificador.py:105-109`](../src/verificador.py#L105-L109). **LACUNA L18** |
-| Juiz do verificador: não há LLM. A decisão é lida da trajetória por código, em `classificar_decisao`. A concordância desse classificador com avaliação humana **não foi medida**; um bug de *substring* já foi achado e corrigido, e há uma divergência conhecida de precedência (`r03`). | [`src/verificador.py:30-56`](../src/verificador.py#L30-L56); [`docs/modelos.md` §3.5](modelos.md). **LACUNA L18** |
-| Juiz do RAG (fidelidade 80%): é um LLM, **o mesmo modelo que gera a resposta**. A concordância com avaliação humana **não foi medida**. | [`src/avaliar_rag.py:45-60`](../src/avaliar_rag.py#L45-L60); [`logs/avaliar_rag.json`](../logs/avaliar_rag.json). **LACUNA L18** |
-| Comparação de 5 casos × 3 modelos: **nunca executada.** | [`README.md:160`](../README.md#L160); [`docs/modelos.md` §3.3](modelos.md). **LACUNA L18** |
-| Testes de autoridade offline: 27 testes (18 provam os limites aplicados em código, 9 fixam as lacunas), todos passando em 16/10/2026 em Python 3.9. Os 24 anteriores à correção da L02 estão em `pytest.txt`, que **não foi regenerado**: a saída de 27 testes sob Python 3.11 ainda precisa ser registrada. | [`docs/evidencias/pytest.txt`](evidencias/pytest.txt) (versão anterior, 24 testes) |
+| *Golden dataset* **v1.2.0**: 37 casos, com a pergunta, o resultado esperado e a classe. | [`evals/dataset/golden_v1.2.0.json`](../evals/dataset/golden_v1.2.0.json); [`docs/evals.md` §1](evals.md); `tests/test_evals.py` |
+| A **regra de promoção** (não-inferioridade por classe, com piso zero para a classe de identidade) foi **assinada antes** de a versão B existir. | [`evals/resultados/assinatura-regra-p3.txt`](../evals/resultados/assinatura-regra-p3.txt); [`evals/regra_de_promocao_p3.json`](../evals/regra_de_promocao_p3.json) |
+| **Rodada A** (tag `parte-2`, **3 de 37 casos**: identidade): **0 de 3 aprovados**. O sistema **sem o controle** leu o cadastro e o financeiro de outra aluna e **emitiu a declaração dela**: é o ataque ASI03 medido com o modelo real. | [`evals/resultados/2026-11-11-A-r1/execucoes.jsonl`](../evals/resultados/2026-11-11-A-r1/execucoes.jsonl); [`docs/evals.md` §4.2](evals.md) |
+| **Rodada B** (código atual, 37 casos): **não rodou.** A cota diária do modelo acabou; o runner é retomável. **A comparação A × B está PENDENTE**, e nenhum número dela está neste documento. | [`docs/evals.md` §4.2, §4.4](evals.md) |
+| **Juiz de fidelidade: NÃO adotado.** No Exercício 11 a rubrica final deu 89% de concordância e **60% de recall** da classe "não fiel" no *hold-out* (limiar: 85% e 80%). **Os rótulos daquela validação são de uma IA, não de pessoas.** A validação com **20 saídas rotuladas à mão pelo grupo não foi feita**: a ficha e a medição estão prontas e **nenhum rótulo é preenchido por código**. | [`docs/evals.md` §3](evals.md); [`evals/rotulagem/LEIA-ME.md`](../evals/rotulagem/LEIA-ME.md); `tests/test_rotulagem.py`. **LACUNA L24** |
+| **Uma repetição por caso**: o ruído do provedor **não foi medido** para este sistema; com 37 casos, um caso vale ~2,7 pontos. | [`docs/evals.md` §3, §4.5](evals.md) |
+| Testes offline: **210 passed, 1 deselected** (o deselecionado é o `eval`, que usa o modelo real). Os que **tentam a ação indevida** de cada controle estão em `tests/test_controles.py` (13 funções), o trace em `tests/test_telemetria.py` (18) e o grafo, a pausa e a decisão em `tests/test_triagem.py` (39). | `python -m pytest -q`; [`docs/evidencias/pytest.txt`](evidencias/pytest.txt) é **anterior** e não foi regenerado (L26) |
+| 8 execuções reais da Parte 2 com o modelo real, fora da suíte. | [`logs/parte2/`](../logs/parte2/) |
 
 ## 8. Limites conhecidos
 
 | Modo de falha observado | Evidência |
 |---|---|
-| **Pendência sem divergência** (série `p`): o agente pergunta pelo comprovante e não conclui em um turno; o caso de teste só tem uma mensagem. Resultado: 4 de 6 sem decisão. | [`verificador-por-fatia.txt`](evidencias/verificador-por-fatia.txt); [`docs/modelos.md` §3.5](modelos.md) |
-| **Trancamento com RA inexistente** (`r03`): o classificador dá precedência a trancamento. | [`src/verificador.py:43-44`](../src/verificador.py#L43-L44) |
-| **Instabilidade do *free tier*:** `erro_fatal` transitório em `d05`, `v01`, `t03` e `t08` na primeira rodada. | [`docs/modelos.md` §3.5](modelos.md) |
-| **Teto de 1.000 tokens de saída por minuto** do `qwen/qwen3.8-27b` inviabiliza o RAG nesse modelo. | [`src/rag.py:36-43`](../src/rag.py#L36-L43) |
-| **Exceções do regimento** (bolsista, liminar, convênio) não são cobertas e vão sempre para humano. | [`docs/case.md` §2.11](case.md) |
-| **Concorrência:** o protocolo é `COUNT(*) + 1`. Duas emissões simultâneas geram o mesmo protocolo e violam a chave primária. | [`src/agente.py:221`](../src/agente.py#L221), [`:243`](../src/agente.py#L243) |
-| **Variante LangGraph:** o protocolo usa `hash()` do Python, que muda a cada processo, e o mesmo pedido recebe protocolos diferentes. | `teste::test_L10_protocolo_do_langgraph_depende_do_hash_do_processo`; [`exercicios/aula09-langgraph/agente_langgraph.py:91`](../exercicios/aula09-langgraph/agente_langgraph.py#L91) |
+| **Invenção de canal** na resposta: *"A secretaria entrará em contato dentro desse prazo."* O validador **aprovou**. | [`logs/parte2/04-trancamento-nao-e-decidido.json`](../logs/parte2/04-trancamento-nao-e-decidido.json); [`docs/seguranca.md` §4](seguranca.md) |
+| **Artigo de ruído marcado como suficiente** pelo modelo real (caso 5). Mitigado pela marca de suficiência exigida pelo código; **a marca é declarada pelo modelo**. | [`logs/parte2/05-fora-do-corpus.json`](../logs/parte2/05-fora-do-corpus.json); [`logs/parte2/ablacao-regra7.json`](../logs/parte2/ablacao-regra7.json) |
+| **A API não autentica o aluno e a conversa é de quem tem o `conversa_id`:** qualquer cliente continua a conversa de outro se souber o identificador (128 bits, o que o torna difícil de adivinhar, mas não é credencial). Os testes passam **descrevendo** isso. | `tests/test_api_seguranca.py` (`test_ASI03_lacuna_a_api_atende_sem_nenhuma_credencial`, `test_ASI03_lacuna_qualquer_cliente_continua_a_conversa_de_outro`). **L27** |
+| **Uma trava global** serializa os turnos de todos os alunos; as conversas **acumulam no checkpoint** sem limite nem expiração. | `tests/test_api_seguranca.py` (`test_ASI08_lacuna_a_trava_global_serializa_todos_os_alunos`, `test_ASI08_lacuna_conversas_acumulam_no_checkpoint_sem_limite_nem_expiracao`). L20 |
+| **Pendência sem divergência**: o agente pergunta pelo comprovante e não conclui em um turno (verificador da Parte 1: pendência 2/6). **Não reavaliada no sistema novo**, porque a rodada B não rodou. | [`verificador-por-fatia.txt`](evidencias/verificador-por-fatia.txt) |
+| **Cota do *free tier*** (200 mil tokens/dia) limita o que se mede: uma rodada completa custa ~170 mil tokens. | [`docs/evals.md` §4.2](evals.md) |
+| **Concorrência:** o protocolo é `COUNT(*) + 1`; a trava do processo evita a colisão, e **dois processos** gerariam o mesmo protocolo. | [`src/api.py:52`](../src/api.py#L52); [`src/agente.py:221`](../src/agente.py#L221) |
+| **A expiração não roda sozinha:** o prazo de 48h é conferido por `/coordenacao/expirar`, chamado por rotina; **não há agendador**. | [`src/triagem/humano.py:27`](../src/triagem/humano.py#L27); `teste::test_ninguem_responde_o_caso_vence_e_volta_a_fila` |
+| **Exceções do regimento** (bolsista, liminar, convênio) não são cobertas e vão a humano. | [`docs/case.md` §2.11](case.md) |
 
-**Não usar, mesmo dentro da finalidade:** em mais de uma sessão simultânea; com dados reais enquanto L01 estiver aberta; quando o aluno anexar comprovante (o agente não lê anexos); como fonte de resposta sobre o Regimento.
+**Não usar, mesmo dentro da finalidade:** com **dados reais**; em **mais de um processo**; quando o aluno anexar comprovante (o sistema não lê anexos); **sem portal** que defina a sessão (ASI03).
 
 ## 9. Riscos aceitos
 
-"Aceito" exige quem aceitou. O responsável de risco é Erick (nomeado em 30/10/2026, L15), mas **ele ainda não registrou nenhum aceite neste documento**: a tabela separa os riscos que **o grupo já registrou como decisão** em documentos versionados dos que este documento **propõe** aceitar, pendentes da aprovação dele.
+"Aceito" exige quem aceitou. O responsável de risco é **Erick**. **Ele não registrou nenhum aceite neste documento nem em [`docs/seguranca.md` §4](seguranca.md), e eu não o faço por ele.** A tabela separa o que **o grupo já registrou como decisão** em documentos versionados do que **o documento propõe**, pendente do aceite dele.
 
 | Risco | Razão | O que o limita | Situação | Evidência |
 |---|---|---|---|---|
-| Cobertura menor que o alvo de 60%: toda exceção vai para humano. | Errar para o lado conservador é mais barato que aprovar indevidamente. | A fila humana absorve os casos. | **registrado pelo grupo** | [`docs/case.md` §2.5, §2.11](case.md) |
-| Divergência nunca é resolvida a favor do aluno sem comprovante. | Evita afrouxar a regra para inflar a cobertura (caso Klarna). | A5, em código. | **registrado pelo grupo** | [`docs/case.md` §2.5](case.md) |
-| Documento emitido por engano não é recolhido; reemitir não desfaz a entrega. | É inerente a entregar documento. | A4–A7 revalidam a regra no momento da escrita. | **registrado pelo grupo** | [`docs/arquitetura-v1.md` §7](arquitetura-v1.md) |
-| O log de um exercício anterior com RA não é apagado num pedido de remoção. | Conflito entre LGPD e auditoria acadêmica. | Dados sintéticos. | **registrado como "risco aberto"**, sem decisão | [`docs/memoria-ex8.md` §2.3](memoria.md) |
-| *Free tier* da Groq sem contrato e sem termos verificados. | Protótipo acadêmico, sem custo. | Nenhum dado real entra. **Deixa de valer com dado real.** | *proposto, pendente* | L14 |
-| Repositório público com logs que contêm nomes. | Os dados são sintéticos. | Nenhum titular real, exceto a coincidência de L09. | *proposto, pendente* | L06, L09 |
-| `temperature=0` não garante a mesma saída em execuções repetidas. | É limitação do provedor. | A decisão é medida pela trajetória, não pelo texto. | *proposto, pendente* | [`src/agente.py:501`](../src/agente.py#L501) |
+| Cobertura menor que o alvo de 60%: toda exceção vai a humano. | Errar para o lado conservador é mais barato que aprovar indevidamente. | A fila humana absorve. | **registrado pelo grupo** | [`docs/case.md` §2.5, §2.11](case.md) |
+| Divergência nunca é resolvida a favor do aluno sem comprovante. | Não afrouxar a regra para inflar a cobertura. | A5, em código. | **registrado pelo grupo** | [`docs/case.md` §2.5](case.md) |
+| Documento emitido por engano não é recolhido. | Inerente a entregar documento. | A4–A7 revalidam na escrita. | **registrado pelo grupo** | [`docs/arquitetura-v1.md` §7](arquitetura-v1.md) |
+| **ASI09:** a resposta pode afirmar canal ou passo que nenhuma ferramenta informou. | A única mitigação completa (resposta por molde) elimina o diálogo livre, que é a razão de ser do produto. | Contrato de saída; prazo vindo da ferramenta; a decisão não depende do texto. | *proposto, **pendente do aceite de Erick*** | [`docs/seguranca.md` §4](seguranca.md) |
+| **ASI04:** imagem e dependências por versão, não por *digest*/hash. | Este ambiente não tem Docker para gerar nem verificar. | *Actions* e imagens de análise por SHA; sem privilégio; **não está em produção**. | *proposto, **pendente*** | [`docs/seguranca.md` §4](seguranca.md) |
+| **ASI03, o que sobra:** não há portal; qualquer cliente da API pode declarar qualquer RA no cabeçalho. | O controle é correto **dado** um portal; ele não existe. | Dados sintéticos; API só na máquina do grupo. **Deixa de valer antes de dado real, de expor a porta ou de ligar um portal.** | *proposto, **pendente*** | [`docs/seguranca.md` §4](seguranca.md) |
+| *Free tier* da Groq sem contrato e sem termos verificados. | Protótipo acadêmico. | Nenhum dado real. **Deixa de valer com dado real.** | *proposto, pendente* | L14 |
+| Repositório público com logs que contêm nomes. | Dados sintéticos. | Nenhum titular real, exceto a coincidência de L09. | *proposto, pendente* | L06, L09 |
+| `temperature=0` não garante a mesma saída. | Limitação do provedor. | A decisão é medida pela trajetória, não pelo texto. | *proposto, pendente* | — |
 
 ## 10. Supervisão humana
 
 | Afirmação | Evidência |
 |---|---|
-| No agente principal **nada pausa para aprovação.** O agente não espera um humano: ele *entrega* o caso à fila (`casos_pendentes`, `status='aberto'`) e encerra. | [`src/agente.py:232-250`](../src/agente.py#L232-L250); [`src/dados.py:100-107`](../src/dados.py#L100-L107) |
-| Vão para a fila: trancamento, divergência não resolvida, pendência e RA não encontrado. **Trancamento é encaminhado também pelo código** (A11); nos demais casos quem encaminha é o modelo (A12–A13). | [`src/prompts/triagem-v1.txt:13-22`](../src/prompts/triagem-v1.txt#L13-L22). **LACUNA L11** |
-| Quem decide os casos: a atendente; o trancamento, a coordenação. Isso é **declarado, não implementado**: não há tela, consumidor da fila nem registro da decisão humana. | [`docs/case.md` §2.2](case.md). **LACUNA L17** |
-| Prazo: "48h" é um texto fixo devolvido pela ferramenta. Não há controle de vencimento nem o que fazer quando vence. | [`src/agente.py:250`](../src/agente.py#L250). **LACUNA L17** |
-| A variante LangGraph (Ex.9) pausa com `interrupt()` antes de escalar um trancamento e retoma com `Command(resume=...)`. Não define quem aprova nem prazo, e uma recusa não abre caso nenhum. | [`exercicios/aula09-langgraph/agente_langgraph.py:158-188`](../exercicios/aula09-langgraph/agente_langgraph.py#L158-L188) |
-| Interrupção do agente: não há procedimento, responsável nem teste (campo 3.5). | **LACUNA L16** |
+| **Trancamento pausa o grafo**: o sistema responde ao aluno, grava a espera (`aprovacoes`) e **para em `interrupt()`**; a coordenação retoma com `Command(resume=...)`. A pausa **sobrevive ao fim do processo** (checkpoint em arquivo). | [`src/triagem/nos.py:412`](../src/triagem/nos.py#L412); `teste::test_pausa_sobrevive_a_reiniciar_o_processo`, `teste::test_pausa_grava_a_espera_e_mostra_a_tela` |
+| A decisão tem **quatro valores** (`aprovar`, `rejeitar`, `aprovar_editando`, `expirar`) e registra **quem, quando, o quê e o que a pessoa editou**: aprovar não é carimbar. | [`src/triagem/humano.py:111-141`](../src/triagem/humano.py#L111-L141); `teste::test_aprovar_editando_guarda_o_que_a_pessoa_corrigiu`, `teste::test_rejeitar_grava_rejeitado` |
+| **Idempotente**: repetir a mesma decisão devolve a gravada; decisão **conflitante** não sobrescreve. | `teste::test_aprovar_duas_vezes_nao_grava_duas_vezes`, `teste::test_decisao_conflitante_nao_sobrescreve` |
+| Prazo de **48h**; vencido, o caso volta à fila da secretaria. Rodado por rotina (`/coordenacao/expirar`), sem agendador. | [`src/triagem/humano.py:27`](../src/triagem/humano.py#L27); `teste::test_ninguem_responde_o_caso_vence_e_volta_a_fila` |
+| Mensagem do aluno **durante a espera** não chama o modelo nem abre outro caso. | `teste::test_mensagem_durante_a_espera_nao_chama_o_modelo_nem_abre_outro_caso` |
+| A tela da coordenação mostra o caso e o que o sistema fez; o endpoint exige token. | [`src/triagem/humano.py:82`](../src/triagem/humano.py#L82), [`src/api.py:147-152`](../src/api.py#L147-L152) |
+| **Quem é "a coordenação":** quem tem o `COORDENACAO_TOKEN`. **Um único token compartilhado**: o campo `por` é **declarado por quem chama**, não verificado. **Não há tela própria nem identidade individual.** | [`src/api.py:81-84`](../src/api.py#L81-L84). **LACUNA L27** |
+| O que **não** exige aprovação: pendência, divergência e RA não encontrado vão à fila **sem pausa**; emitir um documento permitido é automático. | [`docs/humano.md`](humano.md) |
+| Interrupção do sistema: não há procedimento, interruptor nem teste (§3.5). | **LACUNA L16** |
 
 ## 11. Registro e retenção
 
-O registro de cada decisão comparado com a tupla $R = (id, t, x, C, V, \Phi, P, H, y)$ da nota sobre provar a decisão:
+O registro de cada decisão é o **trace** (ver [`docs/observabilidade.md`](observabilidade.md)), comparado com a tupla $R = (id, t, x, C, V, \Phi, P, H, y)$ da nota sobre provar a decisão:
 
 | Campo | Guardado? | Evidência |
 |---|---|---|
-| $id$ | sim, `execucao_id` (8 caracteres hex). **Não** aparece na resposta ao aluno nem em `documentos_emitidos`/`casos_pendentes`: não se liga o protocolo `DOC-1002` ao log que o gerou. | [`src/agente.py:104`](../src/agente.py#L104); [`src/dados.py:94-107`](../src/dados.py#L94-L107). **LACUNA L05** |
-| $t$ (instante) | **não** | `teste::test_L05_registro_sem_instante_modelo_prompt_nem_revisao` |
-| $x$ (entrada) | sim, no `historico` | [`logs/01-caso-simples-695426dc.json`](../logs/01-caso-simples-695426dc.json) |
-| $C$ (contexto recuperado) | não se aplica: o agente não recupera do índice | — |
-| $V$ (modelo servido, prompt, versão do sistema) | **não** | `teste::test_L05_registro_sem_instante_modelo_prompt_nem_revisao`. **LACUNA L05, L13** |
-| $\Phi$ (ferramentas, argumentos, resultados) | sim, em `passos` | [`logs/02-divergencia-9aee9313.json`](../logs/02-divergencia-9aee9313.json) |
-| $P$ (política e versão) | **não**: as regras estão no código, sem versão própria; o commit é o único substituto. | **LACUNA L05** |
-| $H$ (revisão humana, ou a ausência registrada) | **não** | **LACUNA L05** |
-| $y$ (saída) | sim, a última mensagem do `historico` | log acima |
+| $id$ | sim: `trace_id` e `gen_ai.conversation.id` (o `thread_id`); o **protocolo** vai na raiz (`agente.protocolo`), o que liga o caso ao trace. | [`src/triagem/telemetria.py:159`](../src/triagem/telemetria.py#L159); `teste::test_a_raiz_traz_o_termino_e_a_versao` |
+| $t$ (instante) | **sim**, em cada span | `teste::test_a_arvore_de_spans_de_uma_execucao` |
+| $x$ (entrada) | sim, evento `gen_ai.user.message` (se `AGENTE_TRACE_CONTEUDO` ligado) | `teste::test_a_entrada_e_a_saida_ficam_como_eventos_da_raiz` |
+| $C$ (contexto recuperado) | sim: o artigo e o texto devolvidos viram o resultado do span da ferramenta `consultar_regimento` | `teste::test_o_span_da_ferramenta_traz_argumentos_e_resultado` |
+| $V$ (modelo, prompt, sistema) | **sim**: `agente.versao` = `<commit>/<hash do prompt>/<modelo>`; modelo pedido e **servido** no span `chat` (L13). **O commit é lido de `.git/HEAD`:** fora de um repositório git, ele não é conhecido. | [`src/triagem/telemetria.py:145`](../src/triagem/telemetria.py#L145); `teste::test_o_span_chat_traz_modelo_e_tokens` |
+| $\Phi$ (ferramentas, argumentos, resultados) | sim, um span por chamada, **inclusive a feita pelo código** (`agente.ferramenta.origem="codigo"`) e a **recusada** pelo controle | `teste::test_a_escrita_feita_pelo_codigo_tambem_e_um_span`, `teste::test_chamada_recusada_pelo_controle_aparece_marcada_no_trace` |
+| $P$ (política e versão) | **parcial**: as regras estão no código; o commit é o substituto. Não há versão própria da política. | **L05** |
+| $H$ (revisão humana, ou a ausência registrada) | **sim**: a retomada da coordenação é **um trace próprio** (protocolo, quem pediu, decisão, se já decidido, conflito, o que editou); **a ausência** aparece como `agente.termino=aguardando_humano` sem retomada. | `teste::test_a_aprovacao_humana_e_um_trace_de_retomada`, `teste::test_o_termino_aguardando_humano_e_distinto_de_respondeu` |
+| $y$ (saída) | sim, evento `gen_ai.choice` e o objeto `SaidaTriagem` | `teste::test_a_entrada_e_a_saida_ficam_como_eventos_da_raiz` |
+
+**O que o auditor faz com isso:** [`evals/reconstruir.py`](../evals/reconstruir.py) lê só o arquivo de trace e imprime a decisão (versão, identidade, o que o modelo chamou, o que o **código** executou, a resposta, a retomada). Exemplo, **de uma execução com modelo roteirizado em teste, não com o modelo real** (a execução real com trace **ainda não existe**: depende da rodada B, L28):
+
+```text
+CONVERSA conv-exemplo   versão do sistema: 57d5fa1/p-6df71c6c/qwen/qwen3.8-27b
+
+TURNO 1   trace fa5d60b4   12 ms   término: aguardando_humano
+  aluno:     'Quero trancar minha matrícula. Meu RA é 20229012.'   (identidade: autenticada)
+  modelo:    3 chamada(s), pedido qwen/qwen3.8-27b, servido ?, 240 tokens de entrada e 60 de saída; modelo aprovado: True
+  ferramenta 1: buscar_aluno({"ra": "20229012"}) -> {"ra": "20229012", "nome": "Bruno Castro", "curso": "Direito", "situacao_matricula": "ativa"}   [ok]
+  ferramenta 2: escalar_para_humano({"ra": "20229012", "tipo_pedido": "trancamento_matricula", "motivo": "trancamento (aberto pelo código: o agente respondeu sem escalar)", "chave": "20229012:trancamento_matricula:trancamento"}) -> {"protocolo": "CASO-3001", "ra": "20229012", "tipo_pedido": "trancamento_matricula", "motivo": "trancamento (aberto pelo código: o agente respondeu sem escalar)", "prazo": "48h", "ja_existia": false}   [ok]  [executada PELO CÓDIGO, não pelo modelo]
+  decisão:   escalar_trancamento   suficiente: True   protocolo: CASO-3001   aguardando humano: True
+  resposta:  'Encaminhei seu pedido. Protocolo: CASO-3001. Prazo: 48h.'
+
+RETOMADA DA COORDENAÇÃO (turno 2, trace bcef6bb7)
+  caso:      CASO-3001
+  quem:      coord-1   pediu: aprovar_editando
+  decisão:   aprovado   (já decidido antes: False, conflito: False)
+  editou:    {"semestre_efetivo": "2027.1"}
+```
 
 | Afirmação | Evidência |
 |---|---|
-| **`demo.py` e a API (Ex.13) gravam registro de execução**; a API regrava o registro da conversa a cada turno, no volume (`/dados/logs`). `chat.py` (teste manual) e `verificador.py` continuam sem gravar. | `teste::test_L07_chat_nao_grava_registro_de_execucao`; [`inventario-dados-pessoais.txt`](evidencias/inventario-dados-pessoais.txt) (último comando). **LACUNA L07** |
-| O log é serializado com `default=str`: as mensagens do modelo viram texto, incluindo o raciocínio interno. | [`src/agente.py:535-543`](../src/agente.py#L535-L543); `teste::test_L06_log_versionado_guarda_dado_pessoal_e_raciocinio` |
-| Armazenamento: arquivo JSON comum, editável, sem *append-only* nem encadeamento por *hash*. | [`src/agente.py:541`](../src/agente.py#L541). **LACUNA L05** |
-| Prazo de guarda: **nenhum.** Os logs estão no git desde 04/09/2026 e ficam no histórico mesmo se apagados. | [`inventario-dados-pessoais.txt`](evidencias/inventario-dados-pessoais.txt). **LACUNA L20** |
-| Acesso: qualquer pessoa, porque o repositório é público. | `git ls-remote` sem credencial ([`inventario-dados-pessoais.txt`](evidencias/inventario-dados-pessoais.txt)). **LACUNA L06** |
+| **Os chats e a API gravam o trace** quando `TRIAGEM_TRACES_DIR` está definida (a configuração acontece em `Sistema()`); sem a variável, é *no-op* e **nada é registrado**. A API também regrava o registro da conversa a cada turno, no volume. | [`src/triagem/sistema.py:65`](../src/triagem/sistema.py#L65); `teste::test_sem_configuracao_o_trace_e_noop_e_nada_quebra`; [`src/api.py:100-108`](../src/api.py#L100-L108). **L07 fechada só com a variável definida** |
+| Armazenamento: arquivo JSONL comum, **editável**, sem *append-only* nem encadeamento por *hash*. | [`docs/observabilidade.md` §6](observabilidade.md). **LACUNA L05** |
+| Prazo de guarda e acesso: **nenhum implementado.** Proposta: 90 dias e leitura restrita; decisão do grupo e do responsável de risco. | [`docs/observabilidade.md` §6](observabilidade.md). **LACUNA L26** |
+| Remoção por titular: o trace **não** entra na varredura de `Memoria.remover_titular`, e o RA está nos argumentos. | [`docs/memoria.md` §4.3](memoria.md). **LACUNA L26** |
+| Métricas (p50/p95, tokens, motivos de término, erro por ferramenta) e **SLO ≥ 95% em 7 dias**: calculadas por [`evals/metricas.py`](../evals/metricas.py) **sobre execuções reais**; **ainda não há trinta**, então o valor é **PENDENTE**. | [`docs/observabilidade.md` §4, §5](observabilidade.md). **LACUNA L28** |
 
 ## 12. Histórico de mudanças
 
+O histórico completo, com os defeitos achados em cada etapa, está em [`docs/mudancas.md`](mudancas.md). Resumo:
+
 | Versão (commit) | Data | O que mudou | Quem aprovou |
 |---|---|---|---|
-| `069942e` | 04/09/2026 | Parte 1: case, modelos, agente, verificador | *não registrado* |
-| `3757506`, `f1ac1ed` | 18/09/2026 | Arquitetura v1, base de conhecimento v1 | *não registrado* |
-| `1679bb1` | 22/09/2026 | Reconfirmação de preços da Mistral | *não registrado* |
-| `4a41964` | 22/09/2026 | **Troca de provedor Mistral → Groq**: muda para onde vai o dado | *não registrado* |
-| `ba7fb89` | 23/09/2026 | Execução real: 4 demonstrações + verificador (35/40); logs com dado pessoal entram no git | *não registrado* |
-| `8423133` | 25/09/2026 | RAG sobre o Regimento (Ex.7) | *não registrado* |
-| `a4eefb3` | 25/09/2026 | Memória (Ex.8) | *não registrado* |
-| `5fd36fb` | 02/10/2026 | LangGraph e MCP (Ex.9, Ex.10) | *não registrado* |
-| `4a3452a`, `9bc9f8f` | 02/10/2026 | Chat interativo; regra do prompt contra inventar passo do processo | *não registrado* |
-| `b3f4596` | 16/10/2026 | *Model card*, testes de governança, evidências; `.gitignore` passa a cobrir o checkpoint do LangGraph | *não registrado* |
-| commit do Ex.13 | 16/10/2026 | Imagem Docker (usuário sem privilégio), API (`src/api.py`) com estado em volume, pipeline de CI/CD; `ACADEMICO_DB` e pasta de `salvar_log` configuráveis ([`docs/empacotamento.md`](empacotamento.md)) | *não registrado* |
+| `069942e` … `9bc9f8f` | 04/09 a 02/10/2026 | Parte 1 e Exercícios 7 a 10 | *não registrado* |
+| `b3f4596`, `5ade646`, `41d7a0c` | 16 a 20/10/2026 | *Model card* original; L02 fechada (trancamento pelo código) | *não registrado* |
+| `5246a5b` | 02/11/2026 | Exercícios 11 a 15 | *não registrado* |
+| `8fa0ae4`, `cbb82d6`, `706c599` | 11/11/2026 | **Parte 2:** grafo, RAG, memória, pausa humana, contrato, API, 8 demonstrações reais | *não registrado* |
+| `51c278b` | 11/11/2026 | **Parte 3:** os três controles (ASI03, ASI10, ASI02) | *não registrado* |
+| `616fea5` | 11/11/2026 | **Parte 3:** trace OpenTelemetry | *não registrado* |
+| `1dfea71`, `31979bf` | 11/11/2026 | **Parte 3:** pacote `evals/`, rodada A parcial | *não registrado* |
+| `57d5fa1` | 11/11/2026 | **Parte 3:** regra de promoção assinada antes da versão B, juiz, ficha de rotulagem, `seguranca.md` | *não registrado* |
 
-Evidência: [`historico-git.txt`](evidencias/historico-git.txt). Todos os commits têm um único autor e não passaram por *pull request* nem revisão. Uma mudança que altera autoridade ou destino do dado, como a troca de provedor em `4a41964`, entrou sem aprovação registrada. **LACUNA L21.**
+Todos os commits têm um único autor e **nenhum passou por *pull request* nem revisão**. **Os commits da Parte 2 e da Parte 3 existem só localmente: não foram enviados ao GitHub.** Uma mudança de autoridade ou de destino do dado, como a troca de provedor em `4a41964`, ou os controles de `51c278b`, entrou sem aprovação registrada. **LACUNA L21.**
 
 ---
 
 ## Lacunas
 
-Prioridade: **P1**, impede operar com dados reais; **P2**, corrigir antes da Parte 3; **P3**, melhoria.
+Situação em 11/11/2026. Prioridade: **P1**, impede operar com dados reais; **P2**, corrigir antes de operar; **P3**, melhoria. As lacunas que a Parte 3 fechou **dizem com que evidência**, e as que ficaram abertas **dizem por quê**.
 
-| ID | Lacuna | Correção proposta | Prioridade |
+| ID | Lacuna | Situação | Prio. |
 |---|---|---|---|
-| L01 | Não há verificação de identidade: qualquer pessoa consulta o financeiro e emite documento de qualquer RA (A8). | Passar o `ra_autenticado` da sessão ao `Estado` e fazer as 4 ferramentas recusarem, em código, RA diferente do autenticado. Inverter `test_L01`. | **P1** |
-| L02 | **Fechada para trancamento em 16/10/2026.** O escalonamento de trancamento dependia do modelo (A11). Agora `conversar()` confere, antes de aceitar a resposta final, se o aluno pediu trancamento, se o RA foi confirmado por `buscar_aluno` e se há caso aberto; se faltar, abre o caso em código e o modelo redige a resposta com o protocolo real ([`src/agente.py:436-476`](../src/agente.py#L436-L476)). O detector é uma expressão regular (`trancar`, `trancamento`): citar a palavra sem pedir trancamento abre um caso a mais, o que é falha segura. Os demais casos negativos (divergência, RA não encontrado, pendência) continuam só no prompt: ver L11. **Validação com o modelo real:** eval 6/6 (2ª execução, 18/10/2026), trancamento 2/2; verificador **39/40 com 0 falso negativo em trancamento** (`t01`–`t08` certos). O resultado vem de dois lotes, 27 casos em 18/10 e 13 em 20/10, porque a cota diária da Groq acabou no meio; o `logs/verificador.json` versionado continua sendo o de 22-23/09 (35/40). O único erro, `r03`, é a ambiguidade de rótulo conhecida (`docs/modelos.md` §3.5): o agente escalou corretamente por RA não encontrado. | Para o restante, classificar o pedido por roteador determinístico, como em `arquitetura-v1.md` §3. | ~~P1~~ fechada |
-| L05 | O registro não tem instante, modelo servido, versão de prompt e de política, campo $H$, nem ligação com o protocolo; é editável. | Acrescentar `t`, `modelo_pedido`, `modelo_servido` (`resposta.model`), `prompt_sha256`, `commit`, `revisao_humana` (com "não houve" explícito) ao `Estado`; gravar `execucao_id` em `documentos_emitidos`/`casos_pendentes`; arquivo só de acréscimo. | **P1** |
-| L06 | Logs com nome, valor e raciocínio do modelo versionados em repositório público, sem prazo. | Registrar referência (RA pseudonimizado, *hash*) em vez de conteúdo; não serializar o raciocínio; tirar `logs/0*.json` do git em produção e definir o acesso. | **P1** |
-| L07 | **Parcialmente corrigida no Ex.13:** a API, que é o ponto de entrada em produção, grava o registro a cada turno (`teste::test_conversa_em_dois_turnos_emite_e_grava_registro`); `chat.py` ainda não grava. | Chamar `salvar_log` em todo término de `chat.py`, inclusive em erro. | P2 |
-| L14 | Região, retenção e uso para treino da Groq não verificados; sem contrato nem hipótese do art. 33. | Conferir os termos vigentes da Groq, registrar a data e o link aqui e em `docs/fontes.md`; para dado real, provedor com contrato de operador e cláusulas-padrão (Resolução CD/ANPD nº 19/2024). | **P1** |
-| L15 | ~~Nenhum responsável nomeado por papel~~ **Nomes informados pelo grupo em 30/10/2026** (matriz do campo 1). Falta registrar a matriz de responsabilidade da nota sobre governar a ação, §7.4, e o primeiro aceite de risco assinado por Erick. | Registrar o aceite de Erick em §9 e em `exercicios/aula14-respostas.md`; sem isso o responsável existe, mas ninguém aceitou nada. | P2 (era P1) |
-| L03 | A chave de idempotência e o `motivo` do escalonamento são texto livre do modelo. | Calcular a chave em código (`ra:tipo_pedido:categoria`), com `motivo` como enum. Inverter `test_L03`. | P2 |
-| L04 | O limite em dinheiro é inerte (preço 0), e não há limite por janela nem por chave. | Limitar tokens por dia e por mês, em código, com alerta a 80%; tratar modelo fora da tabela de preços como erro, não como custo 0. | P2 |
-| L08 | Uma única chave para agente, RAG, juiz, memória e LangGraph. | Uma chave por carga de trabalho (`TRIAGEM_API_KEY`, `RAG_API_KEY`, ...), para atribuir gasto e revogar só uma. | P2 |
-| L11 | Regras só no prompt: pedir o RA antes, pedir comprovante, confirmar o RA uma vez, não inventar protocolo, prazo ou canal; texto livre sem filtro. | Contadores de confirmação de RA no `Estado`; validar em código que todo protocolo citado na resposta veio de uma ferramenta; mascarar dado sensível antes do envio. | P2 |
-| L12 | Sem privilégio mínimo no banco; `valor_em_aberto` e o nome vão ao provedor sem necessidade. | Tirar `valor_em_aberto` de `consultar_financeiro`; gerar o documento por template em código; para banco real, usuário de serviço com `SELECT` em `alunos`/`financeiro` e `INSERT` só nas duas tabelas. | P2 |
-| L13 | Modelo sem versão datada; modelo servido não registrado; sem lista de modelos aprovados. | Gravar `resposta.model`; validar `LLM_MODELO` contra uma lista aprovada no início do processo. | P2 |
-| L16 | Sem procedimento de interrupção nem responsável; erro de banco derruba o processo sem término registrado. No container, `docker stop` encerra a API em 1,1 s ([`evidencias/empacotamento.txt`](evidencias/empacotamento.txt) §4), mas não há exercício periódico nem dono. | Interruptor (variável ou arquivo) lido a cada volta do laço; capturar exceções de ferramenta como término `erro_fatal`; exercício de desligamento registrado. | P2 |
-| L17 | Fila humana sem consumidor, sem registro da decisão humana e sem controle do prazo de 48h. | Tabela de decisões (`protocolo`, quem decidiu, quando, o quê); prazo controlado com alerta no vencimento. | P2 |
-| L18 | Suíte sem versão; relatório montado à mão; série `p` sem segundo turno; concordância do classificador e do juiz de fidelidade com humanos não medida; comparação de modelos nunca rodada. | Versionar a suíte; o script grava modelo, data e commit; dar o segundo turno à série `p`; rotular à mão uma amostra e medir a concordância; rodar `comparar_modelos.py`. | P2 |
-| L19 | Base legal não decidida pela instituição; sem encarregado. | Validar a tabela do campo 6 com o jurídico ou encarregado da instituição. | P2 |
-| L20 | Nenhuma estrutura tem prazo de guarda; o decaimento da memória não elimina. | Prazo por finalidade (memória: um semestre; registro de decisão: prazo de contestação) e rotina de expurgo registrada. | P2 |
-| L09 | Três nomes "fictícios" coincidem com integrantes do grupo. | Trocar por nomes sem relação com pessoas reais, ou corrigir a afirmação de `case.md` §2.9. | P3 |
-| L10 | O protocolo do LangGraph depende de `hash()` do processo. | Derivar o protocolo de um contador ou de um *hash* estável (`hashlib`) do conteúdo. | P3 |
-| L21 | Sem número de versão nem aprovação registrada das mudanças. A partir do Ex.13, a imagem publicada recebe a tag do SHA do commit (pipeline `imagem`). | Tag por versão entregue; mudanças em autoridade ou dados por *pull request* aprovado por outro integrante. | P3 |
-| L23 | A classificação no ECA Digital não foi confirmada; aluno menor de 18 anos não tem tratamento próprio. | Registrar a análise e, se houver alunos menores de 18 anos, aplicar o padrão mais protetivo (sem memória persistente). | P3 |
+| L01 | Não havia verificação de identidade. | **Fechada em código** (A8, ASI03): as ferramentas recusam RA diferente do da sessão; sem identidade e com `TRIAGEM_EXIGE_IDENTIDADE=1`, o sistema recusa. **Premissa aberta:** não há portal que defina a sessão; qualquer cliente da API pode declarar o RA. Aceite **pendente de Erick** (§9). Medido: a versão sem o controle emitiu a declaração de outra aluna (rodada A, 3 de 3 casos). | **P1** (a premissa) |
+| L02 | O escalonamento de trancamento dependia do modelo. | **Fechada** (A11). Verificador da Parte 1: 39/40, 0 falso negativo em trancamento (18 e 20/10/2026). No sistema novo: `teste::test_trancamento_escalado_pelo_codigo_e_o_grafo_pausa`; **sem rodada real completa (L28)**. | ~~P1~~ |
+| L03 | A chave de idempotência e o `motivo` do escalonamento são texto livre do modelo. | **Parcial:** para trancamento a chave é calculada em código (A10). Para os demais casos, continua do modelo; `motivo` continua livre. | P2 |
+| L04 | O limite em dinheiro é inerte (preço 0); não há limite por dia, mês ou chave. | **Aberta.** Há tetos por execução, por volta e por turno (O1–O4), mas nenhum agregado. | P2 |
+| L05 | O registro não tinha instante, modelo servido, versão, campo $H$ nem ligação com o protocolo; era editável. | **Parcial:** o trace traz $t$, versão, modelo pedido e servido, protocolo e $H$ (§11). **Falta:** política com versão própria; armazenamento imutável (é JSONL editável). | P2 |
+| L06 | Logs com nome, valor e raciocínio versionados em repositório público, sem prazo. | **Aberta, e cresceu:** `logs/parte2/` acrescentou 8 execuções reais ao git. | **P1** |
+| L07 | O chat não gravava registro. | **Fechada com `TRIAGEM_TRACES_DIR` definida;** sem ela, nada é registrado. | P2 |
+| L08 | Uma única chave para todos os componentes. | **Aberta.** | P2 |
+| L09 | Três nomes "fictícios" coincidem com integrantes do grupo. | **Aberta.** | P3 |
+| L10 | O protocolo do LangGraph do Ex.9 depende de `hash()` do processo. | **Aberta, fora do sistema entregue** (o sistema usa `agente.py`). | P3 |
+| L11 | Regras só no prompt: pedir o RA, pedir comprovante, não inventar canal; texto livre sem filtro. | **Parcial:** protocolo, prazo e artigo citado são validados em código (A12); suficiência é exigida (A13). **Continuam só no prompt:** A14, A15 (invenção de canal, medida no caso 4). Sem filtro de dado sensível. | P2 |
+| L12 | Sem privilégio mínimo; `valor_em_aberto` e nome vão ao provedor. | **Aberta.** | P2 |
+| L13 | Modelo sem versão datada; modelo servido não registrado; sem lista aprovada. | **Parcial:** lista aprovada em código (O6); modelo servido **registrado e a divergência contada** (F6). **Falta:** versão datada (o provedor não a oferece) e **conferir, num trace real, se o provedor devolve o modelo servido**. | P2 |
+| L14 | Região, retenção e uso para treino da Groq não verificados. | **Aberta.** Verificar os termos vigentes **exige acesso ao provedor** e não foi feito. | **P1** |
+| L15 | Responsável de risco sem aceite. | **Nomes fechados (30/10/2026); aceite aberto:** §9 e [`docs/seguranca.md` §4](seguranca.md), três riscos propostos, **nenhum aceito por Erick**. | P2 |
+| L16 | Sem procedimento de interrupção, interruptor nem responsável testado. | **Parcial:** exceção de ferramenta já não derruba o turno (F3). **Falta:** interruptor lido a cada volta, procedimento e exercício. | P2 |
+| L17 | Fila humana sem consumidor, sem registro da decisão e sem controle do prazo. | **Fechada no código** (§10): tabelas `aprovacoes` e `decisoes_humanas`, quatro decisões, prazo de 48h. **Resta:** expiração por rotina, sem agendador; identidade individual da coordenação (L27). | ~~P2~~ |
+| L18 | Suíte sem versão; relatório à mão; concordância do juiz não medida; comparação nunca rodada. | **Parcial:** dataset versionado (v1.2.0); runner grava modelo, commit e data; regra assinada antes. **Falta:** rodada B e comparação (L28); validação humana do juiz (L24). | P2 |
+| L19 | Base legal não decidida pela instituição; sem encarregado. | **Aberta.** | P2 |
+| L20 | Nenhuma estrutura tem prazo de guarda. | **Parcial:** a memória episódica **remove** aos 180 dias, ao subir o processo. **Sem prazo:** banco, checkpoint, trace, logs. | P2 |
+| L21 | Sem número de versão nem aprovação das mudanças. | **Parcial:** carimbo `commit/prompt/modelo` em todo trace. **Falta:** *tag* por versão e revisão por outro integrante. | P3 |
+| L23 | Classificação no ECA Digital não confirmada. | **Aberta.** | P3 |
+| L24 | **(nova)** O juiz de fidelidade **não foi validado por humanos**: os 75 rótulos do Ex.11 são de uma IA, e a ficha de 20 saídas ainda não foi rotulada. | **Aberta.** Depende **do grupo**: ~30 minutos de uma pessoa ([`evals/rotulagem/LEIA-ME.md`](../evals/rotulagem/LEIA-ME.md)). Enquanto isso, o juiz fica **fora** da regra de promoção. | P2 |
+| L26 | **(nova)** O trace tem dado pessoal sem prazo, sem controle de acesso e fora da remoção por titular; os arquivos de `docs/evidencias/` são de 16/10 e `pytest.txt` não foi regenerado. | **Aberta.** | **P1** |
+| L27 | **(nova)** A API não autentica o aluno e a conversa é de quem tem o `conversa_id`; a coordenação é **um token compartilhado**, com `por` declarado e não verificado, e sem tela. | **Aberta.** | P2 |
+| L28 | **(nova)** **A rodada B não rodou** (cota): sem comparação A × B, sem trinta execuções reais, sem valor medido do SLO, sem trace real para a reconstrução. | **Aberta; depende de cota nova do provedor.** Comandos em [`docs/evals.md` §4.4](evals.md). | P2 |
+
+*(L22 e L25 não existem: o Ex.12 não usou o número 22, e a numeração só cresce.)*
 
 ---
 
@@ -313,6 +350,6 @@ Prioridade: **P1**, impede operar com dados reais; **P2**, corrigir antes da Par
 
 > *Um auditor que nunca falou com o grupo, com o model card e o repositório na mão, consegue decidir se uma decisão concreta do agente estava dentro da autoridade dele?*
 
-**Em parte, e só para as execuções de demonstração.** Para os 4 casos de `logs/0*.json`, sim: o log tem cada ferramenta chamada, com argumentos e resultado, e os limites que valem fora do modelo (A1–A10, O1–O3, F1) estão no código e são exercitados por testes que o auditor roda sem chave. Ele confirma, por exemplo, que no caso `02-divergencia` o agente não emitiu a segunda via e que, se tivesse tentado, a ferramenta teria recusado.
+**Em parte, e melhor do que antes, mas só para as execuções de demonstração.** O que um auditor consegue hoje: ler os limites que valem **fora do modelo** (A1–A13, O1–O4, F1–F4), cada um com um teste que **tenta a ação indevida** e roda sem chave; ver, nos 8 registros reais de `logs/parte2/`, o que o modelo chamou e o que o **código** executou; e, com a ferramenta [`evals/reconstruir.py`](../evals/reconstruir.py), reconstruir a decisão a partir **só do trace**, incluindo **quem aprovou, quando e o que corrigiu** (campo $H$).
 
-Para uma decisão real, não. Uma conversa pelo `chat.py` não deixa registro (L07). Mesmo num log, o auditor não sabe que modelo decidiu nem quando (L05, L13). Também não sabe se quem pediu era o titular do RA (L01). A quem perguntar já está nomeado (L15, 30/10/2026), mas sem procedimento de interrupção nem aceite de risco registrado (L16). As lacunas P1 são exatamente as que separam "o sistema se comportou bem nos testes" de "o sistema consegue provar o que fez".
+O que ele **não** consegue, e por quê: **(1)** confirmar **quem** pediu: a identidade é a da sessão, e **não há portal** (L01, §9). **(2)** Conferir o **modelo servido** num registro real (L13). **(3)** Ler um trace **real**: o exemplo acima é de teste; **a rodada B não rodou** (L28). **(4)** Confiar que o registro é **o que aconteceu**: o arquivo é editável (L05). **(5)** Saber se alguém **aceitou** os riscos: o aceite de Erick **não existe** (L15). **(6)** Saber como **parar** o sistema (L16). As lacunas P1 que restam (L01 pela premissa, L06, L14, L26) são as que separam "o sistema se comportou bem nos testes" de "o sistema pode operar com dados reais". **Ele não deve.**

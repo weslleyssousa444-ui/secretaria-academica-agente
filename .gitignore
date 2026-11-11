@@ -18,3 +18,7 @@ exercicios/aula09-langgraph/checkpoints.sqlite
 .pytest_cache/
 .env.*
 !.env.example
+
+# Traces do sistema (TRIAGEM_TRACES_DIR=traces): carregam RA, nome e valor em aberto (docs/observabilidade.md §6).
+# Os traces de uma rodada da suíte ficam em evals/resultados/ e são evidência versionada (dados sintéticos).
+/traces/

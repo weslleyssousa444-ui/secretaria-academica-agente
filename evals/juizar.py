@@ -28,7 +28,7 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="Juiz de fidelidade sobre uma rodada")
     ap.add_argument("--rodada", required=True, type=Path)
     ap.add_argument("--casos")
-    ap.add_argument("--dataset", type=Path, default=RAIZ / "evals" / "dataset" / "golden_v1.1.0.json")
+    ap.add_argument("--dataset", type=Path, default=RAIZ / "evals" / "dataset" / "golden_v1.2.0.json")
     args = ap.parse_args(argv)
 
     casos = {c["id"]: c for c in json.loads(args.dataset.read_text(encoding="utf-8"))["casos"]}

@@ -122,7 +122,7 @@ def main(argv=None) -> int:
     p.add_argument("--rodada", action="append", required=True, type=Path)
     p.add_argument("-n", type=int, default=20)
     p.add_argument("--semente", type=int, default=7)
-    p.add_argument("--dataset", type=Path, default=RAIZ / "evals" / "dataset" / "golden_v1.1.0.json")
+    p.add_argument("--dataset", type=Path, default=RAIZ / "evals" / "dataset" / "golden_v1.2.0.json")
     p.add_argument("--saida", type=Path, default=PASTA / "para_rotular.csv")
     m = sub.add_parser("medir")
     m.add_argument("--rotulos", type=Path, default=PASTA / "para_rotular.csv")

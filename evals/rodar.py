@@ -33,7 +33,7 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parents[1]
-DATASET_PADRAO = RAIZ / "evals" / "dataset" / "golden_v1.1.0.json"
+DATASET_PADRAO = RAIZ / "evals" / "dataset" / "golden_v1.2.0.json"
 TPM_ALVO = 6000   # tokens/min: abaixo do teto de 8.000 do free tier (docs/modelos.md §3.5)
 TIMEOUT = 90      # s por chamada: uma chamada pendurada já travou rodadas inteiras
 
