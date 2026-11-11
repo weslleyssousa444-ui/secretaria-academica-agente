@@ -26,7 +26,8 @@ def carregar(caminho: Path) -> tuple[dict, dict]:
     pasta = caminho if caminho.is_dir() else caminho.parent
     arquivo = caminho / "execucoes.jsonl" if caminho.is_dir() else caminho
     registros = {}
-    for linha in arquivo.read_text(encoding="utf-8").splitlines():
+    # Uma rodada que parou antes do primeiro caso (cota diária) existe, vazia.
+    for linha in (arquivo.read_text(encoding="utf-8").splitlines() if arquivo.exists() else []):
         if linha.strip():
             r = json.loads(linha)
             registros[r["caso"]] = r   # o último vale (uma repetição pós-infra substitui a que caiu)

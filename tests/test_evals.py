@@ -154,6 +154,13 @@ def test_o_comparador_exclui_do_pareamento_o_caso_que_caiu_por_infra(banco, mode
     assert r["n_pareados"] == 0 and r["infra"]["B"] == ["em01"]
 
 
+def test_o_comparador_aceita_rodada_que_parou_antes_do_primeiro_caso(tmp_path):
+    (tmp_path / "A").mkdir()
+    (tmp_path / "B").mkdir()
+    r = comparador.comparar(tmp_path / "A", tmp_path / "B")
+    assert r["n_pareados"] == 0 and "MÉDIA" in comparador.imprimir(r, tmp_path / "A", tmp_path / "B")
+
+
 def test_o_runner_retoma_pulando_o_que_ja_foi_feito(tmp_path):
     arquivo = tmp_path / "execucoes.jsonl"
     arquivo.write_text("\n".join(json.dumps({"caso": c, "termino": t}) for c, t in
