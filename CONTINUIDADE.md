@@ -60,6 +60,7 @@ Estado completo em `docs/model-card.md`, seção Lacunas. As de prioridade **P1*
 - **L06**: logs com dado pessoal no repositório público; `logs/parte2/` acrescentou 8 execuções reais.
 - **L14**: região, retenção e uso para treino da Groq **não verificados**.
 - **L26**: o trace não tem prazo nem controle de acesso e não está na remoção por titular.
+- **L29** (P2, depois de A e B): o trace não guarda o motivo da reprovação do validador nem o rascunho; a causa de `re05` e `rg03` na rodada B ficou sem apurar. Acrescentar o evento de validação com teste **só depois** das duas rodadas (mudar `src/` antes mudaria o carimbo da versão sob teste), e rodar os dois casos de novo (~15 mil tokens).
 
 ## 5. Pipeline no GitHub
 

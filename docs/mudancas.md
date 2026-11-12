@@ -71,6 +71,7 @@ O usuário decidiu: **primeiro a Parte 2, depois a Parte 3**, sobre o mesmo repo
 | Gerador de documentos: `f-string` com contrabarra | erro de sintaxe ao gerar `docs/evals.md` | marcadores `@@nome@@` substituídos |
 | Contagem de casos sintéticos **errada** no dataset (17, eram 12) | conferência da contagem | corrigida; casos de demonstração separados como v1.2.0 (`dm01` a `dm04`) |
 | O sistema não tinha **nenhum teste** de que a lista de ferramentas é fechada | revisão do campo "autoridade" do *model card* | `test_o_sistema_tem_exatamente_cinco_ferramentas_e_nenhuma_de_trancamento` e `test_as_ferramentas_do_agente_nao_alteram_nem_apagam_nada` |
+| O trace **não diz por que** o validador reprovou uma resposta | investigar `re05` e `rg03` na rodada B parcial (12/11/2026): o motivo só existia no checkpoint, apagado pela suíte | **aberto**, registrado como **L29** no *model card*; a correção (evento de validação no trace) espera A e B terminarem |
 
 ### 3.3 Afirmações minhas que estavam **erradas** e foram corrigidas
 
@@ -89,7 +90,7 @@ São o tipo de achado que mais importa para a honestidade da entrega: o texto af
 
 | Item | Situação |
 |---|---|
-| **Rodada B da suíte** (37 casos, código atual) | **não rodou**: a cota diária do `qwen/qwen3.8-27b` (200 mil tokens) acabou. A comparação A × B está **PENDENTE** em `docs/evals.md` §4.3, com o comando para completar |
+| **Rodada B da suíte** (37 casos, código atual) | **incompleta** (12/11/2026: 33 de 37, parou em `dm01` por cota). Antes, em 11/11, **não rodou**: a cota diária do `qwen/qwen3.8-27b` (200 mil tokens) acabou. A comparação A × B está **PENDENTE** em `docs/evals.md` §4.3, com o comando para completar |
 | Rodada A completa | 3 de 37 casos (identidade). Resultado: **0 de 3**: o sistema sem o controle emitiu a declaração de outra aluna |
 | Métricas, SLO medido, **trace real** | dependem da rodada B; `docs/observabilidade.md` §4 diz **PENDENTE** |
 | Rótulos humanos do juiz | **o grupo precisa rotular** 20 saídas ([`evals/rotulagem/LEIA-ME.md`](../evals/rotulagem/LEIA-ME.md)); nenhum rótulo foi preenchido por código |
