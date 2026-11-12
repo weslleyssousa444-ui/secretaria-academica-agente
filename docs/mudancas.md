@@ -29,9 +29,10 @@ O usuário decidiu: **primeiro a Parte 2, depois a Parte 3**, sobre o mesmo repo
 | `1dfea71` | 11/11/2026 | Parte 3 | Pacote `evals/`: dataset v1.1.0, runner, comparador, métricas |
 | `31979bf` | 11/11/2026 | Parte 3 | Rodada A parcial com o modelo real; comparador tolerante a rodada vazia |
 | `57d5fa1` | 11/11/2026 | Parte 3 | Regra de promoção declarada **antes** da versão B; juiz e ficha de rotulagem; `seguranca.md` |
-| *(este)* | 11/11/2026 | Parte 3 | Dataset v1.2.0 (+4 casos de demonstração), `docs/evals.md` e `docs/observabilidade.md`, atributo `agente.aprovacao.edicao`, testes de autoridade, *model card* reescrito, este arquivo |
+| `483cc20` | 11/11/2026 | Parte 3 | Dataset v1.2.0 (+4 casos de demonstração), `docs/evals.md` e `docs/observabilidade.md`, atributo `agente.aprovacao.edicao`, testes de autoridade, *model card* reescrito, este arquivo |
+| `6925603` | 11/11/2026 | Parte 3 | Registra a decisão do usuário de não revogar a chave da Groq, com o risco residual declarado |
 
-**Os commits da Parte 2 e da Parte 3 estão só no repositório local.** O último envio ao GitHub foi `41d7a0c` (autorizado pelo usuário); o resto aguarda autorização.
+**Os commits da Parte 2 e da Parte 3 até `483cc20` estão no GitHub** (envio autorizado pelo usuário em 11/11/2026). O commit `6925603` (decisão de não revogar a chave) foi feito depois e está só local, aguardando autorização.
 
 ## 2. O que mudou na autoridade do sistema (em relação à Parte 1)
 

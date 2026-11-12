@@ -2,9 +2,9 @@
 
 Situação em **11/11/2026**. O sistema em grafo (Parte 2) e a avaliação, governança, segurança e observabilidade (Parte 3) estão **no repositório local**. Este arquivo diz o que **falta**, quem tem de fazer, e os comandos exatos. O grupo decidiu **seguir sem Docker**; o que depende dele está na seção 6, como opcional. O histórico do que foi feito e dos defeitos achados está em [`docs/mudancas.md`](docs/mudancas.md).
 
-## 0. Os commits não estão no GitHub
+## 0. Estado do GitHub
 
-O último envio autorizado foi `41d7a0c`. **Todos os commits da Parte 2 e da Parte 3 existem só localmente.** Enviar exige a autorização do usuário (`git push origin master`).
+As Partes 2 e 3 foram enviadas com autorização do usuário: `origin/master` está em `483cc20`. **Só o commit `6925603` (registro da decisão sobre a chave) está local.** Cada envio novo exige nova autorização (`git push origin master`).
 
 ## 1. Testes offline (não precisam de chave nem de Docker)
 
