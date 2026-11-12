@@ -31,8 +31,9 @@ O usuário decidiu: **primeiro a Parte 2, depois a Parte 3**, sobre o mesmo repo
 | `57d5fa1` | 11/11/2026 | Parte 3 | Regra de promoção declarada **antes** da versão B; juiz e ficha de rotulagem; `seguranca.md` |
 | `483cc20` | 11/11/2026 | Parte 3 | Dataset v1.2.0 (+4 casos de demonstração), `docs/evals.md` e `docs/observabilidade.md`, atributo `agente.aprovacao.edicao`, testes de autoridade, *model card* reescrito, este arquivo |
 | `6925603` | 11/11/2026 | Parte 3 | Registra a decisão do usuário de não revogar a chave da Groq, com o risco residual declarado |
+| `73462e3`, `dd1415b` | 12/11/2026 | Parte 3 | Docs com o estado real do GitHub; lacuna L29 e estado parcial da rodada B |
 
-**Os commits da Parte 2 e da Parte 3 até `483cc20` estão no GitHub** (envio autorizado pelo usuário em 11/11/2026). O commit `6925603` (decisão de não revogar a chave) foi feito depois e está só local, aguardando autorização.
+**Os commits da Parte 2 e da Parte 3 até `dd1415b` estão no GitHub** (envios autorizados pelo usuário em 11/11 e 12/11/2026). Commits posteriores podem estar só locais: `git log origin/master..HEAD` mostra quais.
 
 ## 2. O que mudou na autoridade do sistema (em relação à Parte 1)
 

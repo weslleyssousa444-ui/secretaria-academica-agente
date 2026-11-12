@@ -4,7 +4,7 @@ Situação em **11/11/2026**. O sistema em grafo (Parte 2) e a avaliação, gove
 
 ## 0. Estado do GitHub
 
-As Partes 2 e 3 foram enviadas com autorização do usuário: `origin/master` está em `483cc20`. **Só o commit `6925603` (registro da decisão sobre a chave) está local.** Cada envio novo exige nova autorização (`git push origin master`).
+As Partes 2 e 3 foram enviadas com autorização do usuário; o último envio chegou até `dd1415b` (12/11/2026). Commits posteriores a esse podem estar só locais (`git log origin/master..HEAD` mostra quais). Cada envio novo exige nova autorização (`git push origin master`).
 
 ## 1. Testes offline (não precisam de chave nem de Docker)
 

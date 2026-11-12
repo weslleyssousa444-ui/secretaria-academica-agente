@@ -305,7 +305,7 @@ O histórico completo, com os defeitos achados em cada etapa, está em [`docs/mu
 | `1dfea71`, `31979bf` | 11/11/2026 | **Parte 3:** pacote `evals/`, rodada A parcial | *não registrado* |
 | `57d5fa1` | 11/11/2026 | **Parte 3:** regra de promoção assinada antes da versão B, juiz, ficha de rotulagem, `seguranca.md` | *não registrado* |
 
-Todos os commits têm um único autor e **nenhum passou por *pull request* nem revisão**. **Os commits da Parte 2 e da Parte 3 até `483cc20` foram enviados ao GitHub com autorização do usuário; `6925603` está só local.** Uma mudança de autoridade ou de destino do dado, como a troca de provedor em `4a41964`, ou os controles de `51c278b`, entrou sem aprovação registrada. **LACUNA L21.**
+Todos os commits têm um único autor e **nenhum passou por *pull request* nem revisão**. **Os commits da Parte 2 e da Parte 3 até `dd1415b` foram enviados ao GitHub com autorização do usuário; commits posteriores podem estar só locais (`git log origin/master..HEAD`).** Uma mudança de autoridade ou de destino do dado, como a troca de provedor em `4a41964`, ou os controles de `51c278b`, entrou sem aprovação registrada. **LACUNA L21.**
 
 ---
 
