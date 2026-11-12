@@ -1,0 +1,27 @@
+<section id="seguranca" data-transition="fade" style="background:#F6F5F0;color:#101B2D;font-family:'Inter', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:48px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:26px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#17695F">Parte 3 · Segurança</p>
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:64px;font-weight:600;line-height:1.1">Três controles fora do prompt</h2>
+</div>
+<div style="display:flex;gap:32px">
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#FCFBF8;padding:40px;border:1px solid #DAD8CF;border-top:8px solid #17695F;border-radius:16px">
+<p style="font-size:26px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#17695F">ASI03</p>
+<h3 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:40px;font-weight:600">Identidade</h3>
+<p style="font-size:32px;line-height:1.5;color:#4A5568">O RA vem da sessão autenticada. A ferramenta recusa qualquer outro RA.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#FCFBF8;padding:40px;border:1px solid #DAD8CF;border-top:8px solid #17695F;border-radius:16px">
+<p style="font-size:26px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#17695F">ASI10</p>
+<h3 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:40px;font-weight:600">Modelo</h3>
+<p style="font-size:32px;line-height:1.5;color:#4A5568">Só o modelo da lista aprovada sobe. Com outro, o sistema recusa iniciar.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#FCFBF8;padding:40px;border:1px solid #DAD8CF;border-top:8px solid #17695F;border-radius:16px">
+<p style="font-size:26px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#17695F">ASI02</p>
+<h3 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:40px;font-weight:600">Limites</h3>
+<p style="font-size:32px;line-height:1.5;color:#4A5568">No máximo 4 chamadas e 1 escrita por volta, e 120 s por turno.</p>
+</div>
+</div>
+<p style="font-size:32px;line-height:1.4;color:#101B2D">Cada controle tem um teste que tenta a ação proibida e confere que o código a barra.</p>
+<p style="position:absolute;left:128px;bottom:64px;width:1000px;font-size:24px;color:#5B6676">Secretaria Acadêmica Agente</p>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;text-align:right;font-size:24px;color:#5B6676">8 / 15</p>
+<aside>Começa a Parte 3. A regra: segurança que mora só no prompt é um pedido educado ao modelo, não um controle. Os três controles ficam em código. ASI03, identidade: o RA vem da sessão autenticada, e se o modelo tentar consultar outro RA, a ferramenta recusa. ASI10, modelo: só o modelo da lista aprovada sobe, o que evita trocar o modelo por variável de ambiente sem passar por revisão. ASI02, limites: no máximo quatro chamadas e uma escrita por volta do modelo, e 120 segundos por turno. Para cada um existe um teste que tenta a ação indevida e confere que ela é barrada. Ressalva: o controle de identidade é correto dado um portal de login, e esse portal não existe, o que aparece no slide de limites.</aside>
+</section>

@@ -1,0 +1,38 @@
+<section id="arquitetura" data-transition="fade" style="background:#F6F5F0;color:#101B2D;font-family:'Inter', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:40px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:26px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#17695F">O sistema</p>
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:64px;font-weight:600;line-height:1.1">Um grafo de 15 nós e 24 arestas</h2>
+</div>
+<div style="display:flex;align-items:center;gap:16px">
+<div style="flex:1;background:#FCFBF8;padding:24px 16px;border:1px solid #DAD8CF;border-radius:12px"><p style="font-size:26px;font-weight:600;text-align:center">Entrada</p></div>
+<x-shape kind="arrow-right" style="width:40px;height:20px;background:#5B6676"></x-shape>
+<div style="flex:1;background:#FCFBF8;padding:24px 16px;border:1px solid #DAD8CF;border-radius:12px"><p style="font-size:26px;font-weight:600;text-align:center">Classificar pedido</p></div>
+<x-shape kind="arrow-right" style="width:40px;height:20px;background:#5B6676"></x-shape>
+<div style="flex:1;background:#FCFBF8;padding:24px 16px;border:1px solid #DAD8CF;border-radius:12px"><p style="font-size:26px;font-weight:600;text-align:center">Ler memória</p></div>
+<x-shape kind="arrow-right" style="width:40px;height:20px;background:#5B6676"></x-shape>
+<div style="flex:1;background:#FCFBF8;padding:24px 16px;border:1px solid #DAD8CF;border-radius:12px"><p style="font-size:26px;font-weight:600;text-align:center">Rotear</p></div>
+<x-shape kind="arrow-right" style="width:40px;height:20px;background:#5B6676"></x-shape>
+<div style="flex:1;background:#17695F;padding:24px 16px;border-radius:12px"><p style="font-size:26px;font-weight:600;text-align:center;color:#F6F5F0">Agente (modelo)</p></div>
+</div>
+<p style="font-size:26px;line-height:1.4;color:#4A5568">O agente chama as ferramentas e volta até concluir. Depois, o código confere a resposta; duas reprovações levam à contingência, e o trancamento abre a pausa humana.</p>
+<div style="display:flex;align-items:center;gap:16px">
+<div style="flex:1;background:#FCFBF8;padding:24px 16px;border:1px solid #DAD8CF;border-radius:12px"><p style="font-size:26px;font-weight:600;text-align:center">Ferramentas (5)</p></div>
+<x-shape kind="arrow-right" style="width:40px;height:20px;background:#5B6676"></x-shape>
+<div style="flex:1;background:#FCFBF8;padding:24px 16px;border:1px solid #DAD8CF;border-radius:12px"><p style="font-size:26px;font-weight:600;text-align:center">Garantir trancamento</p></div>
+<x-shape kind="arrow-right" style="width:40px;height:20px;background:#5B6676"></x-shape>
+<div style="flex:1;background:#FCFBF8;padding:24px 16px;border:1px solid #DAD8CF;border-radius:12px"><p style="font-size:26px;font-weight:600;text-align:center">Validar resposta</p></div>
+<x-shape kind="arrow-right" style="width:40px;height:20px;background:#5B6676"></x-shape>
+<div style="flex:1;background:#FCFBF8;padding:24px 16px;border:1px solid #DAD8CF;border-radius:12px"><p style="font-size:26px;font-weight:600;text-align:center">Montar saída</p></div>
+<x-shape kind="arrow-right" style="width:40px;height:20px;background:#5B6676"></x-shape>
+<div style="flex:1;background:#FCFBF8;padding:24px 16px;border:1px solid #DAD8CF;border-radius:12px"><p style="font-size:26px;font-weight:600;text-align:center">Escrever memória</p></div>
+</div>
+<div style="display:flex;align-items:center;gap:16px">
+<div style="width:28px;height:28px;background:#17695F;border-radius:6px"></div>
+<p style="font-size:26px;color:#4A5568">Modelo: só o nó Agente</p>
+<div style="width:28px;height:28px;background:#FCFBF8;border:1px solid #5B6676;border-radius:6px"></div>
+<p style="font-size:26px;color:#4A5568">Código: as demais etapas e todas as arestas</p>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1000px;font-size:24px;color:#5B6676">Secretaria Acadêmica Agente</p>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;text-align:right;font-size:24px;color:#5B6676">4 / 15</p>
+<aside>Este é o desenho do sistema, simplificado. São 15 nós e 24 arestas, 12 delas condicionais. A ideia central: só o nó Agente chama o modelo. As arestas são regras em código: o modelo decide o que pedir, mas o código decide o que fazer com isso. Em cima, o caminho de entrada até o agente. Embaixo, o que acontece depois: as ferramentas, a garantia do trancamento, a validação da resposta, a montagem da saída e a gravação da memória. Se o validador reprova duas vezes, a resposta vem de um molde em código (a contingência). Se o pedido é de trancamento, o grafo pausa e espera a coordenação. A figura não mostra todos os nós, para caber.</aside>
+</section>

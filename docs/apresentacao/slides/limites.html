@@ -1,0 +1,32 @@
+<section id="limites" data-transition="fade" style="background:#F6F5F0;color:#101B2D;font-family:'Inter', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:32px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:26px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#17695F">Honestidade</p>
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:64px;font-weight:600;line-height:1.1">Limites que declaramos</h2>
+</div>
+<div style="background:#101B2D;padding:32px 40px;border-radius:16px">
+<p style="font-size:40px;font-weight:600;line-height:1.2;color:#F0B54A">O sistema não deve operar com dados reais.</p>
+</div>
+<div style="display:flex;gap:24px">
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#FCFBF8;padding:32px 40px;border:1px solid #DAD8CF;border-radius:16px">
+<p style="font-size:32px;font-weight:600">Sem portal de login</p>
+<p style="font-size:26px;line-height:1.4;color:#4A5568">O controle de identidade vale dado um portal, e o portal não existe.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#FCFBF8;padding:32px 40px;border:1px solid #DAD8CF;border-radius:16px">
+<p style="font-size:32px;font-weight:600">API sem autenticação do aluno</p>
+<p style="font-size:26px;line-height:1.4;color:#4A5568">Quem tem o identificador da conversa a continua. A coordenação usa um token único.</p>
+</div>
+</div>
+<div style="display:flex;gap:24px">
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#FCFBF8;padding:32px 40px;border:1px solid #DAD8CF;border-radius:16px">
+<p style="font-size:32px;font-weight:600">Dado pessoal no trace e nos logs</p>
+<p style="font-size:26px;line-height:1.4;color:#4A5568">RA, nome e valor em aberto ficam no arquivo, sem prazo de guarda definido.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#FCFBF8;padding:32px 40px;border:1px solid #DAD8CF;border-radius:16px">
+<p style="font-size:32px;font-weight:600">Chave da Groq não revogada</p>
+<p style="font-size:26px;line-height:1.4;color:#4A5568">Decisão registrada: a chave apareceu em texto numa sessão e segue ativa. Risco residual.</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1000px;font-size:24px;color:#5B6676">Secretaria Acadêmica Agente</p>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;text-align:right;font-size:24px;color:#5B6676">13 / 15</p>
+<aside>A conclusão do model card é direta: o sistema se comportou bem nos testes, mas não deve operar com dados reais. Quatro razões, todas registradas como lacunas. Uma: o controle de identidade é correto dado um portal de login, e esse portal não existe; hoje o RA da sessão é uma premissa. Duas: a API não autentica o aluno, e quem tem o identificador da conversa pode continuá-la; a coordenação usa um único token compartilhado. Três: o trace e os logs guardam RA, nome e valor em aberto, sem prazo de guarda definido, e o trace não está na remoção por titular. Quatro: a chave da Groq que apareceu em texto numa sessão de trabalho não foi revogada; essa decisão foi registrada em documento, com o risco residual declarado, e pode ser revista a qualquer momento. Também consta que o aceite desses riscos por Erick, o responsável de risco do grupo, ainda não existe; está nas pendências.</aside>
+</section>

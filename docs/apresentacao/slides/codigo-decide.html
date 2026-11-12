@@ -1,0 +1,24 @@
+<section id="codigo-decide" data-transition="fade" style="background:#F6F5F0;color:#101B2D;font-family:'Inter', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:48px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:26px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#17695F">O sistema</p>
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:64px;font-weight:600;line-height:1.1">O código garante o que o modelo não garante</h2>
+</div>
+<div style="display:flex;gap:32px">
+<div style="flex:1;display:flex;flex-direction:column;gap:20px;background:#FCFBF8;padding:40px;border:1px solid #DAD8CF;border-radius:16px">
+<h3 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:40px;font-weight:600">Trancamento</h3>
+<p style="font-size:32px;line-height:1.5;color:#4A5568">Se o pedido é de trancamento, o código escala o caso. Não depende de o modelo lembrar.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:20px;background:#FCFBF8;padding:40px;border:1px solid #DAD8CF;border-radius:16px">
+<h3 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:40px;font-weight:600">Validador</h3>
+<p style="font-size:32px;line-height:1.5;color:#4A5568">Confere a resposta em código: protocolo que uma ferramenta devolveu, prazo de 48 h e artigo citado.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:20px;background:#FCFBF8;padding:40px;border:1px solid #DAD8CF;border-radius:16px">
+<h3 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:40px;font-weight:600">Suficiência</h3>
+<p style="font-size:32px;line-height:1.5;color:#4A5568">O modelo declara se os artigos respondem à pergunta. O código exige a marca e confere a citação.</p>
+</div>
+</div>
+<p style="font-size:32px;line-height:1.4;color:#101B2D">Reprovado duas vezes, o modelo sai de cena: a resposta vem de um molde em código.</p>
+<p style="position:absolute;left:128px;bottom:64px;width:1000px;font-size:24px;color:#5B6676">Secretaria Acadêmica Agente</p>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;text-align:right;font-size:24px;color:#5B6676">5 / 15</p>
+<aside>A decisão de projeto que mais pesa: o que precisa estar certo fica em código, não no prompt. Primeiro, o trancamento: se o pedido é de trancamento, o código escala o caso, sem depender de o modelo lembrar. Segundo, o validador confere cada resposta: o protocolo precisa ter sido devolvido por uma ferramenta, o prazo só pode ser o de 48 horas ou um número que o artigo devolvido contém, e todo artigo citado precisa ter sido devolvido pela busca. Terceiro, a suficiência: o modelo declara se os artigos respondem à pergunta, e o código exige essa marca e confere a citação. Essa marca nasceu de um erro visto com o modelo real, em que um artigo de ruído foi tratado como resposta. Se o modelo é reprovado duas vezes, a resposta vem de um molde. Limite conhecido, que consta no model card: o detector de trancamento é uma expressão regular, e a garantia só vale com o RA confirmado.</aside>
+</section>

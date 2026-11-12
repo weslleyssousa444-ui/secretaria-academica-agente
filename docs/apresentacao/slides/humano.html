@@ -1,0 +1,31 @@
+<section id="humano" data-transition="fade" style="background:#F6F5F0;color:#101B2D;font-family:'Inter', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:48px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:26px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#17695F">O sistema</p>
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:64px;font-weight:600;line-height:1.1">A coordenação decide e o grafo espera</h2>
+</div>
+<div style="display:flex;flex-direction:column;gap:24px">
+<div style="display:flex;gap:24px">
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#FCFBF8;padding:32px 40px;border:1px solid #DAD8CF;border-radius:16px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:40px;font-weight:600;color:#17695F">1</p>
+<p style="font-size:32px;line-height:1.4">O agente escala o pedido de trancamento e abre o caso.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#FCFBF8;padding:32px 40px;border:1px solid #DAD8CF;border-radius:16px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:40px;font-weight:600;color:#17695F">2</p>
+<p style="font-size:32px;line-height:1.4">O grafo responde ao aluno e pausa, esperando a decisão.</p>
+</div>
+</div>
+<div style="display:flex;gap:24px">
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#FCFBF8;padding:32px 40px;border:1px solid #DAD8CF;border-radius:16px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:40px;font-weight:600;color:#17695F">3</p>
+<p style="font-size:32px;line-height:1.4">A coordenação aprova, rejeita ou aprova editando.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#FCFBF8;padding:32px 40px;border:1px solid #DAD8CF;border-radius:16px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:40px;font-weight:600;color:#17695F">4</p>
+<p style="font-size:32px;line-height:1.4">Sem resposta em 48 h, o caso vence e volta à fila da secretaria.</p>
+</div>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1000px;font-size:24px;color:#5B6676">Secretaria Acadêmica Agente</p>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;text-align:right;font-size:24px;color:#5B6676">7 / 15</p>
+<aside>É o ponto em que o sistema reconhece que há decisão que não é dele. Quando o pedido é de trancamento, o agente escala, o grafo responde ao aluno e fica pausado, com o estado gravado em arquivo. Por isso a pausa sobrevive ao fim do processo, e a coordenação pode decidir em outro dia. Ela tem quatro saídas: aprovar, rejeitar, aprovar editando, e a expiração, quando passa o prazo de 48 horas. A decisão é idempotente: repetir a mesma chamada não grava de novo. As rotas da coordenação exigem um token e respondem 503 se nenhum token estiver configurado. Limite declarado: é um token único compartilhado, e o campo de quem decidiu é declarado por quem chama, não verificado. Não há tela própria para a coordenação.</aside>
+</section>

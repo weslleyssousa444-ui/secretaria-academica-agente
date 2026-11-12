@@ -1,5 +1,7 @@
 # Continuidade — Partes 2 e 3
 
+> Numa máquina nova, comece por [`CLAUDE.md`](CLAUDE.md): ele resume o projeto, onde paramos e o que não veio com o repositório.
+
 Situação em **11/11/2026**. O sistema em grafo (Parte 2) e a avaliação, governança, segurança e observabilidade (Parte 3) estão **no repositório local**. Este arquivo diz o que **falta**, quem tem de fazer, e os comandos exatos. O grupo decidiu **seguir sem Docker**; o que depende dele está na seção 6, como opcional. O histórico do que foi feito e dos defeitos achados está em [`docs/mudancas.md`](docs/mudancas.md).
 
 ## 0. Estado do GitHub
@@ -24,7 +26,7 @@ PYTHONDONTWRITEBYTECODE=1 .venv311/bin/python -m pytest -q -p no:cacheprovider
 cp .env.example .env        # edite: OPENAI_API_KEY=<sua chave da Groq>
 ```
 
-A cota do `qwen/qwen3.8-27b` é de **200 mil tokens por dia**, e uma rodada completa custa **~170 mil**. A rodada B **parou na cota** em 11/11/2026. **Nada mais deve usar o `qwen` no dia em que a suíte rodar.** Os comandos estão em [`docs/evals.md` §4.4](docs/evals.md) e o runner é retomável (pula o que já fez):
+A cota do `qwen/qwen3.8-27b` é de **200 mil tokens por dia**, e uma rodada completa custa **~170 mil**. Em 11/11/2026 a rodada B **parou na cota** sem resultado; em 12/11/2026 ela rodou **33 de 37 casos** e parou em `dm01` (429), e a pasta `evals/resultados/2026-11-11-B-r1` está versionada para o runner retomar de onde parou. **Nada mais deve usar o `qwen` no dia em que a suíte rodar.** Os comandos estão em [`docs/evals.md` §4.4](docs/evals.md) e o runner é retomável (pula o que já fez):
 
 ```bash
 # Dia 1 (cota nova):

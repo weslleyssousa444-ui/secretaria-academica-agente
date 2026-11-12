@@ -1,0 +1,18 @@
+{
+  "v": 4,
+  "createdOnFiles": {"v": 1, "at": "2026-11-12T14:45:00Z"},
+  "lists": "css",
+  "title": "Secretaria Acadêmica Agente",
+  "order": ["cover", "o-agente", "tres-partes", "arquitetura", "codigo-decide", "rag-memoria", "humano", "seguranca", "achado", "avaliacao", "observabilidade", "autocritica", "limites", "pendencias", "fecho"],
+  "sections": {
+    "s1": {"description": "Abertura: o que o agente faz e como o trabalho evoluiu em três entregas.", "start": "cover"},
+    "s2": {"description": "O sistema: grafo, regras em código, RAG, memória e a pausa para a coordenação.", "start": "arquitetura"},
+    "s3": {"description": "Parte 3: segurança fora do prompt, avaliação e observabilidade, com os números medidos.", "start": "seguranca"},
+    "s4": {"description": "Honestidade: o que achamos de errado em nós mesmos, os limites e o que falta.", "start": "autocritica"}
+  },
+  "faces": {
+    "space-grotesk": {"family": "Space Grotesk", "href": "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap"},
+    "inter": {"family": "Inter", "href": "https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"}
+  },
+  "designSystems": []
+}

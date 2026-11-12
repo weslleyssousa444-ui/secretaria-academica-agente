@@ -1,0 +1,31 @@
+<section id="observabilidade" data-transition="fade" style="background:#F6F5F0;color:#101B2D;font-family:'Inter', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:40px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:26px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#17695F">Parte 3 · Observabilidade</p>
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:64px;font-weight:600;line-height:1.1">Dá para reconstruir uma decisão pelo trace</h2>
+</div>
+<div style="background:#FCFBF8;padding:32px 40px;border:1px solid #DAD8CF;border-radius:16px">
+<ul style="font-size:32px;line-height:1.5;color:#4A5568">
+<li>Trace OpenTelemetry, convenção GenAI: agente, chamada ao modelo e ferramenta</li>
+<li>Cada execução leva o commit, o hash do prompt e o modelo</li>
+<li>A aprovação humana registra quem decidiu, quando e o quê</li>
+</ul>
+</div>
+<div style="display:flex;gap:32px">
+<div style="flex:1;display:flex;flex-direction:column;gap:8px;background:#101B2D;padding:32px 40px;border-radius:16px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:64px;font-weight:600;line-height:1.1;color:#F0B54A">94,9%</p>
+<p style="font-size:26px;line-height:1.4;color:#B6C0CF">SLI de qualidade: 37 de 39 execuções. A meta é 95%, violada por 2 casos.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:8px;background:#101B2D;padding:32px 40px;border-radius:16px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:64px;font-weight:600;line-height:1.1;color:#5CD6C0">2,2 s</p>
+<p style="font-size:26px;line-height:1.4;color:#B6C0CF">Latência p50 por execução. O p95 é de 11,7 s.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:8px;background:#101B2D;padding:32px 40px;border-radius:16px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:64px;font-weight:600;line-height:1.1;color:#5CD6C0">0 de 94</p>
+<p style="font-size:26px;line-height:1.4;color:#B6C0CF">Chamadas em que o modelo servido diferiu do pedido.</p>
+</div>
+</div>
+<p style="font-size:26px;line-height:1.4;color:#8A4B00">Medido na rodada B parcial: 33 de 37 casos, em 12/11/2026.</p>
+<p style="position:absolute;left:128px;bottom:64px;width:1000px;font-size:24px;color:#5B6676">Secretaria Acadêmica Agente</p>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;text-align:right;font-size:24px;color:#5B6676">11 / 15</p>
+<aside>Observabilidade: poder responder, depois, o que o sistema fez e por quê. Cada execução gera um trace no padrão OpenTelemetry para GenAI, com o agente, cada chamada ao modelo e cada ferramenta. O trace carrega o commit, o hash do prompt e o modelo, de modo que toda métrica sabe de qual versão veio. A aprovação humana também fica registrada: quem decidiu, quando e o quê, inclusive o que a pessoa editou. Os números abaixo vêm da rodada B parcial, 33 de 37 casos, de 12 de novembro. O SLI de qualidade deu 37 de 39 execuções válidas, 94,9%, contra uma meta de 95%: o objetivo foi violado por dois casos. Não ajustamos o critério para fechar a conta. O erro 429 de cota não entra no SLI, porque a execução nem chamou o modelo. A latência foi de 2,2 segundos no p50 e 11,7 no p95. Em 94 chamadas ao modelo, nenhuma devolveu um modelo diferente do pedido. Limite: o trace não registra por que o validador reprovou uma resposta, o que impediu apurar a causa de dois casos. [Atualizar os números quando a rodada B estiver completa.]</aside>
+</section>

@@ -28,7 +28,7 @@ cp .env.example .env
 # (crie a chave em https://console.groq.com/keys — free tier, sem cartão)
 
 python src/dados.py              # cria e semeia o banco simulado (idempotente)
-python -m pytest                 # 147 testes offline, sem chave e sem rede
+python -m pytest                 # 210 testes offline, sem chave e sem rede
 ```
 
 A instalação de `requirements-agente.txt` (o que a imagem Docker usa) foi verificada num ambiente limpo. O `requirements.txt` da raiz traz também as dependências dos Exercícios 7 e 8 (`torch`, `sentence-transformers`, ~2 GB), que **o sistema não usa**.

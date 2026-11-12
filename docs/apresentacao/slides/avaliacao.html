@@ -1,0 +1,27 @@
+<section id="avaliacao" data-transition="fade" style="background:#F6F5F0;color:#101B2D;font-family:'Inter', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:48px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:26px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#17695F">Parte 3 · Avaliação</p>
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:64px;font-weight:600;line-height:1.1">Suíte, regra assinada e rodadas</h2>
+</div>
+<div style="display:flex;gap:32px">
+<div style="flex:1;display:flex;flex-direction:column;gap:24px;background:#FCFBF8;padding:40px;border:1px solid #DAD8CF;border-radius:16px">
+<ul style="font-size:32px;line-height:1.5;color:#4A5568">
+<li>37 casos no dataset v1.2.0</li>
+<li>Regra de promoção assinada antes da versão B</li>
+<li>Juiz de IA não adotado: os rótulos de validação eram de uma IA, não de pessoas</li>
+<li>Cota gratuita de 200 mil tokens por dia: uma rodada gasta quase tudo</li>
+</ul>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:24px">
+<table style="font-size:32px;color:#101B2D">
+<tr><th style="width:30%;text-align:left">Rodada</th><th style="width:30%;text-align:left">Casos</th><th style="width:40%;text-align:left">Estado</th></tr>
+<tr><td style="width:30%">A, sem o controle</td><td style="width:30%">3 de 37</td><td style="width:40%">Parcial: só identidade</td></tr>
+<tr><td style="width:30%">B, código atual</td><td style="width:30%">33 de 37</td><td style="width:40%">Parcial: parou na cota</td></tr>
+</table>
+<p style="font-size:26px;line-height:1.4;color:#8A4B00">Situação em 12/11/2026. A comparação A × B só vale com as duas rodadas completas.</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1000px;font-size:24px;color:#5B6676">Secretaria Acadêmica Agente</p>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;text-align:right;font-size:24px;color:#5B6676">10 / 15</p>
+<aside>Como avaliamos. A suíte tem 37 casos no dataset versão 1.2.0, rodados com o modelo real. A regra de promoção, isto é, o critério para aceitar a versão B no lugar da A, foi assinada antes de a B existir. Isso impede ajustar o critério depois de ver o resultado. Sobre o juiz de IA: não o adotamos, porque os rótulos usados para validá-lo eram de uma IA e não de pessoas, e o enunciado pede que o grupo rotule 20 saídas à mão; isso ainda não foi feito. Sobre as rodadas: a A tem só os 3 casos de identidade, e a B tem 33 dos 37, porque a cota gratuita do provedor, 200 mil tokens por dia, acaba antes de uma rodada completa. A B parou no caso dm01, e os 4 que faltam são casos de demonstração. [Atualizar a tabela se as rodadas já tiverem terminado.]</aside>
+</section>

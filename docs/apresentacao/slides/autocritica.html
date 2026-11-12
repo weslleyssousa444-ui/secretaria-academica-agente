@@ -1,0 +1,15 @@
+<section id="autocritica" data-transition="fade" style="background:#F6F5F0;color:#101B2D;font-family:'Inter', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:48px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:26px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#17695F">Honestidade</p>
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:64px;font-weight:600;line-height:1.1">O que achamos de errado em nós mesmos</h2>
+</div>
+<div style="display:flex;flex-direction:column;gap:24px">
+<div style="border-left:6px solid #17695F;padding:0 0 0 24px"><p style="font-size:32px;line-height:1.4"><b>Afirmações nossas erradas, corrigidas:</b> “regras cumulativas”, “rótulo humano” (eram de uma IA) e a contagem de nós.</p></div>
+<div style="border-left:6px solid #17695F;padding:0 0 0 24px"><p style="font-size:32px;line-height:1.4"><b>Testes que não testavam:</b> asserções tautológicas e um teste vazio, trocados por asserções exatas.</p></div>
+<div style="border-left:6px solid #17695F;padding:0 0 0 24px"><p style="font-size:32px;line-height:1.4"><b>Defeito visto com o modelo real:</b> um artigo de ruído marcado como suficiente. Hoje o código exige a marca.</p></div>
+<div style="border-left:6px solid #8A4B00;padding:0 0 0 24px"><p style="font-size:32px;line-height:1.4"><b>Ainda aberto:</b> dois casos da rodada B (re05 e rg03) caíram na contingência, e o trace não diz por quê (lacuna L29).</p></div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1000px;font-size:24px;color:#5B6676">Secretaria Acadêmica Agente</p>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;text-align:right;font-size:24px;color:#5B6676">12 / 15</p>
+<aside>Este slide existe porque o trabalho pede honestidade sobre o que a evidência sustenta. Quatro exemplos. Um: escrevemos afirmações que a evidência não sustentava, como dizer que as regras eram cumulativas, que os rótulos do juiz eram humanos, quando eram de uma IA, e contagens de nós e de testes; todas foram corrigidas e estão listadas no histórico de mudanças. Dois: havia testes tautológicos e um teste vazio, que passavam sem testar nada. Três: com o modelo real, um artigo de ruído foi tratado como resposta suficiente, o que levou à marca de suficiência exigida em código. Quatro, que continua aberto: na rodada B, dois casos, re05 e rg03, o modelo foi reprovado duas vezes pelo validador e a resposta saiu pela contingência. Não sabemos a causa, porque o trace não guarda o motivo da reprovação nem o rascunho. Registramos isso como lacuna L29, e a correção proposta é acrescentar esse evento ao trace, depois que as rodadas terminarem, para não mudar o código sob teste no meio da comparação.</aside>
+</section>
