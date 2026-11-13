@@ -29,6 +29,8 @@ import hmac
 import json
 import os
 import threading
+import time
+from datetime import datetime, timezone
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Literal
@@ -98,13 +100,25 @@ def saude() -> dict:
     return {"ok": banco, "banco": banco, "modelo": agente.MODELO}
 
 
-def _gravar_registro(conversa_id: str, resultado: dict, estado: dict) -> None:
+def _gravar_registro(conversa_id: str, resultado: dict, estado: dict,
+                     metadados: dict, duracao_s: float) -> None:
+    """O registro de um turno: o que saiu, por qual caminho, e com QUE configuração
+    (modelo, versão do prompt, parâmetros), além de quantas buscas no Regimento
+    o turno fez. Nunca guarda o retorno cru das ferramentas."""
     if PASTA_LOGS is None:
         return
+    turno = estado.get("passos", [])[estado.get("inicio_do_turno", 0):]
     PASTA_LOGS.mkdir(parents=True, exist_ok=True)
     (PASTA_LOGS / f"api-{conversa_id}.json").write_text(json.dumps({
-        "conversa_id": conversa_id, "saida": resultado["saida"],
+        "conversa_id": conversa_id,
+        "executado_em": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        **metadados,
+        "duracao_s": round(duracao_s, 2),
+        "saida": resultado["saida"],
         "termino": resultado["termino"], "motivo": resultado["motivo"],
+        "ferramentas_do_turno": [p["ferramenta"] for p in turno],
+        "buscas_no_regimento": sum(p["ferramenta"] == "consultar_regimento" for p in turno),
+        "chamadas_ao_modelo": estado.get("n_chamadas_modelo"),
         "trilha_de_nos": estado.get("eventos", []),
         "tokens_gastos": estado.get("tokens_gastos"),
     }, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
@@ -127,13 +141,15 @@ def mensagens(corpo: Mensagem, x_aluno_ra: str | None = Header(default=None)) ->
                 raise HTTPException(404, "conversa não encontrada; abra uma nova")
             if anterior.get("termino") not in (None, "respondeu"):
                 raise HTTPException(409, "conversa encerrada; abra uma nova")
+        inicio = time.monotonic()
         try:
             resultado = sistema.conversar(conversa_id, corpo.mensagem, ra_autenticado)
         except ConversaEncerrada as e:
             raise HTTPException(409, "conversa encerrada; abra uma nova") from e
         except IdentidadeAusente as e:
             raise HTTPException(401, "sessão sem identidade: o portal deve enviar X-Aluno-RA") from e
-        _gravar_registro(conversa_id, resultado, sistema.estado(conversa_id))
+        _gravar_registro(conversa_id, resultado, sistema.estado(conversa_id),
+                         sistema.metadados(), time.monotonic() - inicio)
 
     saida = resultado["saida"]
     # O contrato de saída inteiro (src/triagem/saida.py, docs/io.md §2): além do

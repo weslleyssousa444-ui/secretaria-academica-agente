@@ -73,6 +73,13 @@ def test_conversa_em_dois_turnos_emite_e_grava_registro(cliente, modelo, tmp_pat
 
     log = json.loads((tmp_path / "logs" / f"api-{conversa_id}.json").read_text(encoding="utf-8"))
     assert log["saida"]["decisao"] == "emitir_declaracao"
+    # o registro diz com QUE configuração rodou (critério 2a) e quantas buscas fez (3c)
+    assert log["modelo"] == agente.MODELO and log["modelo_aprovado"] is True
+    assert log["prompt"]["arquivo"] == "src/prompts/triagem-v2.txt" and len(log["prompt"]["sha256"]) == 16
+    assert log["parametros"]["temperature"] == 0 and log["parametros"]["recursion_limit"] == 60
+    assert set(log["parametros"]["orcamento"]) == {"max_passos", "max_tokens", "max_segundos"}
+    assert log["versao"].endswith("/" + agente.MODELO)
+    assert log["ferramentas_do_turno"] == ["buscar_aluno", "emitir_documento"] and log["buscas_no_regimento"] == 0
     assert "ferramentas" in log["trilha_de_nos"]
 
 
@@ -171,3 +178,17 @@ def test_decisao_fora_do_contrato_422_e_caso_desconhecido_404(cliente, modelo, m
     assert cliente.post("/coordenacao/casos/CASO-3001/decisao", json=sem_edicao, headers=cab).status_code == 422
     assert cliente.post("/coordenacao/casos/CASO-9999/decisao",
                         json={"decisao": "aprovar", "por": "x"}, headers=cab).status_code == 404
+
+
+def test_duvida_pela_api_devolve_fonte_e_conta_a_busca(cliente, modelo, tmp_path):
+    """Critérios 1a e 3c pela API: a dúvida sai com o artigo em `fonte`, a
+    suficiência positiva, e o registro conta a busca no Regimento."""
+    pergunta = "Quem decide o trancamento de matrícula: o sistema ou uma pessoa?"
+    modelo([resposta([chamada("consultar_regimento", pergunta=pergunta)]),
+            resposta(content="Vale o que o Regimento diz no Art. 6º, conforme a consulta.\n[SUFICIENTE: sim]")])
+    corpo = cliente.post("/mensagens", json={"mensagem": pergunta}).json()
+    assert corpo["decisao"] == "responder_regimento"
+    assert {"tipo": "regimento", "referencia": "Art. 6º"} in corpo["fonte"]
+    assert corpo["suficiencia"]["suficiente"] is True and "[SUFICIENTE" not in corpo["resultado"]
+    log = json.loads((tmp_path / "logs" / f"api-{corpo['conversa_id']}.json").read_text(encoding="utf-8"))
+    assert log["buscas_no_regimento"] == 1 and log["ferramentas_do_turno"] == ["consultar_regimento"]

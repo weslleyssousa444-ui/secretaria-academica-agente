@@ -114,8 +114,11 @@ A devolutiva da Parte 2 (nota 2,2) corrigiu o repositório no estado de 23/09/20
 | Mudança | Por quê | Teste |
 |---|---|---|
 | `TRIAGEM_PERMITIR_MODELO_NAO_APROVADO=1` libera, explicitamente, um modelo fora da lista (ASI10) | a correção roda com outro modelo (`gpt-oss:20b` no Ollama); com o controle fail-closed o sistema **não subiria**, e "falha de código desconta" | `tests/test_controles.py`: 6 testes novos (sobe, avisa e marca; só `1` libera; a API sobe) |
+| O registro de execução da API (`logs/api-<conversa>.json`) grava `versao`, `modelo`, `modelo_aprovado`, `prompt` (arquivo e sha256), `parametros` (temperature, recursion_limit, orçamento com teto de tempo), `ferramentas_do_turno`, `buscas_no_regimento`, `chamadas_ao_modelo` e `duracao_s` | só os logs das demonstrações (`logs/parte2/`) diziam com que modelo, prompt e parâmetros rodaram; o da API, que é o caminho de uso, não (critérios 2a e 3c) | `tests/test_api.py::test_conversa_em_dois_turnos_emite_e_grava_registro`, `::test_duvida_pela_api_devolve_fonte_e_conta_a_busca` |
 | `POST /mensagens` devolve o contrato inteiro (`resultado`, `fonte`, `suficiencia`) | a API devolvia um recorte sem `fonte` e `suficiencia`, os dois campos que o critério 1a cobra | `tests/test_api.py::test_conversa_em_dois_turnos_emite_e_grava_registro` |
 
 **Efeito na comparação A × B:** as duas mudanças ficam fora do caminho medido pela suíte (a liberação é desligada por padrão e o runner já tinha a sua; a suíte não passa pela API). Os 4 casos que faltam da rodada B rodam no commit novo, e o `agente.versao` do trace registra isso.
 
-Testes: **216 passed, 1 deselected** (eram 210).
+A página de chat da demonstração está em [`web/`](../web/) e mostra a fonte (artigo do Regimento) e a suficiência de cada resposta.
+
+Testes: **217 passed, 1 deselected** (eram 210).

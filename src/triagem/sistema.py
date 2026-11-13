@@ -14,6 +14,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import sqlite3
@@ -71,7 +72,8 @@ class Sistema:
         # que no contêiner é o que reinicia a cada implantação. Não há agendador.
         self.memoria.episodica.aplicar_decaimento(date.today())
         # O grafo é compilado UMA vez, aqui, e reaproveitado em todo turno.
-        self.app = construir(n.Nos(self.memoria)).compile(
+        self.nos = n.Nos(self.memoria)
+        self.app = construir(self.nos).compile(
             checkpointer=SqliteSaver(self._conexao))
 
     def fechar(self) -> None:
@@ -85,6 +87,19 @@ class Sistema:
     def versao(self) -> str:
         """`<commit>/<prompt>/<modelo>`: o carimbo que toda métrica carrega."""
         return telemetria.versao_do_sistema(agente.MODELO, n.SYSTEM)
+
+    def metadados(self) -> dict:
+        """Com QUE configuração uma execução rodou: modelo (e se é o aprovado),
+        versão do prompt e parâmetros. Vai em todo registro de execução da API,
+        para que um log diga sozinho de onde veio (docs/prompts.md §3)."""
+        return {"versao": self.versao(), "modelo": agente.MODELO,
+                "modelo_aprovado": self.modelo_aprovado,
+                "prompt": {"arquivo": "src/prompts/triagem-v2.txt",
+                           "sha256": hashlib.sha256(n.SYSTEM.encode("utf-8")).hexdigest()[:16]},
+                "parametros": {"temperature": n.TEMPERATURA, "recursion_limit": RECURSION_LIMIT,
+                               "orcamento": {"max_passos": self.nos.orcamento.max_passos,
+                                             "max_tokens": self.nos.orcamento.max_tokens,
+                                             "max_segundos": self.nos.max_segundos}}}
 
     def conversar(self, thread_id: str, texto: str,
                   ra_autenticado: str | None = None) -> dict:

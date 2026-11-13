@@ -34,6 +34,8 @@ SYSTEM = (Path(__file__).resolve().parents[1] / "prompts" / "triagem-v2.txt"
 # processo, com todos os outros alunos). LIMITE: uma única chamada em retry pode
 # passar do teto; ele impede a PRÓXIMA volta, e não interrompe a em curso.
 MAX_SEGUNDOS_POR_TURNO = 120.0
+# Parâmetro de amostragem da única chamada ao modelo; o registro de execução o grava.
+TEMPERATURA = 0
 
 # CONTROLES DA PARTE 3 (docs/seguranca.md §3). Os três valem FORA do prompt: o
 # texto injetado chega pelo mesmo canal que o prompt, e só o código o barra.
@@ -268,11 +270,11 @@ class Nos:
         contexto = [{"role": "system", "content": SYSTEM}]
         if estado.get("memoria_bloco"):
             contexto.append({"role": "system", "content": "MEMÓRIA\n" + estado["memoria_bloco"]})
-        with telemetria.chamada_ao_modelo(agente.MODELO, 0) as span_chat:
+        with telemetria.chamada_ao_modelo(agente.MODELO, TEMPERATURA) as span_chat:
             try:
                 resposta = agente.chamar_com_retry(
                     model=agente.MODELO, messages=contexto + mensagens,
-                    tools=DECLARACOES, temperature=0)
+                    tools=DECLARACOES, temperature=TEMPERATURA)
             except ErroFatal as e:
                 telemetria.registrar_erro(span_chat, e, "erro_fatal")
                 return {"termino": "erro_fatal", "motivo": str(e), "eventos": ["agente:erro_fatal"]}
