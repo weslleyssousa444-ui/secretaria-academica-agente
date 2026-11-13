@@ -3,7 +3,7 @@
 <p style="font-size:26px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#17695F">Como funciona</p>
 <h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:64px;font-weight:600;line-height:1.1">O que acontece em cada tipo de pedido</h2>
 </div>
-<table style="font-size:28px;color:#101B2D">
+<table style="font-size:26px;color:#101B2D">
 <tr><th style="width:30%;text-align:left">Pedido</th><th style="width:30%;text-align:left">O que é conferido</th><th style="width:40%;text-align:left">Resultado</th></tr>
 <tr><td style="width:30%">Declaração de matrícula</td><td style="width:30%">Matrícula ativa (Art. 3º)</td><td style="width:40%">Emitida na hora, com protocolo</td></tr>
 <tr><td style="width:30%">Segunda via do histórico</td><td style="width:30%">Quitação total (Art. 4º)</td><td style="width:40%">Emitida, ou escalada se houver débito</td></tr>
@@ -11,8 +11,10 @@
 <tr><td style="width:30%">Trancamento</td><td style="width:30%">Sempre da coordenação (Art. 6º)</td><td style="width:40%">Caso aberto e pausa de até 48 h</td></tr>
 <tr><td style="width:30%">Dúvida de regra</td><td style="width:30%">Busca no Regimento</td><td style="width:40%">Resposta citando o artigo</td></tr>
 <tr><td style="width:30%">RA inexistente</td><td style="width:30%">Cadastro do aluno</td><td style="width:40%">Confirma com o aluno e escala</td></tr>
+<tr><td style="width:30%">Segunda via de boleto</td><td style="width:30%">Mensalidade em aberto (Art. 11)</td><td style="width:40%">Boleto emitido, vence em 5 dias</td></tr>
+<tr><td style="width:30%">Notas e disciplinas</td><td style="width:30%">Histórico do aluno (Art. 12)</td><td style="width:40%">Dados do aluno; revisão é da coordenação</td></tr>
 </table>
 <p style="position:absolute;left:128px;bottom:64px;width:1000px;font-size:24px;color:#5B6676">Secretaria Acadêmica Agente</p>
-<p style="position:absolute;right:128px;bottom:64px;width:200px;text-align:right;font-size:24px;color:#5B6676">11 / 27</p>
-<aside>Cada pedido tem uma regra no Regimento simulado, e o comportamento esperado segue essa regra. Declaração de matrícula: o Art. 3º exige só matrícula ativa, mesmo com débito, então é emitida na hora. Segunda via do histórico: o Art. 4º exige quitação total; com mensalidade em aberto, o agente não emite e escala. Quando o aluno diz que já pagou, o Art. 7º §2º define o comprovante aceito: print do aplicativo do banco não vale, e o caso é escalado como divergência. Trancamento: o Art. 6º diz que é sempre da coordenação, então o agente abre o caso e o grafo pausa por até 48 horas. Dúvida de regra: o agente busca no Regimento e responde citando o artigo, ou diz que o Regimento não trata do assunto. RA que não existe: o agente confirma com o aluno e, se persistir, escala. Esses são os comportamentos que a suíte de avaliação cobra.</aside>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;text-align:right;font-size:24px;color:#5B6676">12 / 28</p>
+<aside>Cada pedido tem uma regra no Regimento simulado, e o comportamento esperado segue essa regra. Declaração de matrícula: o Art. 3º exige só matrícula ativa, mesmo com débito, então é emitida na hora. Segunda via do histórico: o Art. 4º exige quitação total; com mensalidade em aberto, o agente não emite e escala. Quando o aluno diz que já pagou, o Art. 7º §2º define o comprovante aceito: print do aplicativo do banco não vale, e o caso é escalado como divergência. Trancamento: o Art. 6º diz que é sempre da coordenação, então o agente abre o caso e o grafo pausa por até 48 horas. Dúvida de regra: o agente busca no Regimento e responde citando o artigo, ou diz que o Regimento não trata do assunto. RA que não existe: o agente confirma com o aluno e, se persistir, escala. Duas linhas novas, de 13 de novembro: a segunda via do boleto, que o Art. 11 permite só para mensalidade em aberto, com vencimento em 5 dias; e a consulta de notas e disciplinas, pelo Art. 12, em que o agente mostra os dados e lembra que revisão de nota é decidida pela coordenação. As regras ficam no código da ferramenta, não só no prompt. Os comportamentos antigos são os que a suíte de avaliação cobra; os novos ainda vão entrar na rodada B refeita.</aside>
 </section>

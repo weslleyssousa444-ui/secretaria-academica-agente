@@ -26,6 +26,6 @@
 </div>
 <p style="font-size:26px;line-height:1.4;color:#8A4B00">Medido na rodada B parcial: 33 de 37 casos, em 12/11/2026.</p>
 <p style="position:absolute;left:128px;bottom:64px;width:1000px;font-size:24px;color:#5B6676">Secretaria Acadêmica Agente</p>
-<p style="position:absolute;right:128px;bottom:64px;width:200px;text-align:right;font-size:24px;color:#5B6676">19 / 27</p>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;text-align:right;font-size:24px;color:#5B6676">20 / 28</p>
 <aside>Observabilidade: poder responder, depois, o que o sistema fez e por quê. Cada execução gera um trace no padrão OpenTelemetry para GenAI, com o agente, cada chamada ao modelo e cada ferramenta. O trace carrega o commit, o hash do prompt e o modelo, de modo que toda métrica sabe de qual versão veio. A aprovação humana também fica registrada: quem decidiu, quando e o quê, inclusive o que a pessoa editou. Os números abaixo vêm da rodada B parcial, 33 de 37 casos, de 12 de novembro. O SLI de qualidade deu 37 de 39 execuções válidas, 94,9%, contra uma meta de 95%: o objetivo foi violado por dois casos. Não ajustamos o critério para fechar a conta. O erro 429 de cota não entra no SLI, porque a execução nem chamou o modelo. A latência foi de 2,2 segundos no p50 e 11,7 no p95. Em 94 chamadas ao modelo, nenhuma devolveu um modelo diferente do pedido. Limite: o trace não registra por que o validador reprovou uma resposta, o que impediu apurar a causa de dois casos. [Atualizar os números quando a rodada B estiver completa.]</aside>
 </section>
