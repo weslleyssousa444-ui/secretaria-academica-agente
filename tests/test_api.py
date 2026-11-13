@@ -15,7 +15,7 @@ from conftest import chamada, contar, resposta
 
 TOKEN = "token-de-teste-da-coordenacao"
 CHAVES_DA_RESPOSTA = {"resultado", "fonte", "suficiencia", "conversa_id", "resposta", "decisao", "protocolo",
-                      "aguardando_coordenacao", "termino", "motivo", "encerrada"}
+                      "aguardando_coordenacao", "termino", "motivo", "encerrada", "documentos"}
 
 
 @pytest.fixture
@@ -75,7 +75,7 @@ def test_conversa_em_dois_turnos_emite_e_grava_registro(cliente, modelo, tmp_pat
     assert log["saida"]["decisao"] == "emitir_declaracao"
     # o registro diz com QUE configuração rodou (critério 2a) e quantas buscas fez (3c)
     assert log["modelo"] == agente.MODELO and log["modelo_aprovado"] is True
-    assert log["prompt"]["arquivo"] == "src/prompts/triagem-v2.txt" and len(log["prompt"]["sha256"]) == 16
+    assert log["prompt"]["arquivo"] == "src/prompts/triagem-v3.txt" and len(log["prompt"]["sha256"]) == 16
     assert log["parametros"]["temperature"] == 0 and log["parametros"]["recursion_limit"] == 60
     assert set(log["parametros"]["orcamento"]) == {"max_passos", "max_tokens", "max_segundos"}
     assert log["versao"].endswith("/" + agente.MODELO)

@@ -18,7 +18,7 @@ import re
 
 PRAZO_PROMETIDO_HORAS = 48
 
-_PROTOCOLO = re.compile(r"\b(?:DOC|CASO)-\d+\b")
+_PROTOCOLO = re.compile(r"\b(?:DOC|CASO|BOL)-\d+\b")
 _ARTIGO = re.compile(r"Art\.?\s*\d+\s*º?(?:\s*§\s*\d+\s*º?)?", re.IGNORECASE)
 _PRAZO = re.compile(r"\b(\d+)\s*(h|horas?|dias?|semanas?)\b", re.IGNORECASE)
 # O agente declara, no fim da resposta a uma dúvida do Regimento, se os artigos
@@ -103,6 +103,11 @@ def validar_resposta(texto: str, passos: list[dict],
         for t in p["resultado"].get("trechos", []))
     permitidos = {(str(PRAZO_PROMETIDO_HORAS), "h")} | {
         (n, u[0].lower()) for n, u in _PRAZO.findall(texto_dos_artigos)}
+    # Números de horas que a FERRAMENTA devolveu não são promessa: a carga horária
+    # das disciplinas (consultar_historico, "ADS101 tem 80 horas").
+    permitidos |= {(str(d["carga_horaria"]), "h")
+                   for p in passos if p["ferramenta"] == "consultar_historico" and p.get("resultado")
+                   for d in p["resultado"].get("disciplinas", [])}
     for numero, unidade in _PRAZO.findall(texto):
         if (numero, unidade[0].lower()) not in permitidos:
             problemas.append(f"prazo '{numero} {unidade}' que nem o agente promete "
@@ -120,6 +125,14 @@ def resposta_de_contingencia(passos: list[dict]) -> str:
         if passo["ferramenta"] == "emitir_documento":
             return (f"Seu documento foi emitido. Protocolo: {resultado['protocolo']}. "
                     "Se precisar de mais alguma coisa, é só pedir.")
+        if passo["ferramenta"] == "emitir_boleto":
+            return (f"A segunda via do boleto foi emitida. Protocolo: {resultado['protocolo']}, "
+                    f"competência {resultado['competencia']}, vencimento {resultado['vencimento']}. "
+                    "O boleto fica no botão 'Abrir documento' desta conversa.")
+        if passo["ferramenta"] == "consultar_historico":
+            return (f"Encontrei seu histórico: {resultado['aprovadas']} disciplina(s) aprovada(s), "
+                    f"{resultado['reprovadas']} reprovada(s) e {resultado['cursando']} em andamento. "
+                    "Se quiser, detalho as notas.")
         if passo["ferramenta"] == "escalar_para_humano":
             return (f"Seu caso foi encaminhado à secretaria. Protocolo: "
                     f"{resultado['protocolo']}. Prazo de resposta: {PRAZO_PROMETIDO_HORAS}h.")

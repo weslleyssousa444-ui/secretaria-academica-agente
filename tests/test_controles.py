@@ -37,6 +37,8 @@ def sistema(banco, tmp_path):
     ("emitir_documento", {"ra": OUTRO, "tipo_documento": "declaracao_matricula"}),
     ("escalar_para_humano", {"ra": OUTRO, "tipo_pedido": "trancamento_matricula",
                              "motivo": "x", "chave": f"{OUTRO}:t:x"}),
+    ("consultar_historico", {"ra": OUTRO}),
+    ("emitir_boleto", {"ra": OUTRO, "competencia": "2026-10"}),
 ])
 def test_ASI03_o_ra_de_outro_aluno_e_barrado_em_toda_ferramenta(sistema, modelo, ferramenta, argumentos):
     """O aluno autenticado (ALUNO) pede, ou o modelo sequestrado tenta, a ferramenta

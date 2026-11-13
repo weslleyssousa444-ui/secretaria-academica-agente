@@ -25,6 +25,18 @@ if ($rota === 'saude' && $_SERVER['REQUEST_METHOD'] === 'GET') {
         exit;
     }
     $url = BACKEND_URL . '/mensagens';
+} elseif ($rota === 'documento' && $_SERVER['REQUEST_METHOD'] === 'GET') {
+    // A página do documento emitido (HTML imprimível). Protocolo e código são
+    // validados pelo formato aqui e conferidos de verdade pela API.
+    $p = $_GET['p'] ?? ''; $c = $_GET['c'] ?? '';
+    if (!preg_match('/^(DOC|BOL)-\d{1,6}$/', $p) || !preg_match('/^[A-Za-z0-9_-]{1,64}$/', $c)) {
+        http_response_code(404);
+        echo json_encode(['detail' => 'documento não encontrado']);
+        exit;
+    }
+    $url = BACKEND_URL . '/documentos/' . $p . '?c=' . rawurlencode($c);
+    $corpo = null;
+    $html = true;
 } else {
     http_response_code(404);
     echo json_encode(['detail' => 'rota não encontrada']);
@@ -48,5 +60,9 @@ if ($resposta === false) {
     echo json_encode(['detail' => 'servidor do agente não respondeu: ' . curl_error($ch)]);
     exit;
 }
-http_response_code(curl_getinfo($ch, CURLINFO_HTTP_CODE));
+$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+http_response_code($status);
+if (!empty($html) && $status === 200) {
+    header('Content-Type: text/html; charset=utf-8');
+}
 echo $resposta;

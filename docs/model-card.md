@@ -9,7 +9,7 @@
 Cada campo traz **a afirmação** e **a evidência**. Os tipos de evidência são:
 
 - `arquivo:linha`, com link para o trecho exato no repositório (as linhas foram **calculadas por script** sobre o commit-base, não digitadas);
-- `teste::nome`: um teste em [`tests/`](../tests/) que roda offline, sem chave de API (`python -m pytest -q`; **217 passed, 1 deselected** em 13/11/2026; eram 210 em 11/11/2026, Python 3.11.18);
+- `teste::nome`: um teste em [`tests/`](../tests/) que roda offline, sem chave de API (`python -m pytest -q`; **238 passed, 1 deselected** em 13/11/2026; eram 210 em 11/11/2026, Python 3.11.18);
 - `log`: o registro de uma execução real com o modelo real em [`logs/parte2/`](../logs/parte2/) ou [`evals/resultados/`](../evals/resultados/);
 - `saída de comando`: arquivo em [`docs/evidencias/`](evidencias/), com o comando e a saída copiados. **Os de [`autoridade-efetiva.txt`](evidencias/autoridade-efetiva.txt), [`inventario-dados-pessoais.txt`](evidencias/inventario-dados-pessoais.txt) e [`historico-git.txt`](evidencias/historico-git.txt) são de 16/10/2026 e descrevem o agente da Parte 1**: valem como história, não como retrato do sistema atual (L26).
 
@@ -75,7 +75,7 @@ O que o sistema pode fazer, e **onde cada limite é aplicado** (ausência de fer
 
 | # | Limite | Onde é aplicado | Evidência |
 |---|---|---|---|
-| A1 | O sistema tem **exatamente 5 ferramentas**: `buscar_aluno`, `consultar_financeiro`, `consultar_regimento` (leitura), `emitir_documento`, `escalar_para_humano` (escrita). | ausência de ferramenta + código | [`src/agente.py:253-258`](../src/agente.py#L253-L258), [`src/triagem/nos.py:64`](../src/triagem/nos.py#L64); `teste::test_o_sistema_tem_exatamente_cinco_ferramentas_e_nenhuma_de_trancamento` |
+| A1 | O sistema tem **exatamente 7 ferramentas** (desde 13/11/2026; eram 5): `buscar_aluno`, `consultar_financeiro`, `consultar_regimento`, `consultar_historico` (leitura), `emitir_documento`, `emitir_boleto`, `escalar_para_humano` (escrita). Nenhuma decide trancamento. | ausência de ferramenta + código | [`src/agente.py`](../src/agente.py), [`src/triagem/servicos.py`](../src/triagem/servicos.py), [`src/triagem/nos.py`](../src/triagem/nos.py) (`FERRAMENTAS`, `ESCRITA`); `teste::test_o_sistema_tem_exatamente_sete_ferramentas_e_nenhuma_de_trancamento` |
 | A2 | Uma ferramenta que o modelo invente (ex.: `trancar_matricula`) não é executada: o nó devolve erro como dado e nada é gravado. | código | [`src/triagem/nos.py:143`](../src/triagem/nos.py#L143); `teste::test_ferramenta_inventada_nao_executa_nada` |
 | A3 | **Proibido** trancar matrícula, efetivar pagamento ou alterar cadastro e financeiro. As ferramentas do modelo só **inserem**. O único `UPDATE` do sistema (a decisão da coordenação no caso) fica num nó que **só é alcançável depois do `interrupt`**. | ausência de ferramenta + topologia do grafo | `teste::test_as_ferramentas_do_agente_nao_alteram_nem_apagam_nada` (o código do agente e do RAG não tem `UPDATE`/`DELETE`/`DROP`; `registrar_decisao` só tem aresta vinda de `aprovacao_coordenacao`) |
 | A4 | **Proibido** emitir `trancamento_matricula` ou documento fora do catálogo. | código | [`src/agente.py:182-186`](../src/agente.py#L182-L186); `teste::test_emitir_recusa_trancamento`, `teste::test_emitir_recusa_documento_fora_do_catalogo` |
@@ -197,7 +197,7 @@ A avaliação do sistema entregue está em [`docs/evals.md`](evals.md); aqui, s�
 | **Rodada B** (código atual, 37 casos): **não rodou.** A cota diária do modelo acabou; o runner é retomável. **A comparação A × B está PENDENTE**, e nenhum número dela está neste documento. | [`docs/evals.md` §4.2, §4.4](evals.md) |
 | **Juiz de fidelidade: NÃO adotado.** No Exercício 11 a rubrica final deu 89% de concordância e **60% de recall** da classe "não fiel" no *hold-out* (limiar: 85% e 80%). **Os rótulos daquela validação são de uma IA, não de pessoas.** A validação com **20 saídas rotuladas à mão pelo grupo não foi feita**: a ficha e a medição estão prontas e **nenhum rótulo é preenchido por código**. | [`docs/evals.md` §3](evals.md); [`evals/rotulagem/LEIA-ME.md`](../evals/rotulagem/LEIA-ME.md); `tests/test_rotulagem.py`. **LACUNA L24** |
 | **Uma repetição por caso**: o ruído do provedor **não foi medido** para este sistema; com 37 casos, um caso vale ~2,7 pontos. | [`docs/evals.md` §3, §4.5](evals.md) |
-| Testes offline: **217 passed, 1 deselected** (13/11/2026) (o deselecionado é o `eval`, que usa o modelo real). Os que **tentam a ação indevida** de cada controle estão em `tests/test_controles.py` (16 funções), o trace em `tests/test_telemetria.py` (18) e o grafo, a pausa e a decisão em `tests/test_triagem.py` (39). | `python -m pytest -q`; [`docs/evidencias/pytest.txt`](evidencias/pytest.txt) é **anterior** e não foi regenerado (L26) |
+| Testes offline: **238 passed, 1 deselected** (13/11/2026) (o deselecionado é o `eval`, que usa o modelo real). Os que **tentam a ação indevida** de cada controle estão em `tests/test_controles.py` (16 funções), o trace em `tests/test_telemetria.py` (18) e o grafo, a pausa e a decisão em `tests/test_triagem.py` (39). | `python -m pytest -q`; [`docs/evidencias/pytest.txt`](evidencias/pytest.txt) é **anterior** e não foi regenerado (L26) |
 | 8 execuções reais da Parte 2 com o modelo real, fora da suíte. | [`logs/parte2/`](../logs/parte2/) |
 
 ## 8. Limites conhecidos

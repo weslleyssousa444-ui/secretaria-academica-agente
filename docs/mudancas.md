@@ -122,3 +122,21 @@ A devolutiva da Parte 2 (nota 2,2) corrigiu o repositório no estado de 23/09/20
 A página de chat da demonstração está em [`web/`](../web/) e mostra a fonte (artigo do Regimento) e a suficiência de cada resposta.
 
 Testes: **217 passed, 1 deselected** (eram 210).
+
+## 7. Mais funções: boleto, consulta acadêmica e o documento de verdade (13/11/2026)
+
+Pedido do usuário depois de usar o sistema publicado: o agente "não emitia" (registrava o protocolo, mas nada gerava o documento) e não atendia boleto nem consulta de notas.
+
+| Mudança | Onde | Teste |
+|---|---|---|
+| Base fictícia: `disciplinas_cursadas` (notas determinísticas por RA), `mensalidades` (coerentes com `financeiro`: mesma quantidade e total), `boletos_emitidos`, `codigos_verificacao` | [`src/dados.py`](../src/dados.py) | `tests/test_servicos.py::test_mensalidades_batem_com_o_financeiro` |
+| Ferramenta `consultar_historico` (leitura) e `emitir_boleto` (**escrita**, idempotente por competência; com várias em aberto devolve a lista para o agente perguntar) | [`src/triagem/servicos.py`](../src/triagem/servicos.py), na camada do grafo: o laço e o verificador da Parte 1 **não mudaram** | `tests/test_servicos.py` |
+| Regimento: **Art. 11** (boleto) e **Art. 12** (consulta; revisão de nota é da coordenação); o Art. 10 passa a dizer "neste Regimento" em vez de "nos artigos anteriores" | [`dados/regimento_dados.py`](../dados/regimento_dados.py) | os testes do RAG continuam passando |
+| Prompt **v3** (regras 9 e 10; o acesso ao documento só pelo campo `acesso` da ferramenta) | [`src/prompts/triagem-v3.md`](../src/prompts/triagem-v3.md) | |
+| Controles: as duas ferramentas novas passam pela ASI03 (RA da sessão) e `emitir_boleto` conta no limite de 1 escrita por volta (ASI02) | [`src/triagem/nos.py`](../src/triagem/nos.py) | `test_ASI03_o_ra_de_outro_aluno_e_barrado_em_toda_ferramenta` (7 ferramentas), `test_boleto_e_escrita_e_conta_no_limite_por_volta` |
+| Contrato: decisões `emitir_boleto` e `informar_situacao_academica`; validador aceita `BOL-` e não trata carga horária devolvida como prazo | [`src/triagem/saida.py`](../src/triagem/saida.py), [`src/triagem/validacao.py`](../src/triagem/validacao.py) | `test_protocolo_de_boleto_inventado_e_barrado`, `test_carga_horaria_devolvida_nao_e_prazo_inventado` |
+| Documento de verdade: `GET /documentos/{protocolo}?c=` e a lista `documentos` na resposta do chat | [`src/triagem/documentos.py`](../src/triagem/documentos.py), [`docs/io.md`](io.md) §6 | `test_declaracao_emitida_tem_link_e_a_pagina_abre` |
+
+**Efeito na avaliação (decisão do usuário, 13/11/2026: fazer direto no `master`).** Ferramentas, prompt e Regimento novos são **sistema novo**: os 33 casos já rodados da rodada B foram medidos no código anterior, e a comparação A × B só vale com a rodada B **inteira refeita** neste código (`docs/evals.md` §4.4; ~180 mil tokens). A rodada A continua sendo a tag `parte-2`.
+
+Testes: **238 passed, 1 deselected**.

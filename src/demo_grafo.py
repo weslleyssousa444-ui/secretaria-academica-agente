@@ -130,7 +130,7 @@ def rodar(numero: int) -> dict:
                 "caso": nome, "descricao": descricao,
                 "executado_em": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                 "commit": commit(), "modelo": agente.MODELO,
-                "prompt": {"arquivo": "src/prompts/triagem-v2.txt",
+                "prompt": {"arquivo": "src/prompts/triagem-v3.txt",
                            "sha256": hashlib.sha256(nos.SYSTEM.encode()).hexdigest()[:16]},
                 "parametros": {"temperature": 0, "recursion_limit": 60,
                                "orcamento": {"max_passos": 8, "max_tokens": 20000}},

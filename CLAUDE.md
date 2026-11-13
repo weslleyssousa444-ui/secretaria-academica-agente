@@ -6,7 +6,7 @@ Arquivo de entrada para o Claude Code numa máquina nova. Escrito em **12/11/202
 
 1. Leia este arquivo, depois [`CONTINUIDADE.md`](CONTINUIDADE.md) (pendências, com comandos) e [`docs/mudancas.md`](docs/mudancas.md) (histórico e defeitos achados).
 2. `git log --oneline -15` e `git status`: confira que o repositório está em dia com o GitHub.
-3. Monte o ambiente (seção 2) e rode os testes (seção 3). Esperado: **217 passed, 1 deselected**.
+3. Monte o ambiente (seção 2) e rode os testes (seção 3). Esperado: **238 passed, 1 deselected**.
 4. **Antes de gastar cota do modelo, pergunte ao usuário o que ele quer fazer.** A cota é pequena (seção 4) e a gasta de um dia não volta.
 5. Responda **em português**. O usuário escreve rápido e com erros de digitação; entenda a intenção.
 
@@ -16,6 +16,7 @@ Trabalho da disciplina **Agentes de IA com LLMs** (professor **Celso**), em 3 en
 
 - **Grupo:** Weslley Soares de Sousa (usuário que opera o Claude Code), Pedro Akira, Henrique Gomes Matos (Operação, responsável designado pelo interruptor/parada) e Erick (**responsável de risco**).
 - **O sistema:** um agente de triagem de secretaria acadêmica. O aluno escreve em português; o sistema responde dúvida do Regimento citando o artigo, emite declaração de matrícula e segunda via do histórico, ou **escala** o que não pode decidir. **Trancamento de matrícula é sempre decidido pela coordenação** (Art. 6º): o agente só abre o caso e o grafo **pausa** esperando a decisão (prazo de 48 h). Dados **sintéticos** (SQLite); não há dado real.
+- **Funções de 13/11/2026:** segunda via de boleto, consulta de notas e o documento imprimível (`src/triagem/servicos.py`, `src/triagem/documentos.py`, prompt **v3**, Regimento Art. 11 e 12); o sistema tem **7 ferramentas**.
 - **Parte 1:** agente com 4 ferramentas, verificador, API, imagem Docker. **Parte 2:** o sistema em **grafo LangGraph** (15 nós, 24 arestas, 12 condicionais), RAG por FTS5, memória de 3 tipos, pausa humana, contrato de saída. **Parte 3:** avaliação (`evals/`), *model card*/governança, segurança fora do prompt, observabilidade (OpenTelemetry).
 - **Provedor e modelo:** API da **Groq** (endpoint compatível com OpenAI, `https://api.groq.com/openai/v1`), modelo **`qwen/qwen3.8-27b`**, plano gratuito. A variável se chama `OPENAI_API_KEY`, mas guarda a **chave da Groq**.
 
@@ -37,7 +38,7 @@ python src/dados.py                     # recria dados/academico.db (não está 
 
 ```bash
 OPENAI_API_KEY=x PYTHONDONTWRITEBYTECODE=1 python -m pytest -q -p no:cacheprovider
-# esperado: 217 passed, 1 deselected
+# esperado: 238 passed, 1 deselected
 ```
 
 `OPENAI_API_KEY=x` é necessário: com a variável **vazia** a coleta dos testes quebra. O teste deselecionado é o `eval`, que usa o modelo real. O "modelo" dos testes é roteirizado: faz de propósito o que um modelo ruim faria, e o teste prova que o **código** barra.
@@ -61,7 +62,7 @@ Outros comandos úteis: `python conferir_grafo.py` (mostra os 15 nós e 24 arest
 | Rodada | Pasta | Estado |
 |---|---|---|
 | **A** (código da Parte 2, **sem** o controle de identidade; `--ref parte-2` = commit `706c599`) | `evals/resultados/2026-11-11-A-r1` | **3 de 37** (só identidade). Resultado: **0 de 3**; o sistema sem o controle emitiu a declaração de outra aluna |
-| **B** (código atual) | `evals/resultados/2026-11-11-B-r1` | **33 de 37**. Parou em `dm01` por **429** de cota. Faltam `dm01` a `dm04` |
+| **B** (código atual) | `evals/resultados/2026-11-11-B-r1` | **33 de 37**, mas medidos **antes** das funções de 13/11 (boleto, consulta, prompt v3). **Precisa ser refeita inteira** no código novo, numa pasta nova (`docs/mudancas.md` §7) |
 
 O runner é **retomável**: pula o que já está em `execucoes.jsonl`. A pasta B está **versionada** justamente para a outra máquina continuar de onde parou.
 
@@ -69,8 +70,8 @@ O runner é **retomável**: pula o que já está em `execucoes.jsonl`. A pasta B
 
 ## 6. O que falta, em ordem
 
-1. **Terminar a rodada B** (4 casos, ~25 mil tokens), quando houver cota:
-   `python -m evals.rodar --rotulo B --run 1 --pasta evals/resultados/2026-11-11-B-r1`
+1. **Refazer a rodada B inteira** no código atual (37 casos, ~180 mil tokens), quando houver cota, numa pasta nova (a antiga fica como registro do código anterior):
+   `python -m evals.rodar --rotulo B --run 1 --pasta evals/resultados/2026-11-14-B-r1`
 2. **Completar a rodada A** (34 casos, ~170 mil tokens, **em outro dia**; se der 429, retome no dia seguinte):
    `python -m evals.rodar --rotulo A --run 1 --ref 706c599 --pasta evals/resultados/2026-11-11-A-r1`
 3. Com as duas completas: `python -m evals.comparar evals/resultados/2026-11-11-A-r1 evals/resultados/2026-11-11-B-r1 --salvar docs/evidencias/comparacao-parte3.txt` e depois `python -m evals.atualizar_docs --a ...A-r1 --b ...B-r1 --traces evals/resultados/2026-11-11-B-r1/traces.jsonl --slo 0.95`. **Leia** o resultado contra a regra assinada (`evals/resultados/assinatura-regra-p3.txt`). Resultado ruim é resultado: **não ajuste a regra depois**. Os blocos **PENDENTE** de `docs/evals.md` §4.3 e `docs/observabilidade.md` §4 só são preenchidos pelo `atualizar_docs`, **nunca à mão**.
@@ -124,7 +125,7 @@ O runner é **retomável**: pula o que já está em `execucoes.jsonl`. A pasta B
 | `src/agente.py` | motor da Parte 1 reaproveitado (ferramentas, guardas, orçamento); `src/api.py`, `src/chat.py`, `src/coordenacao.py` |
 | `src/prompts/` | prompts versionados (`triagem-v2.*` é o atual) |
 | `evals/` | `rodar.py`, `comparar.py`, `metricas.py`, `atualizar_docs.py`, `reconstruir.py`, `rotulagem.py`; dataset em `evals/dataset/`; resultados em `evals/resultados/` |
-| `tests/` | 217 testes offline (`test_controles.py` tenta a ação indevida de cada controle) |
+| `tests/` | 238 testes offline (`test_controles.py` tenta a ação indevida de cada controle) |
 | `docs/model-card.md` | **o documento central**: autoridade, riscos, lacunas L01–L29, §11 reconstrução de decisão |
 | `docs/` | `grafo.md`, `arquitetura.md`, `io.md`, `prompts.md`, `rag.md`, `memoria.md`, `humano.md`, `evals.md`, `observabilidade.md`, `seguranca.md`, `mudancas.md`, `empacotamento.md` |
 | `exercicios/` | exercícios 7 a 15 da disciplina (RAG, memória, LangGraph, MCP, suíte, riscos, observabilidade) |

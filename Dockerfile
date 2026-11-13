@@ -31,8 +31,8 @@ RUN useradd --create-home --uid 10001 agente \
 COPY src/agente.py src/dados.py src/api.py src/chat.py src/coordenacao.py \
      src/chunking.py src/memoria_semantica.py src/memoria_procedural.py ./src/
 COPY src/triagem/ ./src/triagem/
-# agente.py ainda lê a v1 (laço da Parte 1, motor das ferramentas); o grafo lê a v2.
-COPY src/prompts/triagem-v1.txt src/prompts/triagem-v2.txt ./src/prompts/
+# agente.py ainda lê a v1 (laço da Parte 1, motor das ferramentas); o grafo lê a v3 (13/11/2026).
+COPY src/prompts/triagem-v1.txt src/prompts/triagem-v3.txt ./src/prompts/
 # O Regimento simulado, fonte do RAG (src/triagem/regimento.py).
 COPY dados/regimento_dados.py ./dados/
 

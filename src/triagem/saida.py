@@ -21,6 +21,8 @@ Decisao = Literal[
     "escalar_trancamento", "escalar_pendencia", "escalar_divergencia",
     "escalar_ra_nao_encontrado", "escalar_outro",
     "responder_regimento", "sem_acao",
+    # 13/11/2026: segunda via de boleto e consulta acadêmica (src/triagem/servicos.py)
+    "emitir_boleto", "informar_situacao_academica",
 ]
 
 
@@ -76,6 +78,11 @@ def decisao_da_trajetoria(passos: list[dict]) -> str:
                         resultado.get("tipo_documento"), "sem_acao")
         if nome == "escalar_para_humano":
             return _decisao_de_escalonamento(resultado)
+        if nome == "emitir_boleto":
+            return "emitir_boleto"
+    if any(p["ferramenta"] == "consultar_historico" and p.get("erro") is None
+           and p.get("resultado") for p in passos):
+        return "informar_situacao_academica"
     # Só é "responder do regimento" se algum artigo voltou; zero artigo é recusa.
     if any(p["ferramenta"] == "consultar_regimento" and p.get("erro") is None
            and (p.get("resultado") or {}).get("total", 0) > 0 for p in passos):
@@ -90,9 +97,9 @@ def fontes_da_trajetoria(passos: list[dict], artigos_citados: list[str]) -> list
             continue
         resultado = passo["resultado"]
         nome = passo["ferramenta"]
-        if nome in ("buscar_aluno", "consultar_financeiro"):
+        if nome in ("buscar_aluno", "consultar_financeiro", "consultar_historico"):
             fontes.append(Fonte(tipo="ferramenta", referencia=f"{nome}:{resultado.get('ra')}"))
-        elif nome in ("emitir_documento", "escalar_para_humano"):
+        elif nome in ("emitir_documento", "escalar_para_humano", "emitir_boleto"):
             fontes.append(Fonte(tipo="ferramenta",
                                 referencia=f"{nome}:{resultado.get('protocolo')}"))
     fontes += [Fonte(tipo="regimento", referencia=a) for a in artigos_citados]
@@ -101,7 +108,7 @@ def fontes_da_trajetoria(passos: list[dict], artigos_citados: list[str]) -> list
 
 def protocolo_da_trajetoria(passos: list[dict]) -> str | None:
     for passo in reversed(passos):
-        if (passo["ferramenta"] in ("emitir_documento", "escalar_para_humano")
+        if (passo["ferramenta"] in ("emitir_documento", "escalar_para_humano", "emitir_boleto")
                 and passo.get("erro") is None and passo.get("resultado")):
             return passo["resultado"].get("protocolo")
     return None
@@ -116,6 +123,9 @@ def suficiencia_da_trajetoria(decisao: str, passos: list[dict], termino: str,
     if decisao.startswith(("emitir_", "escalar_")):
         return Suficiencia(suficiente=True,
                            motivo="decisão tomada com o retorno de uma ferramenta")
+    if decisao == "informar_situacao_academica":
+        return Suficiencia(suficiente=True,
+                           motivo="resposta com os dados acadêmicos devolvidos pela ferramenta")
     if decisao == "responder_regimento":
         # Suficiente = o agente DECLAROU que os artigos respondem E o texto cita
         # ao menos um artigo devolvido (a citação é conferida em código).

@@ -36,12 +36,13 @@ from pathlib import Path
 from typing import Literal
 from uuid import uuid4
 
-from fastapi import FastAPI, Header, HTTPException
+from fastapi import FastAPI, Header, HTTPException, Query
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 
 import agente
 import dados
-from triagem import humano
+from triagem import documentos, humano
 from triagem.modelos import liberado_pelo_ambiente, verificar_modelo
 from triagem.sistema import ConversaEncerrada, IdentidadeAusente, Sistema
 
@@ -148,8 +149,13 @@ def mensagens(corpo: Mensagem, x_aluno_ra: str | None = Header(default=None)) ->
             raise HTTPException(409, "conversa encerrada; abra uma nova") from e
         except IdentidadeAusente as e:
             raise HTTPException(401, "sessão sem identidade: o portal deve enviar X-Aluno-RA") from e
-        _gravar_registro(conversa_id, resultado, sistema.estado(conversa_id),
+        estado = sistema.estado(conversa_id) or {}
+        _gravar_registro(conversa_id, resultado, estado,
                          sistema.metadados(), time.monotonic() - inicio)
+        # Os documentos que o turno emitiu, com o link (protocolo + código de
+        # verificação) da página imprimível: GET /documentos/{protocolo}?c=...
+        emitidos = documentos.documentos_do_turno(
+            estado.get("passos", [])[estado.get("inicio_do_turno", 0):])
 
     saida = resultado["saida"]
     # O contrato de saída inteiro (src/triagem/saida.py, docs/io.md §2): além do
@@ -161,7 +167,21 @@ def mensagens(corpo: Mensagem, x_aluno_ra: str | None = Header(default=None)) ->
             "decisao": saida["decisao"], "protocolo": saida["protocolo"],
             "aguardando_coordenacao": resultado["aguardando_humano"],
             "termino": resultado["termino"], "motivo": resultado["motivo"],
-            "encerrada": resultado["termino"] != "respondeu"}
+            "encerrada": resultado["termino"] != "respondeu",
+            "documentos": emitidos}
+
+
+# ------------------------------------------------------------------ documentos
+
+@app.get("/documentos/{protocolo}", response_class=HTMLResponse)
+def documento(protocolo: str, c: str = Query(default="", max_length=64)) -> HTMLResponse:
+    """A página imprimível (o navegador salva em PDF) do documento emitido.
+    Exige o código de verificação: o protocolo é sequencial e não basta.
+    Protocolo inexistente e código errado devolvem o mesmo 404."""
+    try:
+        return HTMLResponse(documentos.pagina_do_documento(protocolo, c))
+    except documentos.DocumentoNaoEncontrado:
+        raise HTTPException(404, "documento não encontrado") from None
 
 
 # ------------------------------------------------------------------ coordenação

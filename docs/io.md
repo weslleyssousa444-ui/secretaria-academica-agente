@@ -26,7 +26,7 @@ A saída **não é texto solto do modelo**. É um objeto Pydantic, montado pelo 
 | Campo | O que é | De onde vem |
 |---|---|---|
 | `resultado` | a resposta ao aluno (não vazia) | o modelo, depois da conferência de `validacao.py`; a marcação `[SUFICIENTE: ...]` é removida |
-| `decisao` | `emitir_declaracao`, `emitir_segunda_via`, `escalar_trancamento`, `escalar_pendencia`, `escalar_divergencia`, `escalar_ra_nao_encontrado`, `escalar_outro`, `responder_regimento` ou `sem_acao` | o **código**, lendo a última ação bem-sucedida da trajetória (`saida.decisao_da_trajetoria`). Os mesmos rótulos do verificador da Parte 1 e do golden dataset |
+| `decisao` | `emitir_declaracao`, `emitir_segunda_via`, `escalar_trancamento`, `escalar_pendencia`, `escalar_divergencia`, `escalar_ra_nao_encontrado`, `escalar_outro`, `responder_regimento`, `emitir_boleto`, `informar_situacao_academica` ou `sem_acao` | o **código**, lendo a última ação bem-sucedida da trajetória (`saida.decisao_da_trajetoria`). Os mesmos rótulos do verificador da Parte 1 e do golden dataset |
 | **`fonte`** | o que sustenta o resultado, conferível: `{tipo: "ferramenta", referencia: "emitir_documento:DOC-1002"}` ou `{tipo: "regimento", referencia: "Art. 6º"}` | o **código**: só entra ferramenta que de fato respondeu sem erro, e só entra artigo que a ferramenta devolveu **e** que o texto cita |
 | **`suficiencia`** | `{suficiente, motivo}`: se o sistema teve base para responder | o código, a partir da decisão; para dúvida do Regimento, também a declaração do agente (ver §4) |
 | `protocolo` | `DOC-xxxx` ou `CASO-xxxx` do turno, se houve | a ferramenta que gravou |
@@ -35,7 +35,7 @@ A saída **não é texto solto do modelo**. É um objeto Pydantic, montado pelo 
 
 **A recusa faz parte do contrato.** `suficiencia.suficiente = false` com o motivo é uma saída **válida**, e é o que o sistema devolve quando falta o RA, quando o Regimento não responde ou quando o pedido está fora do escopo. Uma saída sem `fonte` e sem `resultado` não existe: `SaidaTriagem` recusa `resultado` vazio e `decisao` fora da lista (`tests/test_triagem.py::test_resultado_vazio_nao_e_saida_valida`).
 
-**Na API** (`POST /mensagens`), a resposta traz o contrato inteiro: `resultado` (e `resposta`, a mesma coisa, por compatibilidade), **`fonte`**, **`suficiencia`**, `decisao`, `protocolo`, além de `conversa_id`, `aguardando_coordenacao`, `termino`, `motivo` e `encerrada` (até 13/11/2026 a API devolvia um recorte sem `fonte` e `suficiencia`; `tests/test_api.py::test_conversa_em_dois_turnos_emite_e_grava_registro` confere os dois campos). Nunca traz o retorno cru das ferramentas, que contém cadastro e financeiro do aluno (`tests/test_api.py::test_resposta_nao_expoe_resultado_de_ferramenta`).
+**Na API** (`POST /mensagens`), a resposta traz o contrato inteiro: `resultado` (e `resposta`, a mesma coisa, por compatibilidade), **`fonte`**, **`suficiencia`**, `decisao`, `protocolo`, além de `conversa_id`, `aguardando_coordenacao`, `termino`, `motivo` e `encerrada` e **`documentos`**: os documentos que o turno emitiu, cada um com `protocolo`, `tipo`, `titulo` e `url` da página imprimível (`GET /documentos/{protocolo}?c=<código de verificação>`, §6). (Até 13/11/2026 a API devolvia um recorte sem `fonte` e `suficiencia`; `tests/test_api.py::test_conversa_em_dois_turnos_emite_e_grava_registro` confere os dois campos). Nunca traz o retorno cru das ferramentas, que contém cadastro e financeiro do aluno (`tests/test_api.py::test_resposta_nao_expoe_resultado_de_ferramenta`).
 
 ## 3. Os exemplos
 
@@ -214,3 +214,12 @@ Para uma dúvida do Regimento, o código **não consegue** saber sozinho se os a
 3. **confere** o resto: o artigo citado precisa ter sido devolvido, e a `fonte` só lista artigo citado quando o agente declarou `sim`.
 
 `suficiente` só é `true` para `responder_regimento` quando as duas condições valem (declaração `sim` **e** artigo devolvido citado). O agente poderia declarar `sim` sem base: a conferência do artigo é o que impede isso, e a avaliação da suíte (Parte 3) mede o quanto o agente declara certo.
+
+## 6. O documento emitido (13/11/2026)
+
+Emitir um documento grava o protocolo **e** produz o documento. `GET /documentos/{protocolo}?c=<código>` devolve a página imprimível (o navegador salva em PDF) da declaração de matrícula, da segunda via do histórico (disciplinas, notas, situação e coeficiente de rendimento) ou da segunda via do boleto ([`src/triagem/documentos.py`](../src/triagem/documentos.py)).
+
+- **Acesso.** O protocolo é sequencial e não basta: o link leva um **código de verificação** aleatório (`codigos_verificacao`), conferido em tempo constante. Protocolo inexistente, código errado e código ausente devolvem o **mesmo** 404 (`tests/test_servicos.py::test_sem_o_codigo_o_documento_nao_abre`).
+- **Ficção declarada.** Todo documento traz a marca d'água "DOCUMENTO FICTÍCIO · DEMONSTRAÇÃO"; o boleto diz "SEM VALOR DE PAGAMENTO", usa o banco inexistente `000` e não tem código de barras.
+- **Escape.** Nome, curso e demais campos passam por `html.escape` (`test_nome_com_html_e_escapado`).
+- **Limite.** No servidor gratuito (Render) o banco volta ao estado inicial quando o processo reinicia; o link de um documento emitido antes do reinício deixa de abrir.

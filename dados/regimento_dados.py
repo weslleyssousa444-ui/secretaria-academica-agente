@@ -217,11 +217,39 @@ REGIMENTO = [
         "texto": (
             "Art. 10 Os casos omissos neste Regimento são decididos pela "
             "coordenação acadêmica, vedada a decisão automatizada em "
-            "qualquer matéria não expressamente autorizada nos artigos "
-            "anteriores."
+            "qualquer matéria não expressamente autorizada neste "
+            "Regimento."
         ),
         "vigente": True,
         "data_vigencia": "2026-01-01",
+    },
+    # 13/11/2026: o canal passou a emitir segunda via de boleto e a responder a
+    # consulta acadêmica. Os dois artigos autorizam isso expressamente (Art. 10).
+    {
+        "id": "Art. 11",
+        "capitulo": "VII — Do Atendimento Financeiro e da Consulta Acadêmica",
+        "texto": (
+            "Art. 11 A segunda via do boleto de mensalidade em aberto pode "
+            "ser emitida pelo canal de atendimento ao próprio aluno "
+            "identificado, com vencimento em 5 (cinco) dias corridos a "
+            "partir da emissão. Não se emite boleto de mensalidade já "
+            "quitada, inexistente ou de outro aluno."
+        ),
+        "vigente": True,
+        "data_vigencia": "2026-11-13",
+    },
+    {
+        "id": "Art. 12",
+        "capitulo": "VII — Do Atendimento Financeiro e da Consulta Acadêmica",
+        "texto": (
+            "Art. 12 O aluno identificado pode consultar pelo canal de "
+            "atendimento suas disciplinas, notas, situação em cada "
+            "disciplina e coeficiente de rendimento. A consulta não altera "
+            "nota nem situação: o pedido de revisão de nota ou de prova é "
+            "decidido pela coordenação do curso."
+        ),
+        "vigente": True,
+        "data_vigencia": "2026-11-13",
     },
 ]
 

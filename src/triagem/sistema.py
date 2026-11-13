@@ -94,7 +94,7 @@ class Sistema:
         para que um log diga sozinho de onde veio (docs/prompts.md §3)."""
         return {"versao": self.versao(), "modelo": agente.MODELO,
                 "modelo_aprovado": self.modelo_aprovado,
-                "prompt": {"arquivo": "src/prompts/triagem-v2.txt",
+                "prompt": {"arquivo": "src/prompts/triagem-v3.txt",
                            "sha256": hashlib.sha256(n.SYSTEM.encode("utf-8")).hexdigest()[:16]},
                 "parametros": {"temperature": n.TEMPERATURA, "recursion_limit": RECURSION_LIMIT,
                                "orcamento": {"max_passos": self.nos.orcamento.max_passos,

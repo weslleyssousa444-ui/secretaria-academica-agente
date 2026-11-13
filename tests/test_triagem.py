@@ -451,19 +451,22 @@ def test_janela_omite_retorno_antigo_e_preserva_o_resto():
 
 # ------------------------------------------------------------ a autoridade do sistema em grafo (docs/model-card.md, campo 3)
 
-def test_o_sistema_tem_exatamente_cinco_ferramentas_e_nenhuma_de_trancamento():
-    esperadas = {"buscar_aluno", "consultar_financeiro", "consultar_regimento", "emitir_documento", "escalar_para_humano"}
+def test_o_sistema_tem_exatamente_sete_ferramentas_e_nenhuma_de_trancamento():
+    esperadas = {"buscar_aluno", "consultar_financeiro", "consultar_regimento", "emitir_documento",
+                 "escalar_para_humano", "consultar_historico", "emitir_boleto"}
     assert set(nos.FERRAMENTAS) == esperadas
     assert {d["function"]["name"] for d in nos.DECLARACOES} == esperadas   # o que o modelo VÊ = o que o código executa
-    assert agente.ESCRITA == {"emitir_documento", "escalar_para_humano"}   # as duas únicas escritas
+    assert agente.ESCRITA == {"emitir_documento", "escalar_para_humano"}   # o laço da Parte 1 não mudou
+    assert nos.ESCRITA == {"emitir_documento", "escalar_para_humano", "emitir_boleto"}   # as três escritas do grafo
+    assert set(nos.FERRAMENTAS) - {"consultar_regimento"} <= nos.FERRAMENTAS_COM_RA  # toda ferramenta de aluno passa pela ASI03
 
 
 def test_as_ferramentas_do_agente_nao_alteram_nem_apagam_nada():
     """A3: o agente só insere. O UPDATE da decisão da coordenação existe (humano.py), mas
     fica num nó que só roda DEPOIS do `interrupt`, e nenhuma ferramenta do modelo chega a ele."""
     import inspect
-    from triagem import regimento
-    for modulo in (agente, regimento):
+    from triagem import regimento, servicos
+    for modulo in (agente, regimento, servicos):
         fonte = inspect.getsource(modulo).upper()
         assert "UPDATE " not in fonte and "DELETE " not in fonte and "DROP " not in fonte, modulo.__name__
     fonte_das_ferramentas = "".join(inspect.getsource(f) for f in nos.FERRAMENTAS.values())

@@ -113,6 +113,14 @@
   body.escuro .fonte.reg{color:var(--acento2);border-color:var(--acento2)}
   .insuf{margin-top:10px;font-size:12.5px;color:var(--esc);background:var(--esc-claro);border-radius:8px;padding:6px 10px;line-height:1.45}
   body.escuro .insuf{color:#F0C47A}
+  .docs{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+  .doc{display:flex;align-items:center;gap:12px;border:1px solid var(--linha);background:var(--bg);border-radius:12px;padding:10px 12px;text-decoration:none;color:var(--tinta)}
+  .doc:hover{border-color:var(--acento)}
+  .doc .ico{width:36px;height:36px;border-radius:9px;background:var(--acento);color:#fff;display:grid;place-items:center;font-size:17px;flex:none}
+  .doc b{display:block;font-size:13.5px}
+  .doc small{color:var(--suave);font-size:12px}
+  .doc .abrir{margin-left:auto;font-size:12.5px;font-weight:600;color:var(--acento);white-space:nowrap}
+  body.escuro .doc .abrir{color:var(--acento2)}
   .hora{font-size:11px;color:var(--suave);margin-top:4px}
   .aluno .hora{text-align:right}
 
@@ -247,6 +255,7 @@ const ROTULOS = {
   emitir_segunda_via:['Segunda via emitida','ok'], escalar_trancamento:['Encaminhado à coordenação','esc'],
   escalar_pendencia:['Escalado: pendência financeira','esc'], escalar_divergencia:['Escalado: divergência','esc'],
   escalar_ra_nao_encontrado:['Escalado: RA não encontrado','esc'], escalar_outro:['Escalado a um atendente','esc'],
+  emitir_boleto:['Boleto emitido','ok'], informar_situacao_academica:['Situação acadêmica','ok'],
   sem_acao:['Sem ação','']
 };
 const TERMINOS = { respondeu:'respondeu', aguardando_humano:'aguardando coordenação', erro_fatal:'erro fatal',
@@ -300,14 +309,16 @@ function renderBoasVindas(){
   <div class="boasvindas">
     <div class="selo">SA</div>
     <h2>Como posso ajudar?</h2>
-    <p>Respondo dúvidas do Regimento citando o artigo, emito declaração de matrícula e segunda via do histórico, e encaminho o que não posso decidir. <b>Trancamento é sempre decidido pela coordenação</b>: eu abro o caso e ele aguarda até 48 h.</p>
+    <p>Respondo dúvidas do Regimento citando o artigo, emito declaração de matrícula, segunda via do histórico e do boleto (com o documento para imprimir), mostro suas notas e encaminho o que não posso decidir. <b>Trancamento é sempre decidido pela coordenação</b>: eu abro o caso e ele aguarda até 48 h.</p>
     <div class="cartoes">
       <div class="cartao" data-t="Preciso de uma declaração de matrícula pro estágio."><b>Documento</b><span>Preciso de uma declaração de matrícula pro estágio.</span></div>
       <div class="cartao" data-t="Quero a segunda via do meu histórico."><b>Documento</b><span>Quero a segunda via do meu histórico.</span></div>
+      <div class="cartao" data-t="Preciso da segunda via do boleto da mensalidade."><b>Financeiro</b><span>Preciso da segunda via do boleto da mensalidade.</span></div>
+      <div class="cartao" data-t="Quais são minhas notas neste semestre?"><b>Consulta</b><span>Quais são minhas notas neste semestre?</span></div>
       <div class="cartao" data-t="Quero trancar minha matrícula esse semestre."><b>Trancamento</b><span>Quero trancar minha matrícula esse semestre.</span></div>
       <div class="cartao" data-t="Qual o prazo de resposta da secretaria para um pedido?"><b>Regimento</b><span>Qual o prazo de resposta da secretaria para um pedido?</span></div>
       <div class="cartao" data-t="Print do aplicativo do banco serve como comprovante?"><b>Regimento</b><span>Print do aplicativo do banco serve como comprovante?</span></div>
-      <div class="cartao" data-t="Posso trancar só uma disciplina?"><b>Regimento</b><span>Posso trancar só uma disciplina?</span></div>
+      <div class="cartao" data-t="Como peço revisão de nota?"><b>Regimento</b><span>Como peço revisão de nota?</span></div>
     </div>
     <div class="ras">Dados fictícios. Clique para usar um RA:
       <code data-t="20231045">20231045</code> regular ·
@@ -332,8 +343,18 @@ function renderMsg(m){
     d.querySelector('.bolha').textContent = m.texto;
     chat.appendChild(d); return d;
   }
-  d.innerHTML = av + `<div style="min-width:0"><div class="bolha">${formatar(m.texto)}<div class="fontes"></div><div class="meta"></div><div class="detalhes"></div></div><div class="hora">${hhmm(m.em)}</div></div>`;
+  d.innerHTML = av + `<div style="min-width:0"><div class="bolha">${formatar(m.texto)}<div class="docs"></div><div class="fontes"></div><div class="meta"></div><div class="detalhes"></div></div><div class="hora">${hhmm(m.em)}</div></div>`;
   const meta = d.querySelector('.meta'), det = d.querySelector('.detalhes'), fts = d.querySelector('.fontes');
+  const docs = d.querySelector('.docs');
+  (Array.isArray(m.documentos) ? m.documentos : []).forEach(doc => {
+    const u = new URLSearchParams((doc.url || '').split('?')[1] || '');
+    const a = document.createElement('a'); a.className = 'doc'; a.target = '_blank'; a.rel = 'noopener';
+    a.href = 'api.php?r=documento&p=' + encodeURIComponent(doc.protocolo) + '&c=' + encodeURIComponent(u.get('c') || '');
+    a.innerHTML = `<span class="ico">${doc.tipo === 'segunda_via_boleto' ? '💳' : '📄'}</span><span><b></b><small></small></span><span class="abrir">Abrir documento ↗</span>`;
+    a.querySelector('b').textContent = doc.titulo; a.querySelector('small').textContent = 'Protocolo ' + doc.protocolo + ' · imprimir ou salvar em PDF';
+    docs.appendChild(a);
+  });
+  if (!docs.children.length) docs.remove();
   const fonte = Array.isArray(m.fonte) ? m.fonte : [];
   const regs = fonte.filter(f => f.tipo === 'regimento'), ferr = fonte.filter(f => f.tipo === 'ferramenta');
   if (regs.length){
@@ -468,7 +489,7 @@ async function mandar(texto){
       atual.conversaId = j.encerrada ? null : j.conversa_id;
       atual.encerrada = !!j.encerrada;
       atual.msgs.push({de:'agente', texto:(j.resultado ?? j.resposta), decisao:j.decisao, protocolo:j.protocolo, aguardando:j.aguardando_coordenacao,
-        fonte:j.fonte || [], suficiencia:j.suficiencia || null,
+        fonte:j.fonte || [], suficiencia:j.suficiencia || null, documentos:j.documentos || [],
         termino:j.termino, motivo:j.motivo, conversaId:j.conversa_id, em: agora(), ms});
     }
   }catch(e){
@@ -515,8 +536,9 @@ const ALUNOS = [
 ];
 const DEBITO = {'20230198':[2,890], '20233321':[1,445], '20232210':[3,1200], '20233120':[1,445], '20230321':[2,890], '20234321':[1,445]};
 const ESPECIAL = {
-  '20231045':'Declaração e segunda via sem pendência: caso simples',
-  '20230198':'Segunda via com débito e "já paguei" sem comprovante (divergência)',
+  '20231045':'Declaração, segunda via e notas: caso simples, sem débito',
+  '20233321':'Segunda via do boleto (uma mensalidade em aberto)',
+  '20230198':'Duas mensalidades em aberto: boleto pergunta qual; "já paguei" vira divergência',
   '20229012':'Trancamento: abre o caso e aguarda a coordenação',
   '20234456':'Pedir declaração de novo: já existe a DOC-1000 emitida antes',
   '20240000':'RA inexistente: o agente confirma e escala'
@@ -526,8 +548,8 @@ function sugestao(a){
   if (ESPECIAL[ra]) return ESPECIAL[ra];
   if (sit === 'trancada') return 'Declaração com matrícula trancada';
   if (sit === 'formado') return 'Declaração de quem já se formou';
-  if (DEBITO[ra]) return 'Segunda via com mensalidade em aberto; declaração mesmo com débito';
-  return 'Declaração, segunda via ou trancamento';
+  if (DEBITO[ra]) return 'Boleto da mensalidade em aberto; segunda via do histórico é escalada';
+  return 'Declaração, segunda via do histórico, notas ou trancamento';
 }
 let filtroAluno = 'todos';
 function renderAlunos(){

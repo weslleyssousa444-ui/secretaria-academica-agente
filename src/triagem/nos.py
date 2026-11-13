@@ -21,10 +21,11 @@ import agente
 from agente import ErroFatal, ErroRecuperavel, Orcamento
 from triagem import humano, janela, saida as contrato, telemetria, validacao
 from triagem.memoria import Memoria
+from triagem import servicos
 from triagem.regimento import consultar_regimento
 
 RAIZ = Path(__file__).resolve().parents[2]
-SYSTEM = (Path(__file__).resolve().parents[1] / "prompts" / "triagem-v2.txt"
+SYSTEM = (Path(__file__).resolve().parents[1] / "prompts" / "triagem-v3.txt"
           ).read_text(encoding="utf-8")
 
 # Teto de TEMPO por turno, conferido ENTRE chamadas ao modelo. O Orcamento da
@@ -50,20 +51,25 @@ MAX_ESCRITAS_POR_VOLTA = 1
 # ASI03: ferramentas que recebem um RA. Com sessão autenticada, o RA do argumento
 # TEM de ser o da sessão ("" = RA nunca identificado, só faz sentido ao escalar).
 FERRAMENTAS_COM_RA = frozenset({"buscar_aluno", "consultar_financeiro",
-                                "emitir_documento", "escalar_para_humano"})
+                                "emitir_documento", "escalar_para_humano",
+                                "consultar_historico", "emitir_boleto"})
 
 SAUDACAO_FIXA = (
     "Olá! Sou o assistente da secretaria acadêmica. Posso ajudar com "
-    "declaração de matrícula, segunda via de histórico, trancamento de "
-    "matrícula ou dúvidas sobre o Regimento. Como posso te ajudar?")
+    "declaração de matrícula, segunda via de histórico, segunda via de boleto, "
+    "consulta de notas e disciplinas, trancamento de matrícula ou dúvidas "
+    "sobre o Regimento. Como posso te ajudar?")
 TEXTO_SEM_CONCLUSAO = ("Não consegui concluir seu atendimento. Abra uma nova "
                        "solicitação ou procure a secretaria.")
 _SAUDACAO = re.compile(
     r"^\s*(oi+|ol[aá]+|bom dia|boa tarde|boa noite|e a[ií]|opa|hello|hi)[\s!.,?]*$",
     re.IGNORECASE)
 
-# A ferramenta do RAG entra na tabela do agente (leitura, sem efeito colateral).
-FERRAMENTAS = {**agente.FERRAMENTAS, "consultar_regimento": consultar_regimento}
+# A ferramenta do RAG entra na tabela do agente (leitura, sem efeito colateral),
+# e as de 13/11/2026 (consulta acadêmica e boleto, src/triagem/servicos.py).
+FERRAMENTAS = {**agente.FERRAMENTAS, "consultar_regimento": consultar_regimento,
+               **servicos.FERRAMENTAS}
+ESCRITA = agente.ESCRITA | servicos.ESCRITA
 DECLARACAO_REGIMENTO = {
     "type": "function",
     "function": {
@@ -81,7 +87,7 @@ DECLARACAO_REGIMENTO = {
         },
     },
 }
-DECLARACOES = [*agente.DECLARACOES.values(), DECLARACAO_REGIMENTO]
+DECLARACOES = [*agente.DECLARACOES.values(), DECLARACAO_REGIMENTO, *servicos.DECLARACOES]
 
 
 # ------------------------------------------------------------------ utilidades
@@ -301,7 +307,7 @@ class Nos:
             with telemetria.execucao_de_ferramenta(nome, chamada["id"]) as span_ferramenta:
                 passo = self._uma_chamada(posicao, chamada, escritas, ra_sessao)
                 telemetria.registrar_ferramenta(span_ferramenta, passo, bool(passo.get("recusado")))
-            escritas += nome in agente.ESCRITA and passo["erro"] is None
+            escritas += nome in ESCRITA and passo["erro"] is None
             passos.append(passo)
             novas.append(mensagem_de_ferramenta(passo, chamada["id"]))
         return {"mensagens": novas, "passos": passos, "eventos": ["ferramentas"]}
@@ -315,7 +321,7 @@ class Nos:
             return passo_recusado(nome, argumentos_tentados(chamada),
                                   f"mais de {MAX_CHAMADAS_POR_VOLTA} chamadas numa só volta",
                                   "faça uma chamada por vez")
-        if nome in agente.ESCRITA and escritas >= MAX_ESCRITAS_POR_VOLTA:
+        if nome in ESCRITA and escritas >= MAX_ESCRITAS_POR_VOLTA:
             return passo_recusado(nome, argumentos_tentados(chamada),
                                   f"mais de {MAX_ESCRITAS_POR_VOLTA} escrita numa só volta",
                                   "faça uma escrita por volta")
