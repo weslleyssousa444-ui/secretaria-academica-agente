@@ -1,0 +1,41 @@
+<section id="tecnologias" data-transition="fade" style="background:#F6F5F0;color:#101B2D;font-family:'Inter', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:48px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:26px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#17695F">A solução</p>
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:64px;font-weight:600;line-height:1.1">Com o que o agente foi construído</h2>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px">
+<div style="display:flex;flex-direction:column;gap:10px;background:#FCFBF8;padding:32px;border:1px solid #DAD8CF;border-radius:16px">
+<p style="font-size:24px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#17695F">Modelo</p>
+<h3 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:36px;font-weight:600">qwen3.8-27b na Groq</h3>
+<p style="font-size:26px;line-height:1.4;color:#4A5568">API compatível com a da OpenAI, plano gratuito</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#FCFBF8;padding:32px;border:1px solid #DAD8CF;border-radius:16px">
+<p style="font-size:24px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#17695F">Orquestração</p>
+<h3 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:36px;font-weight:600">LangGraph</h3>
+<p style="font-size:26px;line-height:1.4;color:#4A5568">O fluxo como grafo, com pausa e retomada</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#FCFBF8;padding:32px;border:1px solid #DAD8CF;border-radius:16px">
+<p style="font-size:24px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#17695F">API</p>
+<h3 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:36px;font-weight:600">Python e FastAPI</h3>
+<p style="font-size:26px;line-height:1.4;color:#4A5568">Rotas do aluno e da coordenação</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#FCFBF8;padding:32px;border:1px solid #DAD8CF;border-radius:16px">
+<p style="font-size:24px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#17695F">Dados e busca</p>
+<h3 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:36px;font-weight:600">SQLite com FTS5</h3>
+<p style="font-size:26px;line-height:1.4;color:#4A5568">Base fictícia, busca no Regimento e estado do grafo</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#FCFBF8;padding:32px;border:1px solid #DAD8CF;border-radius:16px">
+<p style="font-size:24px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#17695F">Rastreamento</p>
+<h3 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:36px;font-weight:600">OpenTelemetry</h3>
+<p style="font-size:26px;line-height:1.4;color:#4A5568">Trace de cada decisão, convenção GenAI</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#FCFBF8;padding:32px;border:1px solid #DAD8CF;border-radius:16px">
+<p style="font-size:24px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#17695F">Qualidade</p>
+<h3 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:36px;font-weight:600">pytest e Docker</h3>
+<p style="font-size:26px;line-height:1.4;color:#4A5568">210 testes offline e imagem fixada</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1000px;font-size:24px;color:#5B6676">Secretaria Acadêmica Agente</p>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;text-align:right;font-size:24px;color:#5B6676">6 / 26</p>
+<aside>As peças técnicas, rapidamente. O modelo é o qwen3.8-27b, servido pela Groq, por uma API compatível com a da OpenAI, no plano gratuito; a cota diária desse plano é o que limita o ritmo das avaliações. O fluxo é um grafo do LangGraph, o que permite pausar no meio para esperar a coordenação e retomar depois. A API é em Python com FastAPI. Os dados são fictícios, em SQLite; a busca no Regimento usa o FTS5 do próprio SQLite, e o estado das conversas pausadas também fica em arquivo. Cada decisão gera um trace no padrão OpenTelemetry. São 210 testes automáticos que rodam sem rede e sem chave, e uma imagem Docker com versões fixadas.</aside>
+</section>

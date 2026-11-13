@@ -93,7 +93,7 @@ O runner é **retomável**: pula o que já está em `execucoes.jsonl`. A pasta B
 
 ## 7. Apresentação ao professor Celso
 
-15 slides, em português. Publicados como Artifact na conta do usuário (privado): <https://claude.ai/artifact/JkCytjpKSCdpmfTo2JARMp>. **O código-fonte está versionado em [`docs/apresentacao/`](docs/apresentacao/)** (`deck.json` + `slides/*.html`, formato do tipo "Slides": 1920×1080, estilo inline, notas do apresentador em `<aside>`). Se o link não abrir na conta nova, publique esses arquivos de novo como deck. Os slides com número parcial têm o aviso "[Atualizar…]" nas notas.
+26 slides em 5 etapas, com sumário, em português. Publicados como Artifact na conta do usuário (privado): <https://claude.ai/artifact/JkCytjpKSCdpmfTo2JARMp>. **O código-fonte está versionado em [`docs/apresentacao/`](docs/apresentacao/)** (`deck.json` + `slides/*.html`, formato do tipo "Slides": 1920×1080, estilo inline, notas do apresentador em `<aside>`). Se o link não abrir na conta nova, publique esses arquivos de novo como deck. Os slides com número parcial têm o aviso "[Atualizar…]" nas notas.
 
 ## 8. O que NÃO veio com o repositório
 

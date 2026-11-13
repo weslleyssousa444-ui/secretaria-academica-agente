@@ -1,0 +1,38 @@
+<section id="demo" data-transition="fade" style="background:#F6F5F0;color:#101B2D;font-family:'Inter', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:40px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:26px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#17695F">Na prática</p>
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:64px;font-weight:600;line-height:1.1">O agente online, sem rodar localmente</h2>
+</div>
+<div style="display:flex;align-items:center;gap:16px">
+<div style="flex:1;background:#FCFBF8;padding:24px;border:1px solid #DAD8CF;border-radius:14px"><p style="font-size:26px;font-weight:600;text-align:center">Navegador</p><p style="font-size:24px;text-align:center;color:#4A5568">Página de chat e histórico</p></div>
+<x-shape kind="arrow-right" style="width:40px;height:20px;background:#5B6676"></x-shape>
+<div style="flex:1;background:#FCFBF8;padding:24px;border:1px solid #DAD8CF;border-radius:14px"><p style="font-size:26px;font-weight:600;text-align:center">Hostinger</p><p style="font-size:24px;text-align:center;color:#4A5568">Página e repasse em PHP</p></div>
+<x-shape kind="arrow-right" style="width:40px;height:20px;background:#5B6676"></x-shape>
+<div style="flex:1;background:#17695F;padding:24px;border-radius:14px"><p style="font-size:26px;font-weight:600;text-align:center;color:#F6F5F0">Render</p><p style="font-size:24px;text-align:center;color:#D9EFEA">A API em Docker</p></div>
+<x-shape kind="arrow-right" style="width:40px;height:20px;background:#5B6676"></x-shape>
+<div style="flex:1;background:#FCFBF8;padding:24px;border:1px solid #DAD8CF;border-radius:14px"><p style="font-size:26px;font-weight:600;text-align:center">Groq</p><p style="font-size:24px;text-align:center;color:#4A5568">O modelo</p></div>
+</div>
+<div style="display:flex;gap:32px">
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#FCFBF8;padding:32px 40px;border:1px solid #DAD8CF;border-radius:16px">
+<h3 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:32px;font-weight:600">Roteiro da demonstração</h3>
+<ul style="font-size:26px;line-height:1.5;color:#4A5568">
+<li>Declaração com o RA 20231045</li>
+<li>Segunda via com o RA 20230198, que tem débito</li>
+<li>Trancamento com o RA 20229012</li>
+<li>Uma dúvida do Regimento, com o artigo citado</li>
+</ul>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#101B2D;color:#F2F0EA;padding:32px 40px;border-radius:16px">
+<h3 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:32px;font-weight:600;color:#5CD6C0">Cuidados</h3>
+<ul style="font-size:26px;line-height:1.5;color:#B6C0CF">
+<li>Só dados fictícios</li>
+<li>A chave fica no servidor, fora do código</li>
+<li>As rotas da coordenação não são expostas</li>
+<li>Plano gratuito: a 1ª resposta pode levar 1 min</li>
+</ul>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1000px;font-size:24px;color:#5B6676">Secretaria Acadêmica Agente</p>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;text-align:right;font-size:24px;color:#5B6676">21 / 26</p>
+<aside>Para a demonstração, publicamos o agente na internet. O navegador abre uma página de chat na Hostinger, que guarda o histórico das conversas no próprio navegador. A página fala com um pequeno repasse em PHP, no mesmo servidor, que só deixa passar o chat e a verificação de saúde. O repasse chama a API do agente, que roda no Render a partir do mesmo Dockerfile do repositório, e a API chama o modelo na Groq. Roteiro sugerido: pedir uma declaração com o RA 20231045; pedir a segunda via com o RA 20230198, que tem mensalidade em aberto, e mostrar que o agente não emite; pedir trancamento com o RA 20229012 e mostrar o caso aguardando a coordenação; e fazer uma dúvida do Regimento para mostrar o artigo citado. Cuidados: os dados são fictícios; a chave da Groq fica só nas variáveis do servidor; as rotas da coordenação não são expostas pelo site; e, no plano gratuito, o servidor dorme sem uso, então a primeira resposta pode levar até um minuto. Abrir o site alguns minutos antes. [Confirmar o endereço do site e testar o roteiro no dia.]</aside>
+</section>

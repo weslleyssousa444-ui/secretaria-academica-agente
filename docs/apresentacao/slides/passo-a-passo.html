@@ -1,0 +1,51 @@
+<section id="passo-a-passo" data-transition="fade" style="background:#F6F5F0;color:#101B2D;font-family:'Inter', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:40px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:26px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#17695F">Como funciona</p>
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:64px;font-weight:600;line-height:1.1">Um pedido do começo ao fim, em 8 passos</h2>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:20px">
+<div style="display:flex;flex-direction:column;gap:10px;background:#FCFBF8;padding:28px;border:1px solid #DAD8CF;border-radius:16px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:40px;font-weight:600;color:#17695F">1</p>
+<h3 style="font-size:28px;font-weight:600">Entrada</h3>
+<p style="font-size:24px;line-height:1.4;color:#4A5568">Chega a mensagem do aluno, com o RA da sessão se houver</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#FCFBF8;padding:28px;border:1px solid #DAD8CF;border-radius:16px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:40px;font-weight:600;color:#17695F">2</p>
+<h3 style="font-size:28px;font-weight:600">Classificar e lembrar</h3>
+<p style="font-size:24px;line-height:1.4;color:#4A5568">Em paralelo: o tipo do pedido e a memória do aluno</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#FCFBF8;padding:28px;border:1px solid #DAD8CF;border-radius:16px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:40px;font-weight:600;color:#17695F">3</p>
+<h3 style="font-size:28px;font-weight:600">Rotear</h3>
+<p style="font-size:24px;line-height:1.4;color:#4A5568">Saudação tem resposta fixa; o resto vai ao agente</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#17695F;color:#F6F5F0;padding:28px;border-radius:16px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:40px;font-weight:600;color:#5CD6C0">4</p>
+<h3 style="font-size:28px;font-weight:600">Agente e ferramentas</h3>
+<p style="font-size:24px;line-height:1.4;color:#D9EFEA">O modelo pede ferramentas e repete até concluir</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#FCFBF8;padding:28px;border:1px solid #DAD8CF;border-radius:16px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:40px;font-weight:600;color:#17695F">5</p>
+<h3 style="font-size:28px;font-weight:600">Garantir trancamento</h3>
+<p style="font-size:24px;line-height:1.4;color:#4A5568">Se era trancamento e o agente não escalou, o código escala</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#FCFBF8;padding:28px;border:1px solid #DAD8CF;border-radius:16px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:40px;font-weight:600;color:#17695F">6</p>
+<h3 style="font-size:28px;font-weight:600">Validar</h3>
+<p style="font-size:24px;line-height:1.4;color:#4A5568">Confere protocolo, prazo e artigo; 2 reprovações levam ao molde</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#FCFBF8;padding:28px;border:1px solid #DAD8CF;border-radius:16px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:40px;font-weight:600;color:#17695F">7</p>
+<h3 style="font-size:28px;font-weight:600">Montar a saída</h3>
+<p style="font-size:24px;line-height:1.4;color:#4A5568">Resposta, decisão, fonte, suficiência e protocolo</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#FCFBF8;padding:28px;border:1px solid #DAD8CF;border-radius:16px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:40px;font-weight:600;color:#17695F">8</p>
+<h3 style="font-size:28px;font-weight:600">Memória ou pausa</h3>
+<p style="font-size:24px;line-height:1.4;color:#4A5568">Grava a memória; se é trancamento, espera a coordenação</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1000px;font-size:24px;color:#5B6676">Secretaria Acadêmica Agente</p>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;text-align:right;font-size:24px;color:#5B6676">8 / 26</p>
+<aside>Vamos seguir um pedido, por exemplo: "preciso de uma declaração de matrícula". Passo 1, a entrada recebe a mensagem e, se houver portal, o RA da sessão autenticada. Passo 2, dois ramos rodam em paralelo, ambos em código: um classifica o tipo do pedido e o outro lê a memória do aluno, só se o RA estiver autenticado. Passo 3, o roteador: uma saudação simples recebe uma resposta fixa, sem gastar modelo; o resto vai ao agente. Passo 4, o único passo com o modelo, destacado em verde: ele decide quais ferramentas chamar, como buscar o aluno e emitir o documento, e o laço se repete até ele concluir, dentro de um orçamento de passos, tokens e tempo. Passo 5, se o pedido era de trancamento e o modelo não escalou, o código escala por conta própria. Passo 6, o validador confere a resposta em código; se reprovar, devolve ao agente, e na segunda reprovação a resposta sai de um molde. Passo 7, a saída é montada num contrato fixo. Passo 8, a memória é gravada e, se é trancamento, o grafo pausa esperando a coordenação.</aside>
+</section>
