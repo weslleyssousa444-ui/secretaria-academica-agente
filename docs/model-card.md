@@ -9,7 +9,7 @@
 Cada campo traz **a afirmação** e **a evidência**. Os tipos de evidência são:
 
 - `arquivo:linha`, com link para o trecho exato no repositório (as linhas foram **calculadas por script** sobre o commit-base, não digitadas);
-- `teste::nome`: um teste em [`tests/`](../tests/) que roda offline, sem chave de API (`python -m pytest -q`; **210 passed, 1 deselected** em 11/11/2026, Python 3.11.18);
+- `teste::nome`: um teste em [`tests/`](../tests/) que roda offline, sem chave de API (`python -m pytest -q`; **216 passed, 1 deselected** em 13/11/2026; eram 210 em 11/11/2026, Python 3.11.18);
 - `log`: o registro de uma execução real com o modelo real em [`logs/parte2/`](../logs/parte2/) ou [`evals/resultados/`](../evals/resultados/);
 - `saída de comando`: arquivo em [`docs/evidencias/`](evidencias/), com o comando e a saída copiados. **Os de [`autoridade-efetiva.txt`](evidencias/autoridade-efetiva.txt), [`inventario-dados-pessoais.txt`](evidencias/inventario-dados-pessoais.txt) e [`historico-git.txt`](evidencias/historico-git.txt) são de 16/10/2026 e descrevem o agente da Parte 1**: valem como história, não como retrato do sistema atual (L26).
 
@@ -197,7 +197,7 @@ A avaliação do sistema entregue está em [`docs/evals.md`](evals.md); aqui, s�
 | **Rodada B** (código atual, 37 casos): **não rodou.** A cota diária do modelo acabou; o runner é retomável. **A comparação A × B está PENDENTE**, e nenhum número dela está neste documento. | [`docs/evals.md` §4.2, §4.4](evals.md) |
 | **Juiz de fidelidade: NÃO adotado.** No Exercício 11 a rubrica final deu 89% de concordância e **60% de recall** da classe "não fiel" no *hold-out* (limiar: 85% e 80%). **Os rótulos daquela validação são de uma IA, não de pessoas.** A validação com **20 saídas rotuladas à mão pelo grupo não foi feita**: a ficha e a medição estão prontas e **nenhum rótulo é preenchido por código**. | [`docs/evals.md` §3](evals.md); [`evals/rotulagem/LEIA-ME.md`](../evals/rotulagem/LEIA-ME.md); `tests/test_rotulagem.py`. **LACUNA L24** |
 | **Uma repetição por caso**: o ruído do provedor **não foi medido** para este sistema; com 37 casos, um caso vale ~2,7 pontos. | [`docs/evals.md` §3, §4.5](evals.md) |
-| Testes offline: **210 passed, 1 deselected** (o deselecionado é o `eval`, que usa o modelo real). Os que **tentam a ação indevida** de cada controle estão em `tests/test_controles.py` (13 funções), o trace em `tests/test_telemetria.py` (18) e o grafo, a pausa e a decisão em `tests/test_triagem.py` (39). | `python -m pytest -q`; [`docs/evidencias/pytest.txt`](evidencias/pytest.txt) é **anterior** e não foi regenerado (L26) |
+| Testes offline: **216 passed, 1 deselected** (13/11/2026) (o deselecionado é o `eval`, que usa o modelo real). Os que **tentam a ação indevida** de cada controle estão em `tests/test_controles.py` (16 funções), o trace em `tests/test_telemetria.py` (18) e o grafo, a pausa e a decisão em `tests/test_triagem.py` (39). | `python -m pytest -q`; [`docs/evidencias/pytest.txt`](evidencias/pytest.txt) é **anterior** e não foi regenerado (L26) |
 | 8 execuções reais da Parte 2 com o modelo real, fora da suíte. | [`logs/parte2/`](../logs/parte2/) |
 
 ## 8. Limites conhecidos

@@ -97,7 +97,7 @@ Dos dez riscos do catálogo, **oito existem** neste sistema; **dois não se apli
 
 ## 3. Os controles implementados
 
-Três controles **fora do prompt**, cada um com testes que **tentam a ação indevida** e verificam que foi bloqueada ([`tests/test_controles.py`](../tests/test_controles.py), 16 testes). Dois mitigam os dois riscos de **impacto 3** que o sistema pode fechar em código (ASI03 e ASI10; o ASI04, também de impacto 3, é de infraestrutura, e está no §4); o terceiro, o ASI02.
+Três controles **fora do prompt**, cada um com testes que **tentam a ação indevida** e verificam que foi bloqueada ([`tests/test_controles.py`](../tests/test_controles.py), 22 testes). Dois mitigam os dois riscos de **impacto 3** que o sistema pode fechar em código (ASI03 e ASI10; o ASI04, também de impacto 3, é de infraestrutura, e está no §4); o terceiro, o ASI02.
 
 > **Instrução no prompt de sistema não é controle**: o texto injetado chega pelo mesmo canal que o prompt. Nenhum dos três depende dele.
 
@@ -124,6 +124,8 @@ Três controles **fora do prompt**, cada um com testes que **tentam a ação ind
 **O teste.** `test_ASI10_o_sistema_nao_sobe_com_modelo_fora_da_lista` e `test_ASI10_a_api_nao_sobe_com_modelo_fora_da_lista` (a API falha **na subida**, e não na primeira mensagem); `test_ASI10_o_modelo_aprovado_sobe_e_a_lista_cita_a_evidencia` (nenhum modelo entra sem referência); `test_ASI10_so_o_runner_do_eval_avalia_um_candidato_e_ele_fica_marcado` (avaliar um candidato é como ele **entra** na lista, então só o runner da suíte tem a permissão, e o trace marca `agente.modelo_aprovado = false`).
 
 **Fail-closed.** Sem modelo aprovado, o sistema **não sobe** (a mensagem diz como aprovar: `python -m evals.rodar`).
+
+**A liberação explícita (13/11/2026).** A correção do professor roda o sistema com **outro modelo** (`gpt-oss:20b`, local, no Ollama), e o controle impediria o sistema de subir. Para isso existe `TRIAGEM_PERMITIR_MODELO_NAO_APROVADO=1`: **desligada por padrão**, só o valor `1` libera, e com ela o sistema sobe, **avisa no stderr** e o trace marca cada execução com `agente.modelo_aprovado = false`, de modo que nenhum número medido assim se confunde com o do modelo aprovado. Testes: `test_ASI10_liberacao_pelo_ambiente_sobe_avisa_e_marca`, `test_ASI10_so_o_valor_1_libera` (4 valores que **não** liberam) e `test_ASI10_a_api_sobe_com_a_liberacao_explicita`. O que isso enfraquece, declarado: quem controla o ambiente do processo pode ligar a liberação, assim como pode trocar `LLM_MODELO`; o controle continua barrando a troca **silenciosa**, que era o risco.
 
 **O que o sistema deixou de conseguir.** **Trocar `LLM_MODELO` no `.env` quando a cota gratuita do dia acaba.** Era o conselho que o `START.md` dava; agora é impossível sem passar pelo eval. Hoje **só o `qwen/qwen3.8-27b` está aprovado**, então sem cota o sistema **para** em vez de seguir com um modelo que ninguém mediu. É o custo declarado do controle.
 

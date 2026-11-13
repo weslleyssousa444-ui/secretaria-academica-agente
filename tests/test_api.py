@@ -14,7 +14,7 @@ import api
 from conftest import chamada, contar, resposta
 
 TOKEN = "token-de-teste-da-coordenacao"
-CHAVES_DA_RESPOSTA = {"conversa_id", "resposta", "decisao", "protocolo",
+CHAVES_DA_RESPOSTA = {"resultado", "fonte", "suficiencia", "conversa_id", "resposta", "decisao", "protocolo",
                       "aguardando_coordenacao", "termino", "motivo", "encerrada"}
 
 
@@ -63,6 +63,12 @@ def test_conversa_em_dois_turnos_emite_e_grava_registro(cliente, modelo, tmp_pat
     assert r2.json()["resposta"] == "Emitida. Protocolo: DOC-1002."
     assert r2.json()["decisao"] == "emitir_declaracao" and r2.json()["protocolo"] == "DOC-1002"
     assert r2.json()["encerrada"] is False
+    # o contrato inteiro sai pela API: a fonte que sustenta e a suficiência
+    assert r2.json()["resultado"] == r2.json()["resposta"]
+    assert any(f["tipo"] == "ferramenta" and "emitir_documento" in f["referencia"]
+               for f in r2.json()["fonte"])
+    assert r2.json()["suficiencia"]["suficiente"] is True
+    assert r1.json()["suficiencia"]["suficiente"] is False  # pediu o RA: não agiu
     assert contar("documentos_emitidos") == 2  # semente + a nova
 
     log = json.loads((tmp_path / "logs" / f"api-{conversa_id}.json").read_text(encoding="utf-8"))

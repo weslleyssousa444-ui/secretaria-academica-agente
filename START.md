@@ -17,7 +17,7 @@ Confira com `ls` (Windows: `dir`): devem aparecer as pastas `src` e `tests`.
 ## 2. Sem chave de API
 
 ```bash
-python -m pytest -q                   # esperado: 210 passed, 1 deselected
+python -m pytest -q                   # esperado: 216 passed, 1 deselected
 python conferir_grafo.py              # os 15 nós e 24 arestas do grafo entregue
 OPENAI_API_KEY=x python src/suite/relatorio.py    # resultado da suíte do Exercício 11, a partir de logs/suite/
 ```

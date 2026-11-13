@@ -106,3 +106,16 @@ São o tipo de achado que mais importa para a honestidade da entrega: o texto af
 4. O grupo rotula as 20 saídas; `python -m evals.rotulagem medir`.
 5. Erick registra o aceite (ou a recusa) em `docs/seguranca.md` §4 e `docs/model-card.md` §9.
 6. ~~Revogar a chave da Groq~~ que esteve num arquivo local (apagado, nunca commitado): o usuário decidiu em 11/11/2026 **não revogar** (`docs/seguranca.md` §6).
+
+## 6. Depois da devolutiva da Parte 2 (13/11/2026)
+
+A devolutiva da Parte 2 (nota 2,2) corrigiu o repositório no estado de 23/09/2026 (commit `ba7fb89`), anterior ao sistema da Parte 2 (commits de 11/11/2026, tag `parte-2`). O mapa entre cada subcritério e onde ele está no repositório: [`docs/correcao-parte2.md`](correcao-parte2.md). Duas mudanças de código saíram da leitura da devolutiva:
+
+| Mudança | Por quê | Teste |
+|---|---|---|
+| `TRIAGEM_PERMITIR_MODELO_NAO_APROVADO=1` libera, explicitamente, um modelo fora da lista (ASI10) | a correção roda com outro modelo (`gpt-oss:20b` no Ollama); com o controle fail-closed o sistema **não subiria**, e "falha de código desconta" | `tests/test_controles.py`: 6 testes novos (sobe, avisa e marca; só `1` libera; a API sobe) |
+| `POST /mensagens` devolve o contrato inteiro (`resultado`, `fonte`, `suficiencia`) | a API devolvia um recorte sem `fonte` e `suficiencia`, os dois campos que o critério 1a cobra | `tests/test_api.py::test_conversa_em_dois_turnos_emite_e_grava_registro` |
+
+**Efeito na comparação A × B:** as duas mudanças ficam fora do caminho medido pela suíte (a liberação é desligada por padrão e o runner já tinha a sua; a suíte não passa pela API). Os 4 casos que faltam da rodada B rodam no commit novo, e o `agente.versao` do trace registra isso.
+
+Testes: **216 passed, 1 deselected** (eram 210).

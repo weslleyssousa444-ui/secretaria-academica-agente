@@ -30,7 +30,7 @@ from triagem import nos as n
 from triagem.grafo import RECURSION_LIMIT, construir
 import agente
 from triagem.memoria import Memoria
-from triagem.modelos import verificar_modelo
+from triagem.modelos import avisar_modelo_nao_aprovado, liberado_pelo_ambiente, verificar_modelo
 from triagem.saida import SaidaTriagem, Suficiencia
 
 RAIZ = Path(__file__).resolve().parents[2]
@@ -51,8 +51,12 @@ class Sistema:
                  memoria_dir: Path | str | None = None,
                  permitir_modelo_nao_aprovado: bool = False,
                  exige_identidade: bool | None = None):
-        # ASI10: não sobe com modelo fora da lista (src/triagem/modelos.py).
-        self.modelo_aprovado = verificar_modelo(agente.MODELO, permitir_modelo_nao_aprovado)
+        # ASI10: não sobe com modelo fora da lista (src/triagem/modelos.py), salvo
+        # liberação explícita: o runner do eval, ou TRIAGEM_PERMITIR_MODELO_NAO_APROVADO=1.
+        self.modelo_aprovado = verificar_modelo(
+            agente.MODELO, permitir_modelo_nao_aprovado or liberado_pelo_ambiente())
+        if not self.modelo_aprovado:
+            avisar_modelo_nao_aprovado(agente.MODELO)
         # ASI03: com TRIAGEM_EXIGE_IDENTIDADE=1, sem `ra_autenticado` não há atendimento.
         self.exige_identidade = (os.environ.get("TRIAGEM_EXIGE_IDENTIDADE") == "1"
                                  if exige_identidade is None else exige_identidade)

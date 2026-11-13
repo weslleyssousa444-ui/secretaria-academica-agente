@@ -28,8 +28,22 @@ cp .env.example .env
 # (crie a chave em https://console.groq.com/keys — free tier, sem cartão)
 
 python src/dados.py              # cria e semeia o banco simulado (idempotente)
-python -m pytest                 # 210 testes offline, sem chave e sem rede
+python -m pytest                 # 216 testes offline, sem chave e sem rede
 ```
+
+### Rodar com outro modelo (por exemplo, na correção, com Ollama)
+
+Por segurança (ASI10, `docs/seguranca.md` §3), o sistema **só sobe** com o modelo aprovado (`qwen/qwen3.8-27b`). Para rodar com outro modelo, ligue a liberação explícita; o sistema avisa no terminal e o trace marca as execuções como de modelo **não aprovado**:
+
+```bash
+# .env (ou variáveis de ambiente)
+OPENAI_API_KEY=ollama                         # o Ollama ignora o valor, mas o SDK exige um
+LLM_BASE_URL=http://localhost:11434/v1
+LLM_MODELO=gpt-oss:20b
+TRIAGEM_PERMITIR_MODELO_NAO_APROVADO=1        # só o valor 1 libera
+```
+
+Os testes (`python -m pytest`) não dependem do modelo: rodam offline com um modelo roteirizado.
 
 A instalação de `requirements-agente.txt` (o que a imagem Docker usa) foi verificada num ambiente limpo. O `requirements.txt` da raiz traz também as dependências dos Exercícios 7 e 8 (`torch`, `sentence-transformers`, ~2 GB), que **o sistema não usa**.
 
@@ -165,7 +179,7 @@ Os rótulos de validação do juiz são **provisórios, do assistente de IA, nã
 Governança (Aula 12): o *model card* do agente de triagem em [`docs/model-card.md`](docs/model-card.md), com 12 campos (**reescrito na Parte 3 para o sistema em grafo**; a versão do Exercício 12 está no histórico do git, `b3f4596`). Cada afirmação aponta para a linha de código, o teste, o log ou a saída de comando que a sustenta, ou está marcada como **LACUNA** (lista no fim do documento, com correção e prioridade). As saídas de comando citadas estão em [`docs/evidencias/`](docs/evidencias/).
 
 ```bash
-python -m pytest -q   # 210 passed, 1 deselected (Python 3.10+), sem chave de API
+python -m pytest -q   # 216 passed, 1 deselected (Python 3.10+), sem chave de API
 ```
 
 `tests/test_autoridade.py` prova os limites aplicados fora do modelo (o roteiro de teste faz o "modelo" desobedecer o prompt e verifica que o código barra). `tests/test_lacunas.py` fixa o comportamento atual de cada lacuna; quando uma for corrigida, o teste dela falha e deve ser invertido.
@@ -203,7 +217,7 @@ O mesmo sistema da Parte 2, agora com **evidência** de que se comporta como o g
 | **Observabilidade**: trace OpenTelemetry (GenAI), modos de falha, SLI e SLO | [`docs/observabilidade.md`](docs/observabilidade.md), [`src/triagem/telemetria.py`](src/triagem/telemetria.py) | `TRIAGEM_TRACES_DIR=traces python src/chat.py` e depois `python -m evals.reconstruir traces/traces.jsonl --conversa <id>` |
 
 ```bash
-python -m pytest -q                         # 210 passed, 1 deselected; sem chave
+python -m pytest -q                         # 216 passed, 1 deselected; sem chave
 # com a chave da Groq e cota nova (cada rodada completa custa ~170 mil tokens): ver docs/evals.md §4.4
 python -m evals.rodar --rotulo B --run 1 --pasta evals/resultados/2026-11-11-B-r1
 ```

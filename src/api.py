@@ -40,7 +40,7 @@ from pydantic import BaseModel, Field
 import agente
 import dados
 from triagem import humano
-from triagem.modelos import verificar_modelo
+from triagem.modelos import liberado_pelo_ambiente, verificar_modelo
 from triagem.sistema import ConversaEncerrada, IdentidadeAusente, Sistema
 
 PASTA_LOGS = Path(os.environ["LOGS_DIR"]) if os.environ.get("LOGS_DIR") else None
@@ -62,7 +62,8 @@ def obter_sistema() -> Sistema:
 @asynccontextmanager
 async def ciclo_de_vida(_app: FastAPI):
     global _sistema
-    verificar_modelo(agente.MODELO)  # ASI10: não sobe com modelo fora da lista aprovada
+    # ASI10: não sobe com modelo fora da lista aprovada (salvo TRIAGEM_PERMITIR_MODELO_NAO_APROVADO=1)
+    verificar_modelo(agente.MODELO, liberado_pelo_ambiente())
     dados.inicializar()  # idempotente: semeia só se o banco estiver vazio
     yield
     if _sistema is not None:
@@ -135,7 +136,12 @@ def mensagens(corpo: Mensagem, x_aluno_ra: str | None = Header(default=None)) ->
         _gravar_registro(conversa_id, resultado, sistema.estado(conversa_id))
 
     saida = resultado["saida"]
+    # O contrato de saída inteiro (src/triagem/saida.py, docs/io.md §2): além do
+    # texto, a FONTE que sustenta a resposta e a SUFICIÊNCIA (a recusa é um campo,
+    # não uma frase). `resposta` repete `resultado` por compatibilidade.
     return {"conversa_id": conversa_id, "resposta": saida["resultado"],
+            "resultado": saida["resultado"], "fonte": saida["fonte"],
+            "suficiencia": saida["suficiencia"],
             "decisao": saida["decisao"], "protocolo": saida["protocolo"],
             "aguardando_coordenacao": resultado["aguardando_humano"],
             "termino": resultado["termino"], "motivo": resultado["motivo"],

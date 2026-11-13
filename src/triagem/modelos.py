@@ -16,6 +16,9 @@
 
 from __future__ import annotations
 
+import os
+import sys
+
 MODELOS_APROVADOS: dict[str, str] = {
     "qwen/qwen3.8-27b": (
         "docs/modelos.md §3.5 (35/40 em 22-23/09/2026); verificador 39/40 com 0 falso "
@@ -41,3 +44,21 @@ def verificar_modelo(modelo: str, permitir_nao_aprovado: bool = False) -> bool:
         f"o modelo {modelo!r} não está em MODELOS_APROVADOS (src/triagem/modelos.py). "
         "Rode a suíte de avaliação sobre ele (python -m evals.rodar) e, se aprovado, "
         "acrescente-o à lista com a referência do resultado.")
+
+
+# Liberação EXPLÍCITA para quem precisa rodar com outro modelo (a correção do
+# professor usa um modelo local, p.ex. gpt-oss:20b no Ollama). Desligada por
+# padrão: o controle continua fail-closed. Ligada, o sistema sobe, avisa no
+# stderr e o trace marca cada execução com `agente.modelo_aprovado = false`,
+# então nenhum número medido assim se confunde com o do modelo aprovado.
+VARIAVEL_LIBERACAO = "TRIAGEM_PERMITIR_MODELO_NAO_APROVADO"
+
+
+def liberado_pelo_ambiente() -> bool:
+    return os.environ.get(VARIAVEL_LIBERACAO) == "1"
+
+
+def avisar_modelo_nao_aprovado(modelo: str) -> None:
+    print(f"AVISO (ASI10): o modelo {modelo!r} NÃO está em MODELOS_APROVADOS; o sistema "
+          f"sobe só porque {VARIAVEL_LIBERACAO}=1. Os resultados não valem como os do "
+          "modelo aprovado, e o trace marca agente.modelo_aprovado = false.", file=sys.stderr)

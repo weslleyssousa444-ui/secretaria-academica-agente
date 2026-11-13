@@ -102,6 +102,7 @@ def test_ASI03_a_api_responde_401_sem_identidade_quando_exigida(banco, tmp_path,
 # ---------------------------------------------------------------- ASI10
 
 def test_ASI10_o_sistema_nao_sobe_com_modelo_fora_da_lista(banco, tmp_path, monkeypatch):
+    monkeypatch.delenv("TRIAGEM_PERMITIR_MODELO_NAO_APROVADO", raising=False)
     monkeypatch.setattr(agente, "MODELO", "um-modelo-que-ninguem-mediu")
     with pytest.raises(ModeloNaoAprovado) as erro:
         Sistema(checkpoint=tmp_path / "cp.sqlite", memoria_dir=tmp_path / "mem")
@@ -129,9 +130,43 @@ def test_ASI10_so_o_runner_do_eval_avalia_um_candidato_e_ele_fica_marcado(banco,
     assert verificar_modelo("openai/gpt-oss-20b", permitir_nao_aprovado=True) is False
 
 
+def test_ASI10_liberacao_pelo_ambiente_sobe_avisa_e_marca(banco, tmp_path, monkeypatch, capsys):
+    """A correção roda com outro modelo (p.ex. gpt-oss:20b no Ollama). Com a liberação
+    EXPLÍCITA o sistema sobe, avisa no stderr e fica marcado como não aprovado."""
+    monkeypatch.setattr(agente, "MODELO", "gpt-oss:20b")
+    monkeypatch.setenv("TRIAGEM_PERMITIR_MODELO_NAO_APROVADO", "1")
+    s = Sistema(checkpoint=tmp_path / "cp.sqlite", memoria_dir=tmp_path / "mem")
+    try:
+        assert s.modelo_aprovado is False
+    finally:
+        s.fechar()
+    aviso = capsys.readouterr().err
+    assert "gpt-oss:20b" in aviso and "TRIAGEM_PERMITIR_MODELO_NAO_APROVADO=1" in aviso
+
+
+@pytest.mark.parametrize("valor", ["", "0", "true", "sim"])
+def test_ASI10_so_o_valor_1_libera(banco, tmp_path, monkeypatch, valor):
+    monkeypatch.setattr(agente, "MODELO", "gpt-oss:20b")
+    monkeypatch.setenv("TRIAGEM_PERMITIR_MODELO_NAO_APROVADO", valor)
+    with pytest.raises(ModeloNaoAprovado):
+        Sistema(checkpoint=tmp_path / "cp.sqlite", memoria_dir=tmp_path / "mem")
+
+
+def test_ASI10_a_api_sobe_com_a_liberacao_explicita(banco, tmp_path, monkeypatch):
+    from fastapi.testclient import TestClient
+    import api
+    monkeypatch.setattr(agente, "MODELO", "gpt-oss:20b")
+    monkeypatch.setenv("TRIAGEM_PERMITIR_MODELO_NAO_APROVADO", "1")
+    api._sistema = None
+    with TestClient(api.app) as cliente:
+        assert cliente.get("/saude").json()["modelo"] == "gpt-oss:20b"
+    api._sistema = None
+
+
 def test_ASI10_a_api_nao_sobe_com_modelo_fora_da_lista(banco, tmp_path, monkeypatch):
     from fastapi.testclient import TestClient
     import api
+    monkeypatch.delenv("TRIAGEM_PERMITIR_MODELO_NAO_APROVADO", raising=False)
     monkeypatch.setattr(agente, "MODELO", "um-modelo-que-ninguem-mediu")
     api._sistema = None
     with pytest.raises(ModeloNaoAprovado):

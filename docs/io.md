@@ -35,7 +35,7 @@ A saída **não é texto solto do modelo**. É um objeto Pydantic, montado pelo 
 
 **A recusa faz parte do contrato.** `suficiencia.suficiente = false` com o motivo é uma saída **válida**, e é o que o sistema devolve quando falta o RA, quando o Regimento não responde ou quando o pedido está fora do escopo. Uma saída sem `fonte` e sem `resultado` não existe: `SaidaTriagem` recusa `resultado` vazio e `decisao` fora da lista (`tests/test_triagem.py::test_resultado_vazio_nao_e_saida_valida`).
 
-**Na API** (`POST /mensagens`), a resposta é um recorte do objeto: `conversa_id`, `resposta` (= `resultado`), `decisao`, `protocolo`, `aguardando_coordenacao`, `termino`, `motivo`, `encerrada`. Nunca traz o retorno cru das ferramentas, que contém cadastro e financeiro do aluno (`tests/test_api.py::test_resposta_nao_expoe_resultado_de_ferramenta`).
+**Na API** (`POST /mensagens`), a resposta traz o contrato inteiro: `resultado` (e `resposta`, a mesma coisa, por compatibilidade), **`fonte`**, **`suficiencia`**, `decisao`, `protocolo`, além de `conversa_id`, `aguardando_coordenacao`, `termino`, `motivo` e `encerrada` (até 13/11/2026 a API devolvia um recorte sem `fonte` e `suficiencia`; `tests/test_api.py::test_conversa_em_dois_turnos_emite_e_grava_registro` confere os dois campos). Nunca traz o retorno cru das ferramentas, que contém cadastro e financeiro do aluno (`tests/test_api.py::test_resposta_nao_expoe_resultado_de_ferramenta`).
 
 ## 3. Os exemplos
 
