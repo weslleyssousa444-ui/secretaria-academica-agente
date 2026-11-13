@@ -36,6 +36,6 @@
 </div>
 </div>
 <p style="position:absolute;left:128px;bottom:64px;width:1000px;font-size:24px;color:#5B6676">Secretaria Acadêmica Agente</p>
-<p style="position:absolute;right:128px;bottom:64px;width:200px;text-align:right;font-size:24px;color:#5B6676">6 / 26</p>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;text-align:right;font-size:24px;color:#5B6676">6 / 27</p>
 <aside>As peças técnicas, rapidamente. O modelo é o qwen3.8-27b, servido pela Groq, por uma API compatível com a da OpenAI, no plano gratuito; a cota diária desse plano é o que limita o ritmo das avaliações. O fluxo é um grafo do LangGraph, o que permite pausar no meio para esperar a coordenação e retomar depois. A API é em Python com FastAPI. Os dados são fictícios, em SQLite; a busca no Regimento usa o FTS5 do próprio SQLite, e o estado das conversas pausadas também fica em arquivo. Cada decisão gera um trace no padrão OpenTelemetry. São 210 testes automáticos que rodam sem rede e sem chave, e uma imagem Docker com versões fixadas.</aside>
 </section>

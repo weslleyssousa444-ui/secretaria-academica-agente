@@ -1,20 +1,75 @@
 {
   "v": 4,
-  "createdOnFiles": {"v": 1, "at": "2026-11-12T14:45:00Z"},
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-11-12T14:45:00Z"
+  },
   "lists": "css",
   "title": "Secretaria Acadêmica Agente",
-  "order": ["cover", "sumario", "etapa-1", "o-agente", "tres-partes", "tecnologias", "etapa-2", "passo-a-passo", "arquitetura", "ferramentas", "tipos-de-pedido", "codigo-decide", "rag-memoria", "humano", "etapa-3", "seguranca", "achado", "avaliacao", "observabilidade", "etapa-4", "demo", "etapa-5", "autocritica", "limites", "pendencias", "fecho"],
+  "order": [
+    "cover",
+    "sumario",
+    "etapa-1",
+    "o-agente",
+    "tres-partes",
+    "tecnologias",
+    "etapa-2",
+    "passo-a-passo",
+    "arquitetura",
+    "ferramentas",
+    "tipos-de-pedido",
+    "codigo-decide",
+    "rag-memoria",
+    "humano",
+    "etapa-3",
+    "seguranca",
+    "achado",
+    "avaliacao",
+    "observabilidade",
+    "etapa-4",
+    "video",
+    "demo",
+    "etapa-5",
+    "autocritica",
+    "limites",
+    "pendencias",
+    "fecho"
+  ],
   "sections": {
-    "s0": {"description": "Abertura e sumário da apresentação.", "start": "cover"},
-    "s1": {"description": "Etapa 1: o problema, as três entregas e as tecnologias.", "start": "etapa-1"},
-    "s2": {"description": "Etapa 2: como o agente funciona, do pedido à saída: grafo, ferramentas, regras, RAG, memória e pausa humana.", "start": "etapa-2"},
-    "s3": {"description": "Etapa 3: segurança fora do prompt, avaliação e observabilidade, com os números medidos.", "start": "etapa-3"},
-    "s4": {"description": "Etapa 4: o agente publicado online e a demonstração ao vivo.", "start": "etapa-4"},
-    "s5": {"description": "Etapa 5: o que achamos de errado, os limites e o que falta.", "start": "etapa-5"}
+    "s0": {
+      "description": "Abertura e sumário da apresentação.",
+      "start": "cover"
+    },
+    "s1": {
+      "description": "Etapa 1: o problema, as três entregas e as tecnologias.",
+      "start": "etapa-1"
+    },
+    "s2": {
+      "description": "Etapa 2: como o agente funciona, do pedido à saída: grafo, ferramentas, regras, RAG, memória e pausa humana.",
+      "start": "etapa-2"
+    },
+    "s3": {
+      "description": "Etapa 3: segurança fora do prompt, avaliação e observabilidade, com os números medidos.",
+      "start": "etapa-3"
+    },
+    "s4": {
+      "description": "Etapa 4: o agente publicado online, o vídeo dele rodando e a demonstração ao vivo.",
+      "start": "etapa-4"
+    },
+    "s5": {
+      "description": "Etapa 5: o que achamos de errado, os limites e o que falta.",
+      "start": "etapa-5"
+    }
   },
   "faces": {
-    "space-grotesk": {"family": "Space Grotesk", "href": "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap"},
-    "inter": {"family": "Inter", "href": "https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"}
+    "space-grotesk": {
+      "family": "Space Grotesk",
+      "href": "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap"
+    },
+    "inter": {
+      "family": "Inter",
+      "href": "https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+    }
   },
   "designSystems": []
 }
