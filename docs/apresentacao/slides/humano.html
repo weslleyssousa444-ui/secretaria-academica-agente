@@ -26,6 +26,6 @@
 </div>
 </div>
 <p style="position:absolute;left:128px;bottom:64px;width:1000px;font-size:24px;color:#5B6676">Secretaria Acadêmica Agente</p>
-<p style="position:absolute;right:128px;bottom:64px;width:200px;text-align:right;font-size:24px;color:#5B6676">15 / 29</p>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;text-align:right;font-size:24px;color:#5B6676">15 / 31</p>
 <aside>É o ponto em que o sistema reconhece que há decisão que não é dele. Quando o pedido é de trancamento, o agente escala, o grafo responde ao aluno e fica pausado, com o estado gravado em arquivo. Por isso a pausa sobrevive ao fim do processo, e a coordenação pode decidir em outro dia. Ela tem quatro saídas: aprovar, rejeitar, aprovar editando, e a expiração, quando passa o prazo de 48 horas. A decisão é idempotente: repetir a mesma chamada não grava de novo. As rotas da coordenação exigem um token e respondem 503 se nenhum token estiver configurado. Limite declarado: é um token único compartilhado, e o campo de quem decidiu é declarado por quem chama, não verificado. Não há tela própria para a coordenação.</aside>
 </section>

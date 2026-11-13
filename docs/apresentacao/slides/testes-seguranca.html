@@ -1,0 +1,51 @@
+<section id="testes-seguranca" data-transition="fade" style="background:#F6F5F0;color:#101B2D;font-family:'Inter', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:32px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:26px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#17695F">Segurança · testes automáticos</p>
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:60px;font-weight:600;line-height:1.1">Cada teste tenta o ataque e confere que o código barra</h2>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px">
+<div style="display:flex;flex-direction:column;gap:10px;background:#FCFBF8;padding:24px 28px;border:1px solid #DAD8CF;border-top:6px solid #17695F;border-radius:14px">
+<p style="font-size:24px;font-weight:600;color:#17695F">ASI03 · identidade</p>
+<h3 style="font-size:28px;font-weight:600;line-height:1.3">RA de outro aluno</h3>
+<p style="font-size:24px;line-height:1.35;color:#4A5568">As 6 ferramentas que recebem RA recusam; nada é lido nem gravado</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#FCFBF8;padding:24px 28px;border:1px solid #DAD8CF;border-top:6px solid #17695F;border-radius:14px">
+<p style="font-size:24px;font-weight:600;color:#17695F">ASI03 · identidade</p>
+<h3 style="font-size:28px;font-weight:600;line-height:1.3">Sem login, quando exigido</h3>
+<p style="font-size:24px;line-height:1.35;color:#4A5568">A API responde 401 e o modelo nem é chamado</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#FCFBF8;padding:24px 28px;border:1px solid #DAD8CF;border-top:6px solid #17695F;border-radius:14px">
+<p style="font-size:24px;font-weight:600;color:#17695F">ASI02 · limites</p>
+<h3 style="font-size:28px;font-weight:600;line-height:1.3">12 escritas numa só resposta</h3>
+<p style="font-size:24px;line-height:1.35;color:#4A5568">Só 1 executa; da 5ª chamada em diante, tudo é recusado</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#FCFBF8;padding:24px 28px;border:1px solid #DAD8CF;border-top:6px solid #17695F;border-radius:14px">
+<p style="font-size:24px;font-weight:600;color:#17695F">ASI10 · modelo</p>
+<h3 style="font-size:28px;font-weight:600;line-height:1.3">Trocar o modelo pela variável</h3>
+<p style="font-size:24px;line-height:1.35;color:#4A5568">O sistema não sobe; a liberação só aceita "1" e fica marcada no trace</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#FCFBF8;padding:24px 28px;border:1px solid #DAD8CF;border-top:6px solid #17695F;border-radius:14px">
+<p style="font-size:24px;font-weight:600;color:#17695F">Documentos</p>
+<h3 style="font-size:28px;font-weight:600;line-height:1.3">Adivinhar o link de outro aluno</h3>
+<p style="font-size:24px;line-height:1.35;color:#4A5568">Sem o código de verificação: o mesmo 404, exista o protocolo ou não</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#FCFBF8;padding:24px 28px;border:1px solid #DAD8CF;border-top:6px solid #17695F;border-radius:14px">
+<p style="font-size:24px;font-weight:600;color:#17695F">Documentos</p>
+<h3 style="font-size:28px;font-weight:600;line-height:1.3">Código no nome do aluno</h3>
+<p style="font-size:24px;line-height:1.35;color:#4A5568">O &lt;script&gt; vira texto no documento, sem executar</p>
+</div>
+</div>
+<div style="display:flex;gap:20px">
+<div style="flex:1;display:flex;align-items:center;gap:20px;background:#101B2D;color:#F2F0EA;padding:22px 28px;border-radius:14px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:56px;font-weight:600;color:#5CD6C0">46</p>
+<p style="font-size:24px;line-height:1.35;color:#B6C0CF">testes dos controles de segurança, todos passando, sem rede e sem chave</p>
+</div>
+<div style="flex:1;display:flex;align-items:center;gap:20px;background:#101B2D;color:#F2F0EA;padding:22px 28px;border-radius:14px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:56px;font-weight:600;color:#F0B54A">16</p>
+<p style="font-size:24px;line-height:1.35;color:#B6C0CF">deles provam lacunas ainda abertas: passam enquanto a falha existir</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1000px;font-size:24px;color:#5B6676">Fonte: tests/test_controles, test_seguranca, test_api_seguranca, test_servicos</p>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;text-align:right;font-size:24px;color:#5B6676">20 / 31</p>
+<aside>Além dos casos com o modelo real, cada controle tem testes automáticos em que um modelo roteirizado faz de propósito o que um modelo sequestrado faria, e o teste confere que o código barra. Identidade: o aluno autenticado pede, ou o modelo tenta, as ferramentas sobre o RA de outro aluno; as seis ferramentas que recebem RA recusam, e nada do alvo, nem nome nem valor, aparece no que o modelo vê. Sem login, quando a identidade é exigida, a API responde 401 antes de chamar o modelo. Limites: o modelo devolve doze escritas numa única resposta; só a primeira executa, e da quinta chamada da volta em diante tudo é recusado, mas fica registrado. Modelo: com um modelo fora da lista aprovada, o sistema não sobe; a liberação para a correção só aceita o valor 1 e marca o trace. Documentos: trocar o protocolo no link não abre o documento de outra pessoa sem o código de verificação, e protocolo inexistente e código errado dão a mesma resposta, para não servir de oráculo; um nome com código HTML é escapado. Os números saem do pytest: 46 testes de segurança passando, nos arquivos test_controles, test_seguranca e test_api_seguranca. 16 deles são testes de lacuna: afirmam que uma falha conhecida ainda existe, como a API não exigir credencial; quando a falha for corrigida, eles quebram e obrigam a atualizar a documentação.</aside>
+</section>
