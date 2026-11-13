@@ -168,6 +168,8 @@ A pós-condição do trancamento (L02), a validação do texto, o erro de ferram
 
 O controle 1 trata a **sessão autenticada** como verdade. **Não há portal:** quem define `X-Aluno-RA` é quem chama a API, e a variável `TRIAGEM_CONFIA_NO_PORTAL=1` apenas declara que há um portal na frente que o define e remove o que vier de fora. Sem um portal real, **qualquer cliente pode se declarar qualquer aluno** no cabeçalho. O controle é correto **dado** um portal; a existência dele é uma premissa, e `docs/arquitetura-v1.md` §2 a registra como "integração prevista, não existente". Os dados são 100% sintéticos e a API roda na máquina do grupo. **Reavaliar** antes de qualquer dado real, de expor a porta (`[`docker-compose.yml:11`](../docker-compose.yml#L11)` publica `8000:8000` em todas as interfaces: trocar para `127.0.0.1:8000:8000`) ou de ligar um portal.
 
+> **Atualização de 13/11/2026 (fato, não aceite):** o texto acima diz que o sistema "não está em produção" e que "a API roda na máquina do grupo". Isso deixou de valer: desde 13/11 a API roda no Render (`https://secretaria-academica-agente.onrender.com`) e o site da Hostinger a expõe **para qualquer pessoa**, sem login. Os dados continuam 100% sintéticos. O pedido de aceite enviado ao Erick informa essa mudança; o aceite (ou não) deve considerá-la.
+
 | | |
 |---|---|
 | **Quem aceita** | o **responsável de risco**, Erick (nomeado em `docs/model-card.md` §1). **O aceite é dele:** este documento **propõe** os três aceites acima, e nenhum deles foi registrado por mim |
