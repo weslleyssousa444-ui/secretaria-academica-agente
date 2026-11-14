@@ -6,7 +6,7 @@ Arquivo de entrada para o Claude Code numa máquina nova. Escrito em **12/11/202
 
 1. Leia este arquivo, depois [`CONTINUIDADE.md`](CONTINUIDADE.md) (pendências, com comandos) e [`docs/mudancas.md`](docs/mudancas.md) (histórico e defeitos achados).
 2. `git log --oneline -15` e `git status`: confira que o repositório está em dia com o GitHub.
-3. Monte o ambiente (seção 2) e rode os testes (seção 3). Esperado: **238 passed, 1 deselected**.
+3. Monte o ambiente (seção 2) e rode os testes (seção 3). Esperado: **255 passed, 1 deselected**.
 4. **Antes de gastar cota do modelo, pergunte ao usuário o que ele quer fazer.** A cota é pequena (seção 4) e a gasta de um dia não volta.
 5. Responda **em português**. O usuário escreve rápido e com erros de digitação; entenda a intenção.
 
@@ -38,7 +38,7 @@ python src/dados.py                     # recria dados/academico.db (não está 
 
 ```bash
 OPENAI_API_KEY=x PYTHONDONTWRITEBYTECODE=1 python -m pytest -q -p no:cacheprovider
-# esperado: 238 passed, 1 deselected
+# esperado: 255 passed, 1 deselected
 ```
 
 `OPENAI_API_KEY=x` é necessário: com a variável **vazia** a coleta dos testes quebra. O teste deselecionado é o `eval`, que usa o modelo real. O "modelo" dos testes é roteirizado: faz de propósito o que um modelo ruim faria, e o teste prova que o **código** barra.
@@ -90,7 +90,7 @@ O runner é **retomável**: pula o que já está em `execucoes.jsonl`. A pasta B
 - **Primeiro a Parte 2, depois a Parte 3**, sobre o mesmo repositório (já feito).
 - **A chave da Groq que apareceu em texto numa sessão antiga não será revogada** (decisão de 11/11/2026; risco residual em `docs/seguranca.md` §6). Não a trate como pendência.
 - **Seguir sem Docker.** O que depende dele fica **PENDENTE** em `docs/empacotamento.md`, sem ajustar o texto para parecer concluído.
-- **Opcionais do enunciado da Parte 3 (multiagente, MCP, multimídia): não feitos.** Trabalho novo e grande; só começar se o usuário pedir, e depois de a rodada B fechar.
+- **Opcionais da Parte 3 (multiagente, MCP, multimídia): feitos em 13/11/2026 a pedido do usuário**, em volta do agente do aluno e sem mudá-lo ([`docs/multiagente-mcp-multimidia.md`](docs/multiagente-mcp-multimidia.md)): servidor MCP só leitura, assistente da coordenação (2º agente, não decide), voz no site. O assistente **não foi avaliado** com o modelo real.
 
 ## 7. Apresentação ao professor Celso
 
@@ -123,9 +123,10 @@ O runner é **retomável**: pula o que já está em `execucoes.jsonl`. A pasta B
 |---|---|
 | `src/triagem/` | o sistema em grafo: `grafo.py`, `nos.py`, `estado.py`, `sistema.py` (ponto de entrada), `validacao.py`, `humano.py`, `regimento.py`, `memoria.py`, `modelos.py` (ASI10), `telemetria.py`, `saida.py` |
 | `src/agente.py` | motor da Parte 1 reaproveitado (ferramentas, guardas, orçamento); `src/api.py`, `src/chat.py`, `src/coordenacao.py` |
+| `src/mcp_secretaria.py`, `src/assistente_coordenacao.py` | servidor MCP só leitura e o 2º agente (parecer para a coordenação): `python src/coordenacao.py preparar CASO-3001` |
 | `src/prompts/` | prompts versionados (`triagem-v2.*` é o atual) |
 | `evals/` | `rodar.py`, `comparar.py`, `metricas.py`, `atualizar_docs.py`, `reconstruir.py`, `rotulagem.py`; dataset em `evals/dataset/`; resultados em `evals/resultados/` |
-| `tests/` | 238 testes offline (`test_controles.py` tenta a ação indevida de cada controle) |
+| `tests/` | 255 testes offline (`test_controles.py` tenta a ação indevida de cada controle) |
 | `docs/model-card.md` | **o documento central**: autoridade, riscos, lacunas L01–L29, §11 reconstrução de decisão |
 | `docs/` | `grafo.md`, `arquitetura.md`, `io.md`, `prompts.md`, `rag.md`, `memoria.md`, `humano.md`, `evals.md`, `observabilidade.md`, `seguranca.md`, `mudancas.md`, `empacotamento.md` |
 | `exercicios/` | exercícios 7 a 15 da disciplina (RAG, memória, LangGraph, MCP, suíte, riscos, observabilidade) |

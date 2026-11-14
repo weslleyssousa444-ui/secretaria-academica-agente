@@ -5,6 +5,7 @@
 #   python src/coordenacao.py decidir CASO-3001 aprovar_editando --por coord-1 --editar semestre_efetivo=2027.1
 #   python src/coordenacao.py decidir CASO-3001 rejeitar --por coord-1
 #   python src/coordenacao.py expirar            # vence o que passou do prazo
+#   python src/coordenacao.py preparar CASO-3001 # parecer do assistente (2º agente, via MCP; usa o modelo)
 #
 # Retoma o grafo pausado pelo MESMO arquivo de checkpoint que o chat e a API
 # usam (`TRIAGEM_CHECKPOINT`). Repetir `decidir` não grava duas vezes.
@@ -31,9 +32,16 @@ def main() -> int:
     d.add_argument("--editar", action="append", default=[], metavar="CAMPO=VALOR",
                    help=f"campo editado ({', '.join(humano.CAMPOS_EDITAVEIS)})")
     sub.add_parser("expirar", help="vence as esperas que passaram do prazo")
+    p = sub.add_parser("preparar", help="o assistente da coordenação prepara o parecer de um caso (não decide)")
+    p.add_argument("protocolo")
     args = ap.parse_args()
 
     dados.inicializar()
+    if args.comando == "preparar":
+        import asyncio
+        from assistente_coordenacao import preparar_pelo_servidor
+        print(json.dumps(asyncio.run(preparar_pelo_servidor(args.protocolo)), ensure_ascii=False, indent=2))
+        return 0
     sistema = Sistema()
     try:
         if args.comando == "listar":

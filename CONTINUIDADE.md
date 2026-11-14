@@ -14,7 +14,7 @@ Exige **Python 3.10 ou superior** (a API usa `str | None` em modelos Pydantic). 
 
 ```bash
 PYTHONDONTWRITEBYTECODE=1 .venv311/bin/python -m pytest -q -p no:cacheprovider
-# esperado em 13/11/2026 (com boleto e consulta): 238 passed, 1 deselected
+# esperado em 13/11/2026 (com boleto, consulta, MCP e o 2º agente): 255 passed, 1 deselected
 ```
 
 - [ ] Regenerar `docs/evidencias/pytest.txt` (ainda é de 16/10, de antes da Parte 2): `python -m pytest -v > docs/evidencias/pytest.txt`.

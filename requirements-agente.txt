@@ -22,3 +22,8 @@ langgraph-checkpoint-sqlite==3.1.1
 opentelemetry-api==1.45.2
 opentelemetry-sdk==1.45.2
 opentelemetry-semantic-conventions==0.66b2
+
+# 13/11/2026 (opcionais da Parte 3): o servidor MCP só leitura e o assistente da
+# coordenação, que o consome (docs/multiagente-mcp-multimidia.md). Mesma versão do
+# Exercício 10: mcp>=2 renomeou FastMCP.
+mcp==1.30.0

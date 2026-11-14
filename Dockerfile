@@ -29,10 +29,11 @@ RUN useradd --create-home --uid 10001 agente \
 # Só os arquivos que o agente usa, por nome — segunda barreira contra o .env,
 # além do .dockerignore.
 COPY src/agente.py src/dados.py src/api.py src/chat.py src/coordenacao.py \
-     src/chunking.py src/memoria_semantica.py src/memoria_procedural.py ./src/
+     src/chunking.py src/memoria_semantica.py src/memoria_procedural.py \
+     src/mcp_secretaria.py src/assistente_coordenacao.py ./src/
 COPY src/triagem/ ./src/triagem/
 # agente.py ainda lê a v1 (laço da Parte 1, motor das ferramentas); o grafo lê a v3 (13/11/2026).
-COPY src/prompts/triagem-v1.txt src/prompts/triagem-v3.txt ./src/prompts/
+COPY src/prompts/triagem-v1.txt src/prompts/triagem-v3.txt src/prompts/coordenacao-v1.txt ./src/prompts/
 # O Regimento simulado, fonte do RAG (src/triagem/regimento.py).
 COPY dados/regimento_dados.py ./dados/
 

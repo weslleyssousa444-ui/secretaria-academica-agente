@@ -233,3 +233,14 @@ Nenhuma chave da Groq (`gsk_`) nem da OpenAI (`sk-`) aparece em qualquer commit,
 - **A API foi testada em processo** (`TestClient`), não como serviço de pé numa rede: a exposição real da porta depende de onde o contêiner roda e de como o `docker-compose.yml` a publica, o que só `docker compose up` confirma.
 - **Os impactos são avaliados como se os dados fossem reais**; hoje são sintéticos.
 - **O responsável de risco não aceitou nada ainda** (§4).
+
+## 8. O segundo agente, o servidor MCP e a voz (13/11/2026)
+
+Detalhe em [`docs/multiagente-mcp-multimidia.md`](multiagente-mcp-multimidia.md).
+
+| Canal novo | Risco | O que o limita (no código) |
+|---|---|---|
+| **Servidor MCP** (`src/mcp_secretaria.py`) | um cliente MCP qualquer ler dados de aluno | publica **só leitura** (`test_mcp_nao_publica_escrita`); roda por stdio, aberto pelo próprio assistente, ou em `127.0.0.1` com `--http`. **Não tem autenticação**: quem roda o servidor na máquina lê qualquer RA, como quem abre o SQLite. Não está publicado no Render |
+| **Assistente da coordenação** | o parecer induzir a decisão (viés de automação) ou vazar dado de outro aluno | não recomenda (validado por regex, com contingência), só consulta o RA do caso, não escreve; a decisão continua pelo `decidir` com `--por` |
+| **Voz no site** | o áudio sai para o serviço de reconhecimento do navegador (Google, no Chrome) | o botão só aparece se o navegador oferecer o recurso; o texto não é enviado sozinho. **Não mitigado:** quem usa o microfone manda a própria voz a um terceiro que este projeto não avaliou (mesma natureza da L14) |
+

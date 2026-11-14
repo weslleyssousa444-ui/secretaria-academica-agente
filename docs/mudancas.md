@@ -96,7 +96,7 @@ São o tipo de achado que mais importa para a honestidade da entrega: o texto af
 | Métricas, SLO medido, **trace real** | dependem da rodada B; `docs/observabilidade.md` §4 diz **PENDENTE** |
 | Rótulos humanos do juiz | **o grupo precisa rotular** 20 saídas ([`evals/rotulagem/LEIA-ME.md`](../evals/rotulagem/LEIA-ME.md)); nenhum rótulo foi preenchido por código |
 | Aceite de risco | **Erick** precisa aceitar ou recusar os três riscos propostos (`docs/seguranca.md` §4) |
-| Multiagente, MCP, multimídia (opcionais do enunciado) | **não feitos** |
+| Multiagente, MCP, multimídia (opcionais do enunciado) | **feitos em 13/11/2026**, em volta do agente do aluno, sem mudá-lo: [`docs/multiagente-mcp-multimidia.md`](multiagente-mcp-multimidia.md). O assistente da coordenação **não foi avaliado** com o modelo real |
 
 ## 5. Para completar, na ordem
 
