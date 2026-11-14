@@ -28,6 +28,7 @@
 from __future__ import annotations
 
 import hashlib
+import os
 import json
 import math
 import re
@@ -207,7 +208,7 @@ class Memoria:
         return achados
 
     def remover_titular(self, ra: str, checkpoint_db: Path | None = None,
-                        pasta_registros: Path | None = None) -> dict:
+                        pasta_registros: Path | None = None, trace: Path | None = None) -> dict:
         """Remove o RA de TODAS as estruturas que o guardam: episódica,
         semântica, checkpoint (as conversas inteiras que o citam) e registros
         de execução. A procedural NÃO é editada sozinha: uma regra que cita o
@@ -215,14 +216,21 @@ class Memoria:
         relatorio = {"episodios": self.episodica.remover(ra),
                      "fatos": self.semantica.remover(ra),
                      "regras_suspeitas": self.procedural.contem_texto(ra),
-                     "threads_de_checkpoint": 0, "registros": 0}
+                     "threads_de_checkpoint": 0, "registros": 0, "spans_do_trace": 0}
         if checkpoint_db and Path(checkpoint_db).exists():
             relatorio["threads_de_checkpoint"] = _apagar_threads_com_ra(Path(checkpoint_db), ra)
         if pasta_registros and Path(pasta_registros).exists():
             for arquivo in Path(pasta_registros).glob("*.json*"):
+                if arquivo.name == "traces.jsonl":
+                    continue   # o trace é editado por conversa, abaixo; não se apaga inteiro
                 if ra in arquivo.read_text(encoding="utf-8", errors="ignore"):
                     arquivo.unlink()
                     relatorio["registros"] += 1
+        if trace is None and os.environ.get("TRIAGEM_TRACES_DIR"):
+            trace = Path(os.environ["TRIAGEM_TRACES_DIR"]) / "traces.jsonl"
+        if trace:
+            from triagem.retencao import remover_titular_do_trace
+            relatorio["spans_do_trace"] = remover_titular_do_trace(Path(trace), ra)
         return relatorio
 
 

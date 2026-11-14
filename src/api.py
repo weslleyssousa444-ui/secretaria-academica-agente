@@ -43,6 +43,7 @@ from pydantic import BaseModel, Field
 import agente
 import dados
 from triagem import documentos, humano
+from triagem import retencao
 from triagem.modelos import liberado_pelo_ambiente, verificar_modelo
 from triagem.sistema import ConversaEncerrada, IdentidadeAusente, Sistema
 
@@ -68,6 +69,7 @@ async def ciclo_de_vida(_app: FastAPI):
     # ASI10: não sobe com modelo fora da lista aprovada (salvo TRIAGEM_PERMITIR_MODELO_NAO_APROVADO=1)
     verificar_modelo(agente.MODELO, liberado_pelo_ambiente())
     dados.inicializar()  # idempotente: semeia só se o banco estiver vazio
+    retencao.aplicar_ao_subir()  # L26: trace e registros com mais de 90 dias saem
     yield
     if _sistema is not None:
         _sistema.fechar()

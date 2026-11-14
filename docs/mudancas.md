@@ -94,7 +94,7 @@ São o tipo de achado que mais importa para a honestidade da entrega: o texto af
 | **Rodada B da suíte** (37 casos, código atual) | **incompleta** (12/11/2026: 33 de 37, parou em `dm01` por cota). Antes, em 11/11, **não rodou**: a cota diária do `qwen/qwen3.8-27b` (200 mil tokens) acabou. A comparação A × B está **PENDENTE** em `docs/evals.md` §4.3, com o comando para completar |
 | Rodada A completa | 3 de 37 casos (identidade). Resultado: **0 de 3**: o sistema sem o controle emitiu a declaração de outra aluna |
 | Métricas, SLO medido, **trace real** | dependem da rodada B; `docs/observabilidade.md` §4 diz **PENDENTE** |
-| Rótulos humanos do juiz | **o grupo precisa rotular** 20 saídas ([`evals/rotulagem/LEIA-ME.md`](../evals/rotulagem/LEIA-ME.md)); nenhum rótulo foi preenchido por código |
+| Rótulos do juiz | as 20 saídas foram rotuladas pelo Claude em 13/11 (rótulo de IA, §8); falta rodar o juiz sobre elas |
 | Aceite de risco | **Erick** precisa aceitar ou recusar os três riscos propostos (`docs/seguranca.md` §4) |
 | Multiagente, MCP, multimídia (opcionais do enunciado) | **feitos em 13/11/2026**, em volta do agente do aluno, sem mudá-lo: [`docs/multiagente-mcp-multimidia.md`](multiagente-mcp-multimidia.md). O assistente da coordenação **não foi avaliado** com o modelo real |
 
@@ -140,3 +140,9 @@ Pedido do usuário depois de usar o sistema publicado: o agente "não emitia" (r
 **Efeito na avaliação (decisão do usuário, 13/11/2026: fazer direto no `master`).** Ferramentas, prompt e Regimento novos são **sistema novo**: os 33 casos já rodados da rodada B foram medidos no código anterior, e a comparação A × B só vale com a rodada B **inteira refeita** neste código (`docs/evals.md` §4.4; ~180 mil tokens). A rodada A continua sendo a tag `parte-2`.
 
 Testes: **238 passed, 1 deselected**.
+
+## 8. Guarda do trace e rótulos do juiz (13/11/2026, noite)
+
+- **L26 fechada:** prazo de 90 dias decidido por Weslley pelo grupo; `src/triagem/retencao.py` apaga ao subir a API os spans e os registros mais antigos; o `traces.jsonl` nasce com permissão `0600`; `Memoria.remover_titular` passou a apagar do trace as conversas do titular. 7 testes em `tests/test_retencao.py`. O agente do aluno (grafo, prompt, ferramentas) não mudou.
+- **L24 parcial:** as 20 saídas da ficha foram rotuladas pelo Claude (`evals/rotulagem/rotulos_claude.csv`, 13 fiéis e 7 não fiéis), marcadas como rótulo de IA. Falta rodar o juiz sobre elas para medir a concordância.
+- `docs/evidencias/pytest.txt` regenerado. Testes: **263 passed, 1 deselected**.

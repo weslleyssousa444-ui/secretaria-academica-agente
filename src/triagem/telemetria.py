@@ -68,6 +68,8 @@ class ExportadorJsonl(SpanExporter):
     def __init__(self, caminho: Path):
         self.caminho = Path(caminho)
         self.caminho.parent.mkdir(parents=True, exist_ok=True)
+        self.caminho.touch(exist_ok=True)
+        os.chmod(self.caminho, 0o600)   # L26: só o usuário do processo lê o trace
         self._trava = threading.Lock()
 
     def export(self, spans) -> SpanExportResult:

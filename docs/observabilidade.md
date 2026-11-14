@@ -107,8 +107,9 @@ As quatro, com **corte por versão** (um número que mistura versões soma siste
 ## 6. O que fica fora da telemetria, e a retenção
 
 - **Dado pessoal.** Os atributos de conteúdo (`gen_ai.user.message`, `gen_ai.choice`, argumentos e resultados das ferramentas) carregam **RA, nome, valor em aberto**. Por padrão estão **ligados**, porque o trace é o registro da decisão (docs/model-card.md) e os dados de hoje são sintéticos. **Com dado real:** `AGENTE_TRACE_CONTEUDO=0` os desliga (o trace fica só com a estrutura e as métricas, e **deixa de servir para reconstruir uma decisão**), e o trace herda a classificação do dado que carrega (`docs/seguranca.md` §5).
-- **Prazo de guarda e acesso:** **não implementados.** O arquivo JSONL não expira e não tem controle de acesso além do sistema de arquivos. A proposta é **90 dias** e leitura restrita ao responsável pelo sistema; a decisão é do grupo e do responsável de risco.
-- **Remoção por titular:** o trace **não** está na varredura de `Memoria.remover_titular` (declarado em `docs/memoria.md` §4.3): lacuna, porque o RA está nos argumentos das ferramentas.
+- **Prazo de guarda: 90 dias** (decisão de 13/11/2026, Weslley Soares de Sousa pelo grupo). Spans com mais de 90 dias e registros da API (`api-*.json`) mais antigos que isso são apagados **ao subir o processo** da API, como o decaimento da memória ([`src/triagem/retencao.py`](../src/triagem/retencao.py); `TRIAGEM_RETENCAO_DIAS` muda o prazo). `teste::test_span_com_mais_de_90_dias_sai_e_o_recente_fica`, `teste::test_a_api_aplica_a_guarda_ao_subir`.
+- **Acesso:** o `traces.jsonl` é criado com permissão `0600`, legível só pelo usuário do processo (`teste::test_trace_fica_legivel_so_pelo_dono`).
+- **Remoção por titular:** `Memoria.remover_titular` também apaga do trace as **conversas inteiras** em que o RA aparece (`teste::test_remover_titular_da_memoria_tambem_limpa_o_trace`).
 
 ## 7. O plano é uma hipótese
 

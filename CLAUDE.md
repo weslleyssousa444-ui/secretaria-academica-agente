@@ -6,7 +6,7 @@ Arquivo de entrada para o Claude Code numa máquina nova. Escrito em **12/11/202
 
 1. Leia este arquivo, depois [`CONTINUIDADE.md`](CONTINUIDADE.md) (pendências, com comandos) e [`docs/mudancas.md`](docs/mudancas.md) (histórico e defeitos achados).
 2. `git log --oneline -15` e `git status`: confira que o repositório está em dia com o GitHub.
-3. Monte o ambiente (seção 2) e rode os testes (seção 3). Esperado: **256 passed, 1 deselected**.
+3. Monte o ambiente (seção 2) e rode os testes (seção 3). Esperado: **263 passed, 1 deselected**.
 4. **Antes de gastar cota do modelo, pergunte ao usuário o que ele quer fazer.** A cota é pequena (seção 4) e a gasta de um dia não volta.
 5. Responda **em português**. O usuário escreve rápido e com erros de digitação; entenda a intenção.
 
@@ -38,7 +38,7 @@ python src/dados.py                     # recria dados/academico.db (não está 
 
 ```bash
 OPENAI_API_KEY=x PYTHONDONTWRITEBYTECODE=1 python -m pytest -q -p no:cacheprovider
-# esperado: 256 passed, 1 deselected
+# esperado: 263 passed, 1 deselected
 ```
 
 `OPENAI_API_KEY=x` é necessário: com a variável **vazia** a coleta dos testes quebra. O teste deselecionado é o `eval`, que usa o modelo real. O "modelo" dos testes é roteirizado: faz de propósito o que um modelo ruim faria, e o teste prova que o **código** barra.
@@ -53,9 +53,9 @@ Outros comandos úteis: `python conferir_grafo.py` (mostra os 15 nós e 24 arest
 - O modelo **não pode ser trocado**: o sistema só sobe com modelo da lista aprovada ([`src/triagem/modelos.py`](src/triagem/modelos.py), controle ASI10) e só o `qwen/qwen3.8-27b` está nela. Exceção explícita (13/11/2026), para a correção do professor com outro modelo: `TRIAGEM_PERMITIR_MODELO_NAO_APROVADO=1` (o trace marca `agente.modelo_aprovado = false`; **não use para as rodadas A/B**). A comparação A × B exige o mesmo modelo nas duas rodadas.
 - O plano pago (*Dev Tier*, `console.groq.com/settings/billing`) liberaria as duas rodadas no mesmo dia. **É decisão do grupo (cobrança); não ative sem o usuário pedir.**
 
-## 5. Onde paramos (12/11/2026)
+## 5. Onde paramos (13/11/2026)
 
-**Feito e no GitHub:** Partes 2 e 3 completas no que não depende de cota nem do grupo: grafo, API, 3 controles de segurança, trace, pacote `evals/`, regra de promoção **assinada antes** da versão B, *model card* reescrito, `docs/evals.md`, `docs/observabilidade.md`, `docs/seguranca.md`, `docs/mudancas.md`, 210 testes passando. Slides da apresentação (seção 7).
+**Feito e no GitHub:** Partes 2 e 3 completas no que não depende de cota: grafo, API, 3 controles de segurança, trace com guarda de 90 dias, pacote `evals/`, regra de promoção **assinada antes** da versão B, *model card*, `docs/evals.md`, `docs/observabilidade.md`, `docs/seguranca.md`, `docs/mudancas.md`. Em 13/11: site publicado (Render + Hostinger), boleto, notas e documento imprimível, os opcionais (MCP, 2º agente, voz) e a apresentação de 32 slides. **263 testes passando.**
 
 **Rodadas da suíte (37 casos, dataset `evals/dataset/golden_v1.2.0.json`):**
 
@@ -81,9 +81,9 @@ O runner é **retomável**: pula o que já está em `execucoes.jsonl`. A pasta B
 
 ### O que só o grupo pode fazer (**não preencha por eles**)
 
-- **Rotular à mão 20 saídas do juiz** (`evals/rotulagem/LEIA-ME.md`; depois `python -m evals.rotulagem medir`). Os 75 rótulos do Exercício 11 foram feitos por uma **IA**, não por pessoas (L24). Preencher isso seria fabricar rótulo.
+- **Rótulo humano do juiz:** em 13/11 o Claude rotulou as 20 saídas (`evals/rotulagem/rotulos_claude.csv`), marcadas como rótulo de **IA**. Se uma pessoa do grupo rotular, use `para_rotular.csv` (a ficha humana); nunca passe os rótulos do Claude como humanos (L24). Para medir: `python -m evals.juizar` (cota do `gpt-oss-120b`) e `python -m evals.rotulagem medir --rotulos <csv>`.
 - **Erick aceita ou recusa os três riscos propostos** (ASI09, ASI04, ASI03 "o portal não existe") em `docs/seguranca.md` §4 e `docs/model-card.md` §9. Um aceite escrito pelo Claude **não vale** como aceite dele.
-- Decidir o **prazo de guarda do trace** (proposta: 90 dias) e quem acessa (L26).
+- ~~Prazo de guarda do trace~~: **decidido por Weslley em 13/11 (90 dias) e implementado** (`src/triagem/retencao.py`); L26 fechada.
 
 ### Decisões do usuário (não reabrir sem ele pedir)
 
@@ -124,9 +124,9 @@ O runner é **retomável**: pula o que já está em `execucoes.jsonl`. A pasta B
 | `src/triagem/` | o sistema em grafo: `grafo.py`, `nos.py`, `estado.py`, `sistema.py` (ponto de entrada), `validacao.py`, `humano.py`, `regimento.py`, `memoria.py`, `modelos.py` (ASI10), `telemetria.py`, `saida.py` |
 | `src/agente.py` | motor da Parte 1 reaproveitado (ferramentas, guardas, orçamento); `src/api.py`, `src/chat.py`, `src/coordenacao.py` |
 | `src/mcp_secretaria.py`, `src/assistente_coordenacao.py` | servidor MCP só leitura e o 2º agente (parecer para a coordenação): `python src/coordenacao.py preparar CASO-3001` |
-| `src/prompts/` | prompts versionados (`triagem-v2.*` é o atual) |
+| `src/prompts/` | prompts versionados (`triagem-v3.*` é o atual; `coordenacao-v1.txt` é o do 2º agente) |
 | `evals/` | `rodar.py`, `comparar.py`, `metricas.py`, `atualizar_docs.py`, `reconstruir.py`, `rotulagem.py`; dataset em `evals/dataset/`; resultados em `evals/resultados/` |
-| `tests/` | 256 testes offline (`test_controles.py` tenta a ação indevida de cada controle) |
+| `tests/` | 263 testes offline (`test_controles.py` tenta a ação indevida de cada controle) |
 | `docs/model-card.md` | **o documento central**: autoridade, riscos, lacunas L01–L29, §11 reconstrução de decisão |
 | `docs/` | `grafo.md`, `arquitetura.md`, `io.md`, `prompts.md`, `rag.md`, `memoria.md`, `humano.md`, `evals.md`, `observabilidade.md`, `seguranca.md`, `mudancas.md`, `empacotamento.md` |
 | `exercicios/` | exercícios 7 a 15 da disciplina (RAG, memória, LangGraph, MCP, suíte, riscos, observabilidade) |
