@@ -90,7 +90,7 @@ O runner é **retomável**: pula o que já está em `execucoes.jsonl`. A pasta B
 - **Primeiro a Parte 2, depois a Parte 3**, sobre o mesmo repositório (já feito).
 - **A chave da Groq que apareceu em texto numa sessão antiga não será revogada** (decisão de 11/11/2026; risco residual em `docs/seguranca.md` §6). Não a trate como pendência.
 - **Seguir sem Docker.** O que depende dele fica **PENDENTE** em `docs/empacotamento.md`, sem ajustar o texto para parecer concluído.
-- **Opcionais da Parte 3 (multiagente, MCP, multimídia): feitos em 13/11/2026 a pedido do usuário**, em volta do agente do aluno e sem mudá-lo ([`docs/multiagente-mcp-multimidia.md`](docs/multiagente-mcp-multimidia.md)): servidor MCP só leitura, assistente da coordenação (2º agente, não decide), voz no site. O assistente **não foi avaliado** com o modelo real; a medição está pronta (`python -m evals.avaliar_assistente`, 6 alunos fictícios, metas declaradas no arquivo) e gasta cota do mesmo modelo da rodada B.
+- **Opcionais da Parte 3 (multiagente, MCP, multimídia): feitos em 13/11/2026 a pedido do usuário**, em volta do agente do aluno e sem mudá-lo ([`docs/multiagente-mcp-multimidia.md`](docs/multiagente-mcp-multimidia.md)): servidor MCP só leitura, assistente da coordenação (2º agente, não decide), voz no site. O assistente **não foi avaliado** com o modelo real; a medição está pronta (`python -m evals.avaliar_assistente`, 6 alunos fictícios, metas declaradas no arquivo) e gasta cota do mesmo modelo da rodada B. Existe uma **simulação** com modelo roteirizado (`python -m evals.simular_assistente`), rotulada como tal no slide 23: ela prova os controles, **não** é medição; não a cite como desempenho do modelo.
 
 ## 7. Apresentação ao professor Celso
 

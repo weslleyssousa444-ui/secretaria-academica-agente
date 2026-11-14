@@ -1,27 +1,36 @@
-<section id="multiagente" data-transition="fade" style="background:#F6F5F0;color:#101B2D;font-family:'Inter', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:40px">
+<section id="multiagente" data-transition="fade" style="background:#F6F5F0;color:#101B2D;font-family:'Inter', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:28px">
 <div style="display:flex;flex-direction:column;gap:16px">
 <p style="font-size:26px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#17695F">Parte 3 · Opcionais</p>
 <h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:64px;font-weight:600;line-height:1.1">Dois agentes, um servidor MCP e voz</h2>
 </div>
 <div style="display:flex;gap:32px">
-<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#FCFBF8;padding:40px;border:1px solid #DAD8CF;border-top:8px solid #17695F;border-radius:16px">
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#FCFBF8;padding:32px 36px;border:1px solid #DAD8CF;border-top:8px solid #17695F;border-radius:16px">
 <p style="font-size:26px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#17695F">Multiagente</p>
 <h3 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:40px;font-weight:600">Assistente da coordenação</h3>
-<p style="font-size:30px;line-height:1.45;color:#4A5568">Lê o trancamento que o agente do aluno abriu e prepara um parecer para a pessoa que decide. Não recomenda nem decide.</p>
+<p style="font-size:28px;line-height:1.4;color:#4A5568">Lê o trancamento que o agente do aluno abriu e prepara um parecer para a pessoa que decide. Não recomenda nem decide.</p>
 </div>
-<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#FCFBF8;padding:40px;border:1px solid #DAD8CF;border-top:8px solid #17695F;border-radius:16px">
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#FCFBF8;padding:32px 36px;border:1px solid #DAD8CF;border-top:8px solid #17695F;border-radius:16px">
 <p style="font-size:26px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#17695F">MCP</p>
 <h3 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:40px;font-weight:600">Servidor só leitura</h3>
-<p style="font-size:30px;line-height:1.45;color:#4A5568">As mesmas consultas do agente, em 5 ferramentas MCP. Nenhuma escrita publicada: emitir e decidir ficam atrás dos controles do grafo.</p>
+<p style="font-size:28px;line-height:1.4;color:#4A5568">As mesmas consultas do agente, em 5 ferramentas MCP. Nenhuma escrita publicada: emitir e decidir ficam atrás dos controles do grafo.</p>
 </div>
-<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#FCFBF8;padding:40px;border:1px solid #DAD8CF;border-top:8px solid #17695F;border-radius:16px">
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#FCFBF8;padding:32px 36px;border:1px solid #DAD8CF;border-top:8px solid #17695F;border-radius:16px">
 <p style="font-size:26px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#17695F">Multimídia</p>
 <h3 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:40px;font-weight:600">Pedido por voz</h3>
-<p style="font-size:30px;line-height:1.45;color:#4A5568">O aluno fala, o texto aparece na caixa e ele confere antes de enviar. Reconhecimento do navegador, sem modelo novo.</p>
+<p style="font-size:28px;line-height:1.4;color:#4A5568">O aluno fala, o texto aparece na caixa e ele confere antes de enviar. Reconhecimento do navegador, sem modelo novo.</p>
 </div>
 </div>
-<p style="font-size:28px;line-height:1.4;color:#101B2D">O agente do aluno não mudou, então a rodada B continua válida. 18 testes novos provam os limites; <span style="color:#8A4B00">o parecer ainda não foi avaliado com o modelo real.</span></p>
+<div style="display:flex;gap:24px;align-items:stretch">
+<div style="flex:1;background:#101B2D;color:#F2F0EA;border-radius:16px;padding:24px 32px;display:flex;flex-direction:column;gap:6px">
+<p style="font-size:22px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#F0B54A">Simulação · modelo roteirizado, não é o modelo real</p>
+<p style="font-size:28px;line-height:1.4">6 casos fictícios: os 2 erros plantados (recomendar a decisão e entrar em laço) caíram na contingência, a consulta a outro RA foi recusada e nenhum fato saiu errado.</p>
+</div>
+<div style="width:520px;background:#FCFBF8;border:1px solid #DAD8CF;border-radius:16px;padding:24px 32px;display:flex;flex-direction:column;gap:6px">
+<p style="font-size:22px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#8A4B00">Modelo real</p>
+<p style="font-size:28px;line-height:1.4;color:#4A5568">Medição pronta, metas declaradas antes. Ainda não executada.</p>
+</div>
+</div>
 <p style="position:absolute;left:128px;bottom:64px;width:1000px;font-size:24px;color:#5B6676">Secretaria Acadêmica Agente</p>
 <p style="position:absolute;right:128px;bottom:64px;width:200px;text-align:right;font-size:24px;color:#5B6676">23 / 32</p>
-<aside>Os três itens opcionais da Parte 3, feitos em 13 de novembro, todos em volta do agente do aluno, sem mexer nele. Multiagente: um segundo agente, o assistente da coordenação. Quando o agente do aluno abre um trancamento, o grafo pausa esperando a coordenação. O assistente lê esse caso e prepara um parecer de apoio: quem é o aluno, a situação financeira e acadêmica, o artigo do Regimento e os pontos de atenção. O código barra qualquer recomendação, qualquer consulta a outro RA e qualquer artigo que a busca não devolveu; se o modelo errar duas vezes, o parecer sai montado pelo código. A decisão continua com a pessoa. MCP: o assistente só enxerga o sistema por um servidor MCP, que publica as mesmas consultas do agente do aluno e nenhuma escrita. Multimídia: o site aceita o pedido por voz; o texto aparece na caixa e o aluno confere antes de enviar. Usa o reconhecimento do próprio navegador, sem modelo novo; o risco registrado é que, no Chrome, o áudio passa pelo Google. O que não sabemos ainda: a qualidade do parecer com o modelo real, que não foi avaliada.</aside>
+<aside>Os três itens opcionais da Parte 3, feitos em 13 de novembro, todos em volta do agente do aluno, sem mexer nele. Multiagente: um segundo agente, o assistente da coordenação. Quando o agente do aluno abre um trancamento, o grafo pausa esperando a coordenação. O assistente lê esse caso e prepara um parecer de apoio: quem é o aluno, a situação financeira e acadêmica, o artigo do Regimento e os pontos de atenção. O código barra qualquer recomendação, qualquer consulta a outro RA e qualquer artigo que a busca não devolveu; se o modelo errar duas vezes, o parecer sai montado pelo código. A decisão continua com a pessoa. MCP: o assistente só enxerga o sistema por um servidor MCP, que publica as mesmas consultas do agente do aluno e nenhuma escrita. Multimídia: o site aceita o pedido por voz; o texto aparece na caixa e o aluno confere antes de enviar. Usa o reconhecimento do próprio navegador, sem modelo novo; o risco registrado é que, no Chrome, o áudio passa pelo Google. Para mostrar a medição funcionando de ponta a ponta, rodamos uma simulação com um modelo roteirizado, sem o modelo real: nos 6 alunos fictícios, o roteiro errou de propósito em dois casos, recomendando a decisão e entrando em laço, e os dois caíram na resposta montada pelo código; a tentativa de consultar outro RA foi recusada; nenhum fato citado divergiu do banco. Isso prova os controles, não a qualidade do modelo. A medição com o modelo real está pronta, com as metas escritas antes, e ainda não foi executada. O agente do aluno não mudou, então a rodada B continua válida.</aside>
 </section>

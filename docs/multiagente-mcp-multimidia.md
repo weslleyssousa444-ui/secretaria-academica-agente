@@ -95,6 +95,20 @@ Para cada um de 6 alunos fictícios (em dia, com débito, sem motivo, mudança d
 
 Gasta a cota do mesmo modelo da rodada B: rode em outro dia, ou depois dela.
 
+### Simulação (13/11/2026), **não é medição**
+
+Para mostrar a medição funcionando sem chave, `python -m evals.simular_assistente` roda o mesmo script com um **modelo roteirizado**, offline. O roteiro erra de propósito em alguns casos, e o resultado ([`evals/resultados/simulacao-assistente-roteirizado/`](../evals/resultados/simulacao-assistente-roteirizado/)) mostra o que os controles fizeram com esses erros:
+
+| Aluno fictício | O roteiro fez | O código fez |
+|---|---|---|
+| 20229012, 20234321 | parecer correto | aceito |
+| 20230198 | recomendou aprovar, duas vezes | reprovado; parecer montado pelo código (contingência) |
+| 20232210 | citou um artigo que a busca não devolveu | reprovado; aceito na 2ª tentativa, corrigido |
+| 20231987 | consultou o débito de outra aluna | recusado sem ir ao servidor; o valor não aparece |
+| 20230555 | entrou em laço de ferramentas | parou em 8 chamadas; contingência |
+
+Nenhum fato citado divergiu do banco. **Esses números descrevem o roteiro, que foi escrito para exercitar os controles; não dizem nada sobre a qualidade do modelo real.**
+
 ## 4. Multimídia: entrada por voz (`web/index.html`)
 
 O site ganhou um botão de microfone ao lado do "Enviar". O aluno fala o pedido, o texto reconhecido aparece na caixa e **não é enviado sozinho**: ele confere, corrige se precisar, e envia. Para o agente, a mensagem é texto como qualquer outra, então nenhum controle muda.
