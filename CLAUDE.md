@@ -6,7 +6,7 @@ Arquivo de entrada para o Claude Code numa máquina nova. Escrito em **12/11/202
 
 1. Leia este arquivo, depois [`CONTINUIDADE.md`](CONTINUIDADE.md) (pendências, com comandos) e [`docs/mudancas.md`](docs/mudancas.md) (histórico e defeitos achados).
 2. `git log --oneline -15` e `git status`: confira que o repositório está em dia com o GitHub.
-3. Monte o ambiente (seção 2) e rode os testes (seção 3). Esperado: **255 passed, 1 deselected**.
+3. Monte o ambiente (seção 2) e rode os testes (seção 3). Esperado: **256 passed, 1 deselected**.
 4. **Antes de gastar cota do modelo, pergunte ao usuário o que ele quer fazer.** A cota é pequena (seção 4) e a gasta de um dia não volta.
 5. Responda **em português**. O usuário escreve rápido e com erros de digitação; entenda a intenção.
 
@@ -38,7 +38,7 @@ python src/dados.py                     # recria dados/academico.db (não está 
 
 ```bash
 OPENAI_API_KEY=x PYTHONDONTWRITEBYTECODE=1 python -m pytest -q -p no:cacheprovider
-# esperado: 255 passed, 1 deselected
+# esperado: 256 passed, 1 deselected
 ```
 
 `OPENAI_API_KEY=x` é necessário: com a variável **vazia** a coleta dos testes quebra. O teste deselecionado é o `eval`, que usa o modelo real. O "modelo" dos testes é roteirizado: faz de propósito o que um modelo ruim faria, e o teste prova que o **código** barra.
@@ -77,7 +77,7 @@ O runner é **retomável**: pula o que já está em `execucoes.jsonl`. A pasta B
 3. Com as duas completas: `python -m evals.comparar evals/resultados/2026-11-11-A-r1 evals/resultados/2026-11-11-B-r1 --salvar docs/evidencias/comparacao-parte3.txt` e depois `python -m evals.atualizar_docs --a ...A-r1 --b ...B-r1 --traces evals/resultados/2026-11-11-B-r1/traces.jsonl --slo 0.95`. **Leia** o resultado contra a regra assinada (`evals/resultados/assinatura-regra-p3.txt`). Resultado ruim é resultado: **não ajuste a regra depois**. Os blocos **PENDENTE** de `docs/evals.md` §4.3 e `docs/observabilidade.md` §4 só são preenchidos pelo `atualizar_docs`, **nunca à mão**.
 4. Reconstruir uma decisão **real** pelo trace e trocar o exemplo de teste de `docs/model-card.md` §11: `python -m evals.reconstruir evals/resultados/2026-11-11-B-r1/traces.jsonl --conversa <id>`. Registrar o SLO em `docs/observabilidade.md` §5, **mesmo que viole**.
 5. **L29** (só **depois** das duas rodadas, para não mudar o código sob teste no meio da comparação): registrar no trace os `problemas` de `validar_resposta` (`src/triagem/nos.py`, nó `validar_resposta`) e o rascunho reprovado (este só com `AGENTE_TRACE_CONTEUDO` ligado), com teste; depois rodar `re05` e `rg03` de novo (~15 mil tokens). Hipótese **não confirmada** para `rg03`: o Art. 8º §3º remete ao Art. 9º §1º, que a busca não devolveu, e o validador reprova artigo citado que a ferramenta não devolveu.
-6. **Reveja os slides** (seção 7) quando as rodadas fecharem: slides 9, 10, 11 e 14 trazem números parciais, rotulados como tais.
+6. **Reveja os slides** (seção 7) quando as rodadas fecharem: os slides 18, 21, 22 e 31 trazem números parciais, rotulados como tais ("[Atualizar…]" nas notas).
 
 ### O que só o grupo pode fazer (**não preencha por eles**)
 
@@ -90,11 +90,11 @@ O runner é **retomável**: pula o que já está em `execucoes.jsonl`. A pasta B
 - **Primeiro a Parte 2, depois a Parte 3**, sobre o mesmo repositório (já feito).
 - **A chave da Groq que apareceu em texto numa sessão antiga não será revogada** (decisão de 11/11/2026; risco residual em `docs/seguranca.md` §6). Não a trate como pendência.
 - **Seguir sem Docker.** O que depende dele fica **PENDENTE** em `docs/empacotamento.md`, sem ajustar o texto para parecer concluído.
-- **Opcionais da Parte 3 (multiagente, MCP, multimídia): feitos em 13/11/2026 a pedido do usuário**, em volta do agente do aluno e sem mudá-lo ([`docs/multiagente-mcp-multimidia.md`](docs/multiagente-mcp-multimidia.md)): servidor MCP só leitura, assistente da coordenação (2º agente, não decide), voz no site. O assistente **não foi avaliado** com o modelo real.
+- **Opcionais da Parte 3 (multiagente, MCP, multimídia): feitos em 13/11/2026 a pedido do usuário**, em volta do agente do aluno e sem mudá-lo ([`docs/multiagente-mcp-multimidia.md`](docs/multiagente-mcp-multimidia.md)): servidor MCP só leitura, assistente da coordenação (2º agente, não decide), voz no site. O assistente **não foi avaliado** com o modelo real; a medição está pronta (`python -m evals.avaliar_assistente`, 6 alunos fictícios, metas declaradas no arquivo) e gasta cota do mesmo modelo da rodada B.
 
 ## 7. Apresentação ao professor Celso
 
-31 slides em 5 etapas, com sumário, o grafo completo (slide 10), os casos de teste de segurança (slides 19 e 20), o QR code do site (slide 26, imagem em `docs/apresentacao/video/qr-site.png`) e um vídeo real do agente (`docs/apresentacao/video/`, gravado em 13/11/2026 no site publicado), em português. Publicados como Artifact na conta do usuário (privado): <https://claude.ai/artifact/JkCytjpKSCdpmfTo2JARMp>. **O código-fonte está versionado em [`docs/apresentacao/`](docs/apresentacao/)** (`deck.json` + `slides/*.html`, formato do tipo "Slides": 1920×1080, estilo inline, notas do apresentador em `<aside>`). Se o link não abrir na conta nova, publique esses arquivos de novo como deck. Os slides com número parcial têm o aviso "[Atualizar…]" nas notas.
+32 slides em 5 etapas, com sumário, o grafo completo (slide 10), os casos de teste de segurança (slides 19 e 20), os opcionais multiagente/MCP/voz (slide 23), o vídeo (slide 25), o QR code do site (slide 27, imagem em `docs/apresentacao/video/qr-site.png`) e um vídeo real do agente (`docs/apresentacao/video/`, gravado em 13/11/2026 no site publicado), em português. Publicados como Artifact na conta do usuário (privado): <https://claude.ai/artifact/JkCytjpKSCdpmfTo2JARMp>. **O código-fonte está versionado em [`docs/apresentacao/`](docs/apresentacao/)** (`deck.json` + `slides/*.html`, formato do tipo "Slides": 1920×1080, estilo inline, notas do apresentador em `<aside>`). Se o link não abrir na conta nova, publique esses arquivos de novo como deck. Os slides com número parcial têm o aviso "[Atualizar…]" nas notas.
 
 ## 8. O que NÃO veio com o repositório
 
@@ -126,7 +126,7 @@ O runner é **retomável**: pula o que já está em `execucoes.jsonl`. A pasta B
 | `src/mcp_secretaria.py`, `src/assistente_coordenacao.py` | servidor MCP só leitura e o 2º agente (parecer para a coordenação): `python src/coordenacao.py preparar CASO-3001` |
 | `src/prompts/` | prompts versionados (`triagem-v2.*` é o atual) |
 | `evals/` | `rodar.py`, `comparar.py`, `metricas.py`, `atualizar_docs.py`, `reconstruir.py`, `rotulagem.py`; dataset em `evals/dataset/`; resultados em `evals/resultados/` |
-| `tests/` | 255 testes offline (`test_controles.py` tenta a ação indevida de cada controle) |
+| `tests/` | 256 testes offline (`test_controles.py` tenta a ação indevida de cada controle) |
 | `docs/model-card.md` | **o documento central**: autoridade, riscos, lacunas L01–L29, §11 reconstrução de decisão |
 | `docs/` | `grafo.md`, `arquitetura.md`, `io.md`, `prompts.md`, `rag.md`, `memoria.md`, `humano.md`, `evals.md`, `observabilidade.md`, `seguranca.md`, `mudancas.md`, `empacotamento.md` |
 | `exercicios/` | exercícios 7 a 15 da disciplina (RAG, memória, LangGraph, MCP, suíte, riscos, observabilidade) |

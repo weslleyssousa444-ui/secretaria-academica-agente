@@ -81,11 +81,19 @@ A saída é um objeto validado:
 | 8 | Só modelo aprovado (ASI10) | `test_modelo_nao_aprovado_e_recusado` |
 | 9 | O assistente não grava decisão; o caso continua pendente | `test_assistente_nao_decide_o_caso` |
 
-Os 17 testes estão em [`tests/test_multiagente_mcp.py`](../tests/test_multiagente_mcp.py). Rodam offline: o servidor MCP roda em memória (sessão MCP real) e, num teste, como subprocesso stdio, que é o caminho do `preparar`.
+Os 18 testes estão em [`tests/test_multiagente_mcp.py`](../tests/test_multiagente_mcp.py). Rodam offline: o servidor MCP roda em memória (sessão MCP real) e, num teste, como subprocesso stdio, que é o caminho do `preparar`.
 
 ### O que não foi medido
 
-O assistente **não foi avaliado com o modelo real** numa suíte: os testes provam os limites do código, não a qualidade do parecer. Não há casos do assistente no dataset `golden_v1.2.0`. Uma execução real gasta cota do mesmo modelo que a rodada B; por isso não foi feita antes dela.
+Até 13/11/2026 o assistente **não foi avaliado com o modelo real**: os testes provam os limites do código, não a qualidade do parecer. A medição está pronta e usa só os alunos **fictícios** do banco sintético, num banco separado:
+
+```bash
+python -m evals.avaliar_assistente --pasta evals/resultados/<data>-assistente-r1   # precisa da chave; ~6 pareceres
+```
+
+Para cada um de 6 alunos fictícios (em dia, com débito, sem motivo, mudança de cidade...), ela abre um trancamento aguardando a coordenação e pede o parecer pelo servidor MCP. As **metas foram declaradas antes de rodar**, no próprio arquivo: pelo menos 5 de 6 pareceres aceitos pelo validador sem contingência, e 0 com recomendação de decisão. Ela também confere por código se a situação da matrícula e o débito citados batem com o banco, e conta os tokens. O resultado vai para `resumo.json` na pasta. **Se a meta não for atingida, isso é o resultado**: não se ajusta a meta depois.
+
+Gasta a cota do mesmo modelo da rodada B: rode em outro dia, ou depois dela.
 
 ## 4. Multimídia: entrada por voz (`web/index.html`)
 

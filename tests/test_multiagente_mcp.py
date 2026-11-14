@@ -178,3 +178,16 @@ def test_servidor_sobe_como_subprocesso_stdio(caso):
     nomes, pend = rodar(f())
     assert nomes == sorted(mcp_secretaria.FERRAMENTAS_PUBLICADAS)
     assert pend["casos"][0]["protocolo"] == caso
+
+
+def test_medicao_do_assistente_roda_e_confere_fatos(banco, tmp_path):
+    """O script de medição (evals/avaliar_assistente.py) com o modelo roteirizado:
+    prova o encanamento e a conferência de fatos; o número de verdade sai do modelo real."""
+    from evals import avaliar_assistente as av
+    ok = parecer_json("CASO-3001")
+    modelo = ModeloRoteirizado(coleta("CASO-3001") + [resposta(content=ok)])
+    resumo = rodar(av.avaliar(tmp_path / "r", cliente=modelo, casos=[(RA_CASO, "teste")]))
+    assert resumo["casos"] == 1 and resumo["aceitos_sem_contingencia"] == 1
+    assert resumo["casos_com_fato_errado"] == 0 and resumo["meta_atingida"] is False   # 1 caso < meta de 5
+    errado = {"parecer": {"fatos": [{"texto": "Bruno Castro, matrícula trancada"}]}}
+    assert av.conferir_fatos(errado, RA_CASO) == ["diz matrícula trancada; o banco tem ativa"]

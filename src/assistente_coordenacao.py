@@ -156,11 +156,12 @@ async def preparar_parecer(protocolo: str, sessao, cliente=None, modelo: str | N
                  {"role": "user", "content": "Caso a preparar (tela da coordenação):\n"
                                              + json.dumps(caso, ensure_ascii=False)}]
     retornos: list[dict] = [{"ferramenta": "casos_aguardando_coordenacao", "argumentos": {}, "retorno": caso}]
-    recusas, problemas, tentativas, passos = [], [], 0, 0
+    recusas, problemas, tentativas, passos, tokens = [], [], 0, 0, 0
     parecer = None
     while passos < MAX_PASSOS and tentativas < TENTATIVAS_DE_PARECER:
         passos += 1
         r = cliente.chat.completions.create(model=modelo, temperature=0, messages=mensagens, tools=ferramentas)
+        tokens += getattr(getattr(r, "usage", None), "total_tokens", 0) or 0
         msg = r.choices[0].message
         if msg.tool_calls:
             mensagens.append({"role": "assistant", "content": msg.content or "", "tool_calls": [
@@ -199,7 +200,7 @@ async def preparar_parecer(protocolo: str, sessao, cliente=None, modelo: str | N
     return {"protocolo": protocolo, "origem": origem, "parecer": parecer.model_dump(),
             "decisao": "cabe à coordenação (Art. 6º)", "problemas_da_ultima_tentativa": problemas,
             "ferramentas": [r["ferramenta"] for r in retornos], "recusas": recusas,
-            "chamadas_ao_modelo": passos, "modelo": modelo, "modelo_aprovado": aprovado}
+            "chamadas_ao_modelo": passos, "tokens": tokens, "modelo": modelo, "modelo_aprovado": aprovado}
 
 
 @asynccontextmanager
