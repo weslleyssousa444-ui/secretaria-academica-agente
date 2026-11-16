@@ -94,7 +94,7 @@ São o tipo de achado que mais importa para a honestidade da entrega: o texto af
 | **Rodada B da suíte** (37 casos, código atual) | **incompleta** (12/11/2026: 33 de 37, parou em `dm01` por cota). Antes, em 11/11, **não rodou**: a cota diária do `qwen/qwen3.8-27b` (200 mil tokens) acabou. A comparação A × B está **PENDENTE** em `docs/evals.md` §4.3, com o comando para completar |
 | Rodada A completa | 3 de 37 casos (identidade). Resultado: **0 de 3**: o sistema sem o controle emitiu a declaração de outra aluna |
 | Métricas, SLO medido, **trace real** | dependem da rodada B; `docs/observabilidade.md` §4 diz **PENDENTE** |
-| Rótulos do juiz | as 20 saídas foram rotuladas pelo Claude em 13/11 (rótulo de IA, §8); falta rodar o juiz sobre elas |
+| Rótulos do juiz | as 20 saídas foram rotuladas à mão por Erick Sousa em 16/11 (§9); falta rodar o juiz sobre elas |
 | Aceite de risco | **Erick** precisa aceitar ou recusar os três riscos propostos (`docs/seguranca.md` §4) |
 | Multiagente, MCP, multimídia (opcionais do enunciado) | **feitos em 13/11/2026**, em volta do agente do aluno, sem mudá-lo: [`docs/multiagente-mcp-multimidia.md`](multiagente-mcp-multimidia.md). O assistente da coordenação **não foi avaliado** com o modelo real |
 
@@ -146,3 +146,8 @@ Testes: **238 passed, 1 deselected**.
 - **L26 fechada:** prazo de 90 dias decidido por Weslley pelo grupo; `src/triagem/retencao.py` apaga ao subir a API os spans e os registros mais antigos; o `traces.jsonl` nasce com permissão `0600`; `Memoria.remover_titular` passou a apagar do trace as conversas do titular. 7 testes em `tests/test_retencao.py`. O agente do aluno (grafo, prompt, ferramentas) não mudou.
 - **L24 parcial:** as 20 saídas da ficha foram rotuladas pelo Claude (`evals/rotulagem/rotulos_claude.csv`, 13 fiéis e 7 não fiéis), marcadas como rótulo de IA. Falta rodar o juiz sobre elas para medir a concordância.
 - `docs/evidencias/pytest.txt` regenerado. Testes: **263 passed, 1 deselected**.
+
+## 9. Rótulo humano do juiz (16/11/2026)
+
+Erick Sousa rotulou à mão as 20 saídas da ficha (`evals/rotulagem/para_rotular.csv`): 16 fiéis e 4 não fiéis, com nota por caso. Comparado com a leitura do Claude (13/11, rótulo de IA): 13 de 20 iguais; os 7 desacordos estão em `evals/rotulagem/humano_vs_claude.csv` e lidos em `docs/evals.md` §3. Nenhum rótulo foi alterado. Falta rodar o juiz sobre as 20.
+

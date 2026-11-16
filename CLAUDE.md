@@ -81,7 +81,7 @@ O runner é **retomável**: pula o que já está em `execucoes.jsonl`. A pasta B
 
 ### O que só o grupo pode fazer (**não preencha por eles**)
 
-- **Rótulo humano do juiz:** em 13/11 o Claude rotulou as 20 saídas (`evals/rotulagem/rotulos_claude.csv`), marcadas como rótulo de **IA**. Se uma pessoa do grupo rotular, use `para_rotular.csv` (a ficha humana); nunca passe os rótulos do Claude como humanos (L24). Para medir: `python -m evals.juizar` (cota do `gpt-oss-120b`) e `python -m evals.rotulagem medir --rotulos <csv>`.
+- **Rótulo humano do juiz: feito.** Erick Sousa rotulou as 20 saídas em 16/11 (`evals/rotulagem/para_rotular.csv`); os rótulos do Claude (`rotulos_claude.csv`, IA) ficam como segunda leitura (13 de 20 iguais, `humano_vs_claude.csv`). **Falta o juiz:** `python -m evals.juizar --rodada evals/resultados/2026-11-11-B-r1 --casos re05,rg04,em02,tr01,rg05,tr06,em01,pe04,re01,id03,tr05,em04,rg01,id02,tr02,re06,id01,bo03` e `--rodada evals/resultados/2026-11-11-A-r1 --casos id02,id03` (cota do `gpt-oss-120b`); depois `python -m evals.rotulagem medir --veredictos <B>/veredictos_juiz.jsonl --veredictos <A>/veredictos_juiz.jsonl`.
 - **Erick aceita ou recusa os três riscos propostos** (ASI09, ASI04, ASI03 "o portal não existe") em `docs/seguranca.md` §4 e `docs/model-card.md` §9. Um aceite escrito pelo Claude **não vale** como aceite dele.
 - ~~Prazo de guarda do trace~~: **decidido por Weslley em 13/11 (90 dias) e implementado** (`src/triagem/retencao.py`); L26 fechada.
 

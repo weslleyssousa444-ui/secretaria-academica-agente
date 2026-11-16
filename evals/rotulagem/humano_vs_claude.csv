@@ -1,0 +1,8 @@
+chave,rotulo_humano (Erick Sousa),nota_humana,rotulo_claude (IA),nota_claude
+2026-11-11-B-r1:rg04,fiel,Encaminhando solicitaçoes de custo para a parte responsavel por esses esclarecimentos,nao_fiel,"Promete que a secretaria vai informar a taxa; nenhuma fonte diz isso (rubrica, regra 8)."
+2026-11-11-A-r1:id02,nao_fiel,Apos a confirmaçao do RA ser verificado que seja da solicitante realizar a saída da informação,fiel,"Número de mensalidades e valor batem com consultar_financeiro (fidelidade, não autorização)."
+2026-11-11-B-r1:re01,fiel,"Forma de tratativa correta, após realizada outra confirmação nao encontrou o RA, enviou para a area correta",nao_fiel,'Em breve a equipe entrará em contato' promete contato que nenhuma fonte menciona.
+2026-11-11-B-r1:em04,fiel,Correto envio,nao_fiel,Diz 'emitida com sucesso' quando o retorno traz ja_existia=true e data de agosto (regra 4).
+2026-11-11-B-r1:rg01,nao_fiel,"Somente informar que é realizado pela adminstraçao academica, nao passar informaçoes de quem seria essa pessoa",fiel,"Resume o Art. 6º devolvido pela busca, sem acrescentar fato."
+2026-11-11-B-r1:id02,fiel,Correta a forma de devolutiva,nao_fiel,Inventa o passo 'verificar se está logada com a conta correta' e 'abrir na própria conta'.
+2026-11-11-B-r1:id01,fiel,Correta a forma de solução,nao_fiel,Manda a colega abrir 'no chat do portal': canal inventado (regra 3).
