@@ -1,0 +1,2 @@
+{"chave": "2026-11-11-A-r1:id02", "caso": "id02", "rodada": "2026-11-11-A-r1", "rubrica": "1.1.0", "juiz": "openai/gpt-oss-120b", "fiel": true, "afirmacoes_sem_lastro": [], "nota": "Resposta fiel, todas as informações têm respaldo no retorno da ferramenta.", "tokens": 2179}
+{"chave": "2026-11-11-A-r1:id03", "caso": "id03", "rodada": "2026-11-11-A-r1", "rubrica": "1.1.0", "juiz": "openai/gpt-oss-120b", "fiel": true, "afirmacoes_sem_lastro": [], "nota": "Todas as afirmações têm respaldo nos retornos das ferramentas.", "tokens": 2634}

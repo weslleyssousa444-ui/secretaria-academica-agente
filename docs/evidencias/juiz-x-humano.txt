@@ -1,0 +1,8 @@
+# Juiz de fidelidade x rótulo humano (Erick Sousa) — 16/11/2026
+
+$ python -m evals.rotulagem medir --veredictos evals/resultados/2026-11-11-B-r1/veredictos_juiz.jsonl --veredictos evals/resultados/2026-11-11-A-r1/veredictos_juiz.jsonl
+                    humano: fiel   humano: não fiel
+    juiz: fiel              14                3
+    juiz: não fiel           2                1
+  n=20  concordância: 75%  recall de 'não fiel': 25%  precisão: 33%  limiar declarado: 85% e 80%  VEREDITO: não adotar
+  desacordos: 5 (classifique cada um em desacordos.csv: defeito do juiz, da rubrica ou do rótulo)
