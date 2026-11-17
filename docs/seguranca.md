@@ -40,7 +40,7 @@ Dos dez riscos do catálogo, **oito existem** neste sistema; **dois não se apli
 |---|---|
 | **Onde** | a imagem-base por **tag** ([`Dockerfile:11`](../Dockerfile#L11)), as dependências com versão exata e **sem hash** ([`requirements-agente.txt:11`](../requirements-agente.txt#L11)), a imagem publicada com a tag móvel `latest` ([`.github/workflows/ci.yml:97`](../.github/workflows/ci.yml#L97)) |
 | **Cenário de ataque** | o atacante é **o mantenedor de um pacote** ou da imagem-base. Publica uma versão adulterada sob o mesmo nome; a próxima imagem construída a inclui, e o código roda **no processo que tem a chave do provedor e escreve no banco** |
-| **Mitigação (parcial)** | já existe: *actions* de terceiros fixadas pelo SHA do commit, `hadolint` e `trivy` fixados por **versão e digest** (`.github/workflows/ci.yml`), usuário sem privilégio, 10 dependências diretas, todas com versão exata. **Falta:** a imagem-base por *digest*, `pip --require-hashes`, e implantar pelo SHA em vez de `latest`. **Não é o controle implementado nesta entrega**, e o que resta é o **risco aceito** do §4 |
+| **Mitigação (parcial)** | já existe: *actions* de terceiros fixadas pelo SHA do commit, `hadolint` e `trivy` fixados por **versão e digest** (`.github/workflows/ci.yml`), usuário sem privilégio, 10 dependências diretas, todas com versão exata. **Falta:** a imagem-base por *digest*, `pip --require-hashes`, e implantar pelo SHA em vez de `latest`. **Não é o controle implementado nesta entrega**, e o que resta é o **risco do §4, não aceito** pelo responsável |
 
 ### ASI10: agentes desgovernados (impacto 3)
 
@@ -88,7 +88,7 @@ Dos dez riscos do catálogo, **oito existem** neste sistema; **dois não se apli
 |---|---|
 | **Onde** | a resposta final ao aluno e o `motivo` que o modelo escreve para a fila |
 | **Cenário de ataque** | o agente (por erro ou sequestro) **inventa** um passo, canal ou prazo que nenhuma ferramenta informou ("a secretaria entrará em contato", "disponível para download"), e o aluno age sobre isso; o motivo escrito pelo modelo engana a atendente |
-| **Mitigação (parcial)** | o validador confere **protocolo, prazo e artigo** contra as ferramentas ([`src/triagem/validacao.py:80`](../src/triagem/validacao.py#L80)); a tela da coordenação é montada **pelo código** ([`src/triagem/humano.py:82`](../src/triagem/humano.py#L82)). **Não confere invenção de canal**: é o **risco aceito** do §4 |
+| **Mitigação (parcial)** | o validador confere **protocolo, prazo e artigo** contra as ferramentas ([`src/triagem/validacao.py:80`](../src/triagem/validacao.py#L80)); a tela da coordenação é montada **pelo código** ([`src/triagem/humano.py:82`](../src/triagem/humano.py#L82)). **Não confere invenção de canal**: é o **risco do §4, não aceito** pelo responsável |
 
 ### Os dois que não se aplicam
 
@@ -143,28 +143,28 @@ Três controles **fora do prompt**, cada um com testes que **tentam a ação ind
 
 A pós-condição do trancamento (L02), a validação do texto, o erro de ferramenta como dado e a idempotência das escritas são controles fora do prompt com teste (`docs/model-card.md`, `docs/grafo.md`). Não entram na contagem dos três acima porque são da Parte 2.
 
-## 4. Os riscos aceitos
+## 4. Os riscos propostos para aceite (não aceitos em 17/11/2026)
 
-### ASI09: invenção de canal ou passo, **aceito**
+### ASI09: invenção de canal ou passo, proposto e **não aceito** (Erick, 17/11/2026)
 
 | | |
 |---|---|
 | **Risco** | a resposta ao aluno pode afirmar um canal ou passo que nenhuma ferramenta informou |
 | **Medido** | no caso 4 real ([`logs/parte2/04-trancamento-nao-e-decidido.json`](../logs/parte2/04-trancamento-nao-e-decidido.json)): *"A secretaria entrará em contato dentro desse prazo."* Nenhuma ferramenta diz que a secretaria entra em contato. O validador **aprovou** a resposta |
-| **Por que foi aceito** | a única mitigação completa, a resposta **por molde** montada em código, elimina o diálogo livre (pedir o RA, explicar a pendência), que é o motivo de o produto ser um agente. Uma regra por palavra-chave tem falso positivo ("portal" aparece legitimamente) e o juiz que mediria isso **não foi adotado** (recall de 60%, `docs/evals.md` §3) |
+| **Por que se propôs aceitar** | a única mitigação completa, a resposta **por molde** montada em código, elimina o diálogo livre (pedir o RA, explicar a pendência), que é o motivo de o produto ser um agente. Uma regra por palavra-chave tem falso positivo ("portal" aparece legitimamente) e o juiz que mediria isso **não foi adotado** (recall de 60%, `docs/evals.md` §3) |
 | **O que o limita hoje** | o contrato de saída no prompt; o prazo (`48h`) vem da ferramenta, e o validador confere qualquer outro número; a API nunca devolve o resultado cru das ferramentas; o que o agente **decide** (emissão, trancamento) não depende do texto |
 | **Reavaliar se** | houver reclamação de aluno que agiu sobre informação inventada; o sistema passar a responder por um canal real (o portal); ou a suíte medir a taxa de invenção acima de um limite que o grupo fixar |
 
-### ASI04: o que sobra da cadeia de suprimentos, **aceito**
+### ASI04: o que sobra da cadeia de suprimentos, proposto e **não aceito** (Erick, 17/11/2026)
 
 | | |
 |---|---|
 | **Risco** | imagem-base e dependências por versão, não por *digest*/hash; `latest` publicado |
-| **Por que foi aceito** | exige `docker`/`pip-compile` para gerar e verificar os *digests* e os hashes, e **este ambiente de trabalho não tem Docker** (o grupo decidiu seguir sem ele: `CONTINUIDADE.md`). Mudar o `Dockerfile` sem poder construí-lo arriscaria quebrar o CI por um ganho que não consigo verificar |
+| **Por que se propôs aceitar** | exige `docker`/`pip-compile` para gerar e verificar os *digests* e os hashes, e **este ambiente de trabalho não tem Docker** (o grupo decidiu seguir sem ele: `CONTINUIDADE.md`). Mudar o `Dockerfile` sem poder construí-lo arriscaria quebrar o CI por um ganho que não consigo verificar |
 | **O que o limita hoje** | as *actions* e as imagens de análise estão fixadas por SHA e *digest*; a imagem roda sem privilégio; **o sistema não está em produção** |
 | **Reavaliar se** | houver implantação fora da máquina do grupo, ou dado real de aluno |
 
-### ASI03, o que sobra: o portal não existe, **aceito para o protótipo**
+### ASI03, o que sobra: o portal não existe, proposto e **não aceito** (Erick, 17/11/2026)
 
 O controle 1 trata a **sessão autenticada** como verdade. **Não há portal:** quem define `X-Aluno-RA` é quem chama a API, e a variável `TRIAGEM_CONFIA_NO_PORTAL=1` apenas declara que há um portal na frente que o define e remove o que vier de fora. Sem um portal real, **qualquer cliente pode se declarar qualquer aluno** no cabeçalho. O controle é correto **dado** um portal; a existência dele é uma premissa, e `docs/arquitetura-v1.md` §2 a registra como "integração prevista, não existente". Os dados são 100% sintéticos e a API roda na máquina do grupo. **Reavaliar** antes de qualquer dado real, de expor a porta (`[`docker-compose.yml:11`](../docker-compose.yml#L11)` publica `8000:8000` em todas as interfaces: trocar para `127.0.0.1:8000:8000`) ou de ligar um portal.
 
@@ -172,8 +172,15 @@ O controle 1 trata a **sessão autenticada** como verdade. **Não há portal:** 
 
 | | |
 |---|---|
-| **Quem aceita** | o **responsável de risco**, Erick (nomeado em `docs/model-card.md` §1). **O aceite é dele:** este documento **propõe** os três aceites acima, e nenhum deles foi registrado por mim |
-| **Aceite do responsável de risco** | *a preencher por Erick: data e "aceito" ou "não aceito", para cada um dos três* |
+| **Quem decide** | o **responsável de risco**, Erick (nomeado em `docs/model-card.md` §1) |
+| **Decisão do responsável de risco** | **Erick, 17/11/2026: ASI09 não aceito; ASI04 não aceito; ASI03 não aceito.** Resposta dada depois de ser informado de que o site está publicado e aberto (nota acima) |
+
+**O que a recusa significa.** Os três riscos **continuam abertos e sem tratamento aceito**: nenhum deles pode ser apresentado como "risco aceito". Pelo que este documento já registra, o sistema serve **só como demonstração com dados sintéticos**; continua valendo a conclusão do *model card* de que ele não deve operar com dados reais. O que tiraria cada risco da mesa, se o grupo quiser tratar em vez de aceitar:
+- **ASI09:** resposta por molde nos casos de escalada (o texto de "encaminhado" sai do código, não do modelo), ou um verificador de canal com lista de termos proibidos, medido pela suíte.
+- **ASI04:** fixar a imagem-base por *digest* e as dependências por hash (`pip-compile --generate-hashes`), o que exige um ambiente com Docker.
+- **ASI03:** um portal com login de verdade na frente da API; enquanto não existir, restringir o acesso ao site publicado (senha simples, lista de IPs ou tirá-lo do ar fora das demonstrações).
+
+Decidir qual tratar, e quando, é do grupo; nada disso foi feito até 17/11/2026.
 
 ## 5. Os dados pessoais, e o que a memória não guarda
 

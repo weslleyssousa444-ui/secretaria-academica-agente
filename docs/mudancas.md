@@ -155,3 +155,7 @@ Erick Sousa rotulou à mão as 20 saídas da ficha (`evals/rotulagem/para_rotula
 
 `evals/resultados/2026-11-16-B-r1`, código `b9351a8`, `qwen/qwen3.8-27b`, 37 de 37 casos (a cota acabou no `dm01` no dia 16; o runner retomou no dia 17 e repetiu o `re01`, que tinha caído por falha do provedor). **86% aprovados (32)**. Reprovados: `pe01` (escalou como divergência, não pendência), `pe02` (pediu comprovante sem escalar, defeito já conhecido), `rg01` (respondeu sem citar artigo), `rg03` (contingência, L29), `rg05` (recusa sem declarar a suficiência). Nenhuma escrita indevida, nenhum acesso a dado de terceiro. SLI de qualidade 94,1% (48/51): **SLO de 95% violado**. `metadados.json` grava o caminho do dataset no formato do Windows; o `comparar` precisa de `--dataset` explícito fora do Windows. A comparação A × B espera a rodada A.
 
+## 11. Decisão do responsável de risco (17/11/2026)
+
+Erick, responsável de risco, respondeu sobre os três riscos propostos para aceite (`docs/seguranca.md` §4): **ASI09 não aceito, ASI04 não aceito, ASI03 não aceito**. A resposta veio depois de ele ser informado de que o site está publicado e aberto. Os três seguem abertos, sem tratamento aceito; `seguranca.md` §4 lista o que trataria cada um. L15 fechada (havia decisão a registrar; agora há).
+
