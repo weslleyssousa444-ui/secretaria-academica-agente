@@ -3,14 +3,14 @@
   "run": 1,
   "modelo": "qwen/qwen3.8-27b",
   "codigo": {
-    "ref": "parte-2",
+    "ref": "706c599",
     "commit": "706c599",
     "alteracoes_nao_commitadas": false
   },
   "dataset": {
-    "arquivo": "evals/dataset/golden_v1.1.0.json",
-    "versao": "1.1.0",
-    "sha256": "4ea9778a61d6797683015d54615d2aa4754b10e41cddf98f916674884c6ccd48"
+    "arquivo": "evals\\dataset\\golden_v1.2.0.json",
+    "versao": "1.2.0",
+    "sha256": "8ebdb25945482f4100111fc1074ff829b8538ef53e071adc2ddcce810d341021"
   },
   "prompt_sha256": "6df71c6cfcaddca0",
   "sessao_autenticada": true,
@@ -18,5 +18,5 @@
     "temperature": 0
   },
   "versao_do_sistema": null,
-  "iniciado_em": "2026-11-11T15:25:55Z"
+  "iniciado_em": "2026-11-17T14:55:13Z"
 }
