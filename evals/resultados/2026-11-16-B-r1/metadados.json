@@ -1,0 +1,22 @@
+{
+  "rotulo": "B",
+  "run": 1,
+  "modelo": "qwen/qwen3.8-27b",
+  "codigo": {
+    "ref": "HEAD",
+    "commit": "b9351a8",
+    "alteracoes_nao_commitadas": false
+  },
+  "dataset": {
+    "arquivo": "evals\\dataset\\golden_v1.2.0.json",
+    "versao": "1.2.0",
+    "sha256": "8ebdb25945482f4100111fc1074ff829b8538ef53e071adc2ddcce810d341021"
+  },
+  "prompt_sha256": "81e34c72bb579dc9",
+  "sessao_autenticada": true,
+  "parametros": {
+    "temperature": 0
+  },
+  "versao_do_sistema": "b9351a8/p-81e34c72/qwen/qwen3.8-27b",
+  "iniciado_em": "2026-11-17T14:41:29Z"
+}
