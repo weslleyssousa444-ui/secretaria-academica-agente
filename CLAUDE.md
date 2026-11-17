@@ -62,22 +62,21 @@ Outros comandos úteis: `python conferir_grafo.py` (mostra os 15 nós e 24 arest
 | Rodada | Pasta | Estado |
 |---|---|---|
 | **A** (código da Parte 2, **sem** o controle de identidade; `--ref parte-2` = commit `706c599`) | `evals/resultados/2026-11-11-A-r1` | **3 de 37** (só identidade). Resultado: **0 de 3**; o sistema sem o controle emitiu a declaração de outra aluna |
-| **B** (código atual) | `evals/resultados/2026-11-11-B-r1` | **33 de 37**, mas medidos **antes** das funções de 13/11 (boleto, consulta, prompt v3). **Precisa ser refeita inteira** no código novo, numa pasta nova (`docs/mudancas.md` §7) |
+| **B** (código atual, `b9351a8`) | `evals/resultados/2026-11-16-B-r1` | **37 de 37, completa** (16 e 17/11): **86% aprovados**; reprovados pe01, pe02, rg01, rg03, rg05; SLI 94,1%, SLO violado (`docs/evidencias/rodada-B-2026-11-16.txt`). A pasta `2026-11-11-B-r1` é o registro do código anterior |
 
 O runner é **retomável**: pula o que já está em `execucoes.jsonl`. A pasta B está **versionada** justamente para a outra máquina continuar de onde parou.
 
-**O que a rodada B parcial mediu** (`python -m evals.metricas evals/resultados/2026-11-11-B-r1/traces.jsonl --slo 0.95`, só leitura): p50 2,2 s, p95 11,7 s; término `respondeu` 33, `aguardando_humano` 6, exceção 1 (o 429, que **não** entra no SLI); **modelo servido diferente do pedido: 0 em 94 chamadas**; **SLI de qualidade 37/39 = 94,9%**; **SLO ≥ 95%: VIOLADO** por 2 casos. Os 2 casos são **`re05` e `rg03`**: o modelo foi reprovado duas vezes pelo validador e a resposta saiu pela **contingência**. **A causa não foi apurada**: o motivo da reprovação não fica no trace (lacuna **L29**, seção 6).
+**O que a rodada B completa mediu** (`python -m evals.metricas evals/resultados/2026-11-16-B-r1/traces.jsonl --slo 0.95`, só leitura): p50 2,7 s, p95 55 s; término `respondeu` 43, `aguardando_humano` 7, `erro_fatal` 1 e exceção 1 (falhas do provedor, fora do SLI); **modelo servido diferente do pedido: 0 em 113 chamadas**; **SLI de qualidade 48/51 = 94,1%**; **SLO ≥ 95%: VIOLADO**. O `rg03` voltou a sair pela **contingência**; a causa segue não apurada porque o motivo da reprovação não fica no trace (lacuna **L29**, seção 6). A rodada parcial anterior (`2026-11-11-B-r1`, código antigo) tinha dado 94,9%.
 
 ## 6. O que falta, em ordem
 
-1. **Refazer a rodada B inteira** no código atual (37 casos, ~180 mil tokens), quando houver cota, numa pasta nova (a antiga fica como registro do código anterior):
-   `python -m evals.rodar --rotulo B --run 1 --pasta evals/resultados/2026-11-14-B-r1`
+1. ~~Refazer a rodada B~~: **feita em 16 e 17/11** (`evals/resultados/2026-11-16-B-r1`, 37/37).
 2. **Completar a rodada A** (34 casos, ~170 mil tokens, **em outro dia**; se der 429, retome no dia seguinte):
    `python -m evals.rodar --rotulo A --run 1 --ref 706c599 --pasta evals/resultados/2026-11-11-A-r1`
-3. Com as duas completas: `python -m evals.comparar evals/resultados/2026-11-11-A-r1 evals/resultados/2026-11-11-B-r1 --salvar docs/evidencias/comparacao-parte3.txt` e depois `python -m evals.atualizar_docs --a ...A-r1 --b ...B-r1 --traces evals/resultados/2026-11-11-B-r1/traces.jsonl --slo 0.95`. **Leia** o resultado contra a regra assinada (`evals/resultados/assinatura-regra-p3.txt`). Resultado ruim é resultado: **não ajuste a regra depois**. Os blocos **PENDENTE** de `docs/evals.md` §4.3 e `docs/observabilidade.md` §4 só são preenchidos pelo `atualizar_docs`, **nunca à mão**.
-4. Reconstruir uma decisão **real** pelo trace e trocar o exemplo de teste de `docs/model-card.md` §11: `python -m evals.reconstruir evals/resultados/2026-11-11-B-r1/traces.jsonl --conversa <id>`. Registrar o SLO em `docs/observabilidade.md` §5, **mesmo que viole**.
+3. Com as duas completas: `python -m evals.comparar evals/resultados/2026-11-11-A-r1 evals/resultados/2026-11-16-B-r1 --dataset evals/dataset/golden_v1.2.0.json --salvar docs/evidencias/comparacao-parte3.txt` e depois `python -m evals.atualizar_docs --a ...A-r1 --b evals/resultados/2026-11-16-B-r1 --traces evals/resultados/2026-11-16-B-r1/traces.jsonl --slo 0.95`. **Leia** o resultado contra a regra assinada (`evals/resultados/assinatura-regra-p3.txt`). Resultado ruim é resultado: **não ajuste a regra depois**. Os blocos **PENDENTE** de `docs/evals.md` §4.3 e `docs/observabilidade.md` §4 só são preenchidos pelo `atualizar_docs`, **nunca à mão**.
+4. Reconstruir uma decisão **real** pelo trace e trocar o exemplo de teste de `docs/model-card.md` §11: `python -m evals.reconstruir evals/resultados/2026-11-16-B-r1/traces.jsonl --conversa <id>`. Registrar o SLO em `docs/observabilidade.md` §5, **mesmo que viole**.
 5. **L29** (só **depois** das duas rodadas, para não mudar o código sob teste no meio da comparação): registrar no trace os `problemas` de `validar_resposta` (`src/triagem/nos.py`, nó `validar_resposta`) e o rascunho reprovado (este só com `AGENTE_TRACE_CONTEUDO` ligado), com teste; depois rodar `re05` e `rg03` de novo (~15 mil tokens). Hipótese **não confirmada** para `rg03`: o Art. 8º §3º remete ao Art. 9º §1º, que a busca não devolveu, e o validador reprova artigo citado que a ferramenta não devolveu.
-6. **Reveja os slides** (seção 7) quando as rodadas fecharem: os slides 18, 21, 22 e 31 trazem números parciais, rotulados como tais ("[Atualizar…]" nas notas).
+6. **Reveja os slides** (seção 7) quando a rodada A fechar: os slides 21 e 22 já têm a B completa; os slides 18 e 31 trazem números parciais, rotulados como tais ("[Atualizar…]" nas notas).
 
 ### O que só o grupo pode fazer (**não preencha por eles**)
 

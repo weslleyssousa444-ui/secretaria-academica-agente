@@ -125,17 +125,19 @@ Cada rodada completa custa **~170 mil tokens** (estimado: o Exercício 11 gastou
 
 **Atenção (13/11/2026):** os 33 casos de `evals/resultados/2026-11-11-B-r1` foram medidos **antes** das funções de boleto, consulta e do prompt v3 (`docs/mudancas.md` §7). A rodada B é refeita **inteira** no código atual, numa pasta nova; a antiga fica como registro.
 
+**Rodada B completa (16 e 17/11/2026):** `evals/resultados/2026-11-16-B-r1`, código `b9351a8`, 37 de 37 casos: **86% aprovados (32)**; reprovados `pe01`, `pe02` (pendência) e `rg01`, `rg03`, `rg05` (Regimento); nenhuma escrita indevida, nenhum acesso a dado de terceiro. SLI de qualidade **94,1%** (48/51), **SLO de 95% violado**. Detalhe em [`docs/evidencias/rodada-B-2026-11-16.txt`](evidencias/rodada-B-2026-11-16.txt). A comparação A × B espera a rodada A.
+
 ```bash
 # Dia 1 (a cota é uma janela de 24 h; espere ela voltar):
-python -m evals.rodar --rotulo B --run 1 --pasta evals/resultados/2026-11-14-B-r1
+python -m evals.rodar --rotulo B --run 1 --pasta evals/resultados/2026-11-16-B-r1
 
 # Dia 2 (a rodada A já tem 3 casos; o runner pula o que já foi feito):
 python -m evals.rodar --rotulo A --run 1 --ref parte-2 --pasta evals/resultados/2026-11-11-A-r1
 
 # Depois:
-python -m evals.comparar evals/resultados/2026-11-11-A-r1 evals/resultados/2026-11-14-B-r1 --salvar docs/evidencias/comparacao-parte3.txt
-python -m evals.atualizar_docs --a evals/resultados/2026-11-11-A-r1 --b evals/resultados/2026-11-14-B-r1 \
-       --traces evals/resultados/2026-11-14-B-r1/traces.jsonl --slo 0.95
+python -m evals.comparar evals/resultados/2026-11-11-A-r1 evals/resultados/2026-11-16-B-r1 --dataset evals/dataset/golden_v1.2.0.json --salvar docs/evidencias/comparacao-parte3.txt
+python -m evals.atualizar_docs --a evals/resultados/2026-11-11-A-r1 --b evals/resultados/2026-11-16-B-r1 \
+       --traces evals/resultados/2026-11-16-B-r1/traces.jsonl --slo 0.95
 ```
 
 O `--pasta` fixa a pasta (o nome padrão leva a data do dia). O juiz (`python -m evals.juizar --rodada ...`) usa **outro modelo e outra cota** e pode rodar no mesmo dia.

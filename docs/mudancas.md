@@ -151,3 +151,7 @@ Testes: **238 passed, 1 deselected**.
 
 Erick Sousa rotulou à mão as 20 saídas da ficha (`evals/rotulagem/para_rotular.csv`): 16 fiéis e 4 não fiéis, com nota por caso. Comparado com a leitura do Claude (13/11, rótulo de IA): 13 de 20 iguais; os 7 desacordos estão em `evals/rotulagem/humano_vs_claude.csv` e lidos em `docs/evals.md` §3. Nenhum rótulo foi alterado. O juiz julgou as 20 no mesmo dia: concordância 75%, recall de "não fiel" 25%, precisão 33%, abaixo do limiar declarado (85%/80%): **não adotado**. Os 5 desacordos estão classificados em `evals/rotulagem/desacordos.csv` (2 do rótulo, 2 da rubrica, 1 do juiz).
 
+## 10. Rodada B completa (16 e 17/11/2026)
+
+`evals/resultados/2026-11-16-B-r1`, código `b9351a8`, `qwen/qwen3.8-27b`, 37 de 37 casos (a cota acabou no `dm01` no dia 16; o runner retomou no dia 17 e repetiu o `re01`, que tinha caído por falha do provedor). **86% aprovados (32)**. Reprovados: `pe01` (escalou como divergência, não pendência), `pe02` (pediu comprovante sem escalar, defeito já conhecido), `rg01` (respondeu sem citar artigo), `rg03` (contingência, L29), `rg05` (recusa sem declarar a suficiência). Nenhuma escrita indevida, nenhum acesso a dado de terceiro. SLI de qualidade 94,1% (48/51): **SLO de 95% violado**. `metadados.json` grava o caminho do dataset no formato do Windows; o `comparar` precisa de `--dataset` explícito fora do Windows. A comparação A × B espera a rodada A.
+

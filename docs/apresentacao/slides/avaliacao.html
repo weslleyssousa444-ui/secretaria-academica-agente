@@ -8,7 +8,7 @@
 <ul style="font-size:32px;line-height:1.5;color:#4A5568">
 <li>37 casos no dataset v1.2.0</li>
 <li>Regra de promoção assinada antes da versão B</li>
-<li>Juiz de IA não adotado: os rótulos de validação eram de uma IA, não de pessoas</li>
+<li>Juiz de IA não adotado: contra o rótulo humano, 75% de concordância (meta 85%)</li>
 <li>Cota gratuita de 200 mil tokens por dia: uma rodada gasta quase tudo</li>
 </ul>
 </div>
@@ -16,12 +16,12 @@
 <table style="font-size:32px;color:#101B2D">
 <tr><th style="width:30%;text-align:left">Rodada</th><th style="width:30%;text-align:left">Casos</th><th style="width:40%;text-align:left">Estado</th></tr>
 <tr><td style="width:30%">A, sem o controle</td><td style="width:30%">3 de 37</td><td style="width:40%">Parcial: só identidade</td></tr>
-<tr><td style="width:30%">B, código atual</td><td style="width:30%">33 de 37</td><td style="width:40%">Parcial: parou na cota</td></tr>
+<tr><td style="width:30%">B, código atual</td><td style="width:30%">37 de 37</td><td style="width:40%">Completa: 86% aprovados</td></tr>
 </table>
-<p style="font-size:26px;line-height:1.4;color:#8A4B00">Situação em 12/11/2026. A comparação A × B só vale com as duas rodadas completas.</p>
+<p style="font-size:26px;line-height:1.4;color:#8A4B00">Situação em 17/11/2026. A comparação A × B só vale com as duas rodadas completas.</p>
 </div>
 </div>
 <p style="position:absolute;left:128px;bottom:64px;width:1000px;font-size:24px;color:#5B6676">Secretaria Acadêmica Agente</p>
 <p style="position:absolute;right:128px;bottom:64px;width:200px;text-align:right;font-size:24px;color:#5B6676">21 / 32</p>
-<aside>Como avaliamos. A suíte tem 37 casos no dataset versão 1.2.0, rodados com o modelo real. A regra de promoção, isto é, o critério para aceitar a versão B no lugar da A, foi assinada antes de a B existir. Isso impede ajustar o critério depois de ver o resultado. Sobre o juiz de IA: não o adotamos, porque os rótulos usados para validá-lo eram de uma IA e não de pessoas, e o enunciado pede que o grupo rotule 20 saídas à mão; isso ainda não foi feito. Sobre as rodadas: a A tem só os 3 casos de identidade, e a B tem 33 dos 37, porque a cota gratuita do provedor, 200 mil tokens por dia, acaba antes de uma rodada completa. A B parou no caso dm01, e os 4 que faltam são casos de demonstração. [Atualizar a tabela se as rodadas já tiverem terminado.]</aside>
+<aside>Como avaliamos. A suíte tem 37 casos no dataset versão 1.2.0, rodados com o modelo real. A regra de promoção, isto é, o critério para aceitar a versão B no lugar da A, foi assinada antes de a B existir. Isso impede ajustar o critério depois de ver o resultado. Sobre o juiz de IA: o Erick rotulou 20 saídas à mão, e o juiz concordou com ele em 75% dos casos, abaixo da meta de 85% declarada antes; por isso o juiz não é adotado. Sobre as rodadas: a B, no código atual, está completa, 37 de 37, com 86% de aprovação, ou seja, 32 casos. Os 5 reprovados são 2 de pendência financeira e 3 de dúvida do Regimento, nenhum de segurança. A A, sem o controle de identidade, tem só os 3 casos de identidade, porque a cota gratuita do provedor, 200 mil tokens por dia, não cabe as duas rodadas no mesmo dia. [Atualizar a linha da A quando ela terminar.]</aside>
 </section>
