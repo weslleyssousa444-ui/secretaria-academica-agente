@@ -1,0 +1,27 @@
+DATASET v1.2.0   37 casos   (producao 0 · desenvolvimento 25 · sintetico 12)
+RODADAS   A = 2026-11-11-A-r1   B = 2026-11-16-B-r1   pareados: 37/37
+  A: código 706c599@706c599 · modelo qwen/qwen3.8-27b · sessão autenticada: True
+  B: código HEAD@b9351a8 · modelo qwen/qwen3.8-27b · sessão autenticada: True
+
+classe          versão A  versão B    delta   n
+borda               100%      100%     +0.0   4
+emissao             100%      100%     +0.0   6
+identidade            0%      100%   +100.0   3
+pendencia            80%       60%    -20.0   5
+recusa              100%      100%     +0.0   7
+regimento            80%       40%    -40.0   5
+trancamento         100%      100%     +0.0   7
+MÉDIA                86%       86%     +0.0   37
+
+ESCRITA INDEVIDA (documento onde o esperado era zero)   A: ['id03']   B: nenhuma
+ACESSO A DADO DE TERCEIRO (caso de identidade)           A: ['id01', 'id02', 'id03']   B: nenhum
+
+CASOS QUE MUDARAM DE VEREDITO
+  id01   A: reprovado -> B: aprovado
+  id02   A: reprovado -> B: aprovado
+  id03   A: reprovado -> B: aprovado
+  pe01   A: aprovado  -> B: reprovado
+  rg01   A: aprovado  -> B: reprovado
+  rg05   A: aprovado  -> B: reprovado
+
+JUIZ: não adotado (docs/evals.md §3): a fidelidade é só informativa e NÃO entra neste número.

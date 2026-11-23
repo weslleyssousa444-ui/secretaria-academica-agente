@@ -87,10 +87,21 @@ As quatro, com **corte por versão** (um número que mistura versões soma siste
 **Custo:** o sistema roda no *free tier* da Groq, onde o preço registrado em `agente.PRECOS` é **zero** (lacuna L04 do model card), então o custo em US$ é **zero e não informa nada**. O que informa é o **consumo de tokens**, que é o que a cota limita e o que um preço pago multiplicaria. As métricas reportam tokens por execução (média e p95).
 
 <!-- BLOCO:metricas -->
-**PENDENTE.** Exigem **ao menos trinta execuções reais** com o trace ligado, e o sistema ainda não as tem: a rodada B da suíte (37 casos) as produzirá, mas a cota diária do `qwen/qwen3.8-27b` acabou antes (`docs/evals.md` §4). Quando existir, `python -m evals.atualizar_docs --traces evals/resultados/2026-11-11-B-r1/traces.jsonl --slo 0.95` cola aqui a saída **real** de `python -m evals.metricas`. Nenhum número desta seção é digitado à mão.
+```text
+$ python -m evals.metricas evals/resultados/2026-11-16-B-r1/traces.jsonl --slo 0.95
+VERSÃO b9351a8/p-81e34c72/qwen/qwen3.8-27b   n = 52 execuções
+
+  latência     p50     2726 ms   p95    54845 ms
+  tokens       média     6345   p95    12862  (custo em US$: 0 no free tier da Groq; ver docs/observabilidade.md §4.3)
+  término      respondeu 43 (83%), aguardando_humano 7 (13%), erro_fatal 1 (2%), excecao 1 (2%)
+  modelo       113 chamada(s); servido diferente do pedido em 0
+  ferramentas  buscar_aluno 7/29 erro(s), 1 recusada(s); consultar_financeiro 2/11 erro(s), 1 recusada(s); consultar_regimento 0/6 erro(s), 0 recusada(s); emitir_documento 1/9 erro(s), 1 recusada(s); escalar_para_humano 0/15 erro(s), 0 recusada(s)
+  SLI de qualidade  48/51 = 94.1%
+  SLO >= 95%        VIOLADO   orçamento de erro consumido: 118% do permitido
+```
 <!-- /BLOCO:metricas -->
 
-**As quatro perguntas respondidas com esses números:** **PENDENTE**, pelo mesmo motivo. O que dá para dizer agora é **qual sinal responde a cada uma** (a última coluna do §1) e que todos eles **existem no trace** (testados em `tests/test_telemetria.py`). Uma pergunta que os sinais implementados não respondem é lacuna do plano ou da instrumentação: **a do negócio, na parte "decisão com pendência no retorno do financeiro"**, é uma regra de auditoria sobre o trace que **ainda não está implementada** em `evals.metricas` (o sinal existe, o cálculo não).
+**As quatro perguntas respondidas com esses números (rodada B):** o sistema decidiu bem em 94,1% das execuções válidas (qualidade); custou cerca de 7,6 mil tokens por caso e teve p50 de 2,7 s e p95 de 55 s (custo e latência); o modelo servido foi sempre o pedido, 0 em 113 (fornecedor); e os erros de ferramenta são quase todos recusas do controle de identidade e RAs inexistentes de propósito nos casos (segurança). O que dá para dizer agora é **qual sinal responde a cada uma** (a última coluna do §1) e que todos eles **existem no trace** (testados em `tests/test_telemetria.py`). Uma pergunta que os sinais implementados não respondem é lacuna do plano ou da instrumentação: **a do negócio, na parte "decisão com pendência no retorno do financeiro"**, é uma regra de auditoria sobre o trace que **ainda não está implementada** em `evals.metricas` (o sinal existe, o cálculo não).
 
 ## 5. O objetivo: SLI e SLO
 
@@ -102,7 +113,7 @@ As quatro, com **corte por versão** (um número que mistura versões soma siste
 - **Por que este SLO:** é o de **qualidade**, e cobre a **degradação silenciosa**: execuções que terminam por orçamento esgotado ou por contingência **não dão erro**, a resposta é devolvida, e a taxa de erro não se mexe. Só um objetivo sobre o **motivo de término** as torna visíveis. Um SLO de disponibilidade (HTTP 200) não pegaria nada disso.
 - **Por que 95%:** sem dado de produção, o alvo é uma **hipótese**. As 8 execuções reais da Parte 2 deram 8 de 8 boas, e 5% deixa folga para a variação do provedor; mas **8 execuções não sustentam um alvo**, e o valor deve ser revisto com as trinta.
 
-**Valor medido, e o orçamento de erro consumido:** no bloco do §4 (PENDENTE). **Se o SLO estiver violado nas execuções medidas, o documento dirá isso e o que fariam: um objetivo violado e reportado é um resultado; um objetivo ajustado ao valor medido, para passar, não é objetivo.**
+**Valor medido (rodada B, 16 e 17/11/2026, 51 execuções válidas): SLI de 94,1% (48/51). SLO de 95% VIOLADO; orçamento de erro consumido: 118% do permitido.** As 3 execuções ruins saíram pela contingência ou por orçamento: o modelo foi reprovado duas vezes pelo validador (entre elas `rg03`, de novo). O que faríamos: (1) registrar no trace o motivo da reprovação (L29), sem o qual a causa não se apura; (2) corrigir o que ele mostrar e medir de novo. **O alvo de 95% não foi mudado:** um objetivo violado e reportado é um resultado; um objetivo ajustado ao valor medido, para passar, não é objetivo. Ressalva: 51 execuções de uma suíte, não 7 dias de produção.
 
 ## 6. O que fica fora da telemetria, e a retenção
 

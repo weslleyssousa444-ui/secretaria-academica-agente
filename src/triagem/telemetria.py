@@ -183,6 +183,21 @@ def evento_de_conteudo(span, nome: str, conteudo: str) -> None:
         span.add_event(nome, {"gen_ai.message.content": _cortar(conteudo)})
 
 
+def registrar_validacao(problemas: list[str], rascunho: str, desfecho: str) -> None:
+    """L29: quando o validador reprova o texto do modelo, o MOTIVO vai para o trace.
+    Antes, ele só existia numa mensagem do checkpoint, que a suíte apaga. Os
+    problemas e o rascunho reprovado podem citar dado do aluno: só entram com o
+    conteúdo ligado; desligado, fica a estrutura (desfecho e quantos problemas)."""
+    span = trace.get_current_span()
+    if not span.is_recording():
+        return
+    atributos = {"agente.validacao.desfecho": desfecho, "agente.validacao.n_problemas": len(problemas)}
+    if conteudo_ligado():
+        atributos["agente.validacao.problemas"] = _cortar("; ".join(problemas))
+        atributos["gen_ai.message.content"] = _cortar(rascunho or "")
+    span.add_event("agente.validacao.reprovada", atributos)
+
+
 def registrar_resultado(span, resultado: dict, estado: dict) -> None:
     """O que a raiz carrega ao fim de um turno: término, decisão, suficiência e o
     que permite RECONSTRUIR a decisão (docs/model-card.md)."""

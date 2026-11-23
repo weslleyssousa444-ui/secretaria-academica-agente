@@ -361,7 +361,10 @@ class Nos:
             _ultima_do_assistente(estado), estado.get("passos", []), turno)
         if not problemas:
             return {"eventos": ["validar:ok"]}
-        if estado.get("correcoes", 0) < 1:
+        devolve = estado.get("correcoes", 0) < 1
+        telemetria.registrar_validacao(problemas, _ultima_do_assistente(estado),
+                                       "devolveu" if devolve else "contingencia")
+        if devolve:
             return {"correcoes": 1, "eventos": ["validar:devolveu"],
                     "mensagens": [{"role": "system", "content": (
                         "[verificação automática] Sua resposta foi reprovada: "

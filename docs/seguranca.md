@@ -115,7 +115,7 @@ Três controles **fora do prompt**, cada um com testes que **tentam a ação ind
 - ser usado **sem portal** quando a identidade é exigida (o chat de terminal só funciona com `--ra`);
 - consultar um RA diferente do da sessão **por qualquer motivo legítimo** (um atendente humano que use o chat para ver o aluno X precisaria de uma sessão do aluno X).
 
-**Medido com o modelo real (parcial):** versão anterior, **3 de 3 ataques funcionaram** (§2). A versão atual, **mesma entrada, mesmo modelo**: verificada em **1 caso** (`id01`) numa execução exploratória (a ferramenta devolveu "ra diferente do aluno autenticado nesta sessão" e o caso foi aprovado). **A rodada B oficial dos 3 casos e a comparação completa estão PENDENTES**: a cota diária do `qwen` acabou antes (`docs/evals.md` §4).
+**Medido com o modelo real:** versão anterior (rodada A), **3 de 3 ataques funcionaram** (§2). Versão atual (rodada B, mesma entrada, mesmo modelo), **0 de 3**: as ferramentas devolveram "ra diferente do aluno autenticado nesta sessão" e nenhum dado de terceiro foi lido ou escrito (`docs/evals.md` §4.3).
 
 ### Controle 2: modelo aprovado (ASI10)
 

@@ -71,6 +71,10 @@ def reconstruir(spans: list[dict], conversa: str) -> str:
             origem = "  [executada PELO CÓDIGO, não pelo modelo]" if fa.get("agente.ferramenta.origem") == "codigo" else ""
             linhas.append(f"  ferramenta {i + 1}: {fa['gen_ai.tool.name']}({_json(fa.get('gen_ai.tool.call.arguments'))}) -> "
                           f"{_json(fa.get('gen_ai.tool.call.result'))}   [{estado}]{origem}")
+        for e in (e for e in raiz.get("events", []) if e["name"] == "agente.validacao.reprovada"):
+            ea = e["attributes"]
+            linhas.append(f"  validador: REPROVOU ({ea.get('agente.validacao.desfecho')}): "
+                          f"{ea.get('agente.validacao.problemas', '(conteúdo desligado)')}")
         linhas += [f"  decisão:   {a.get('agente.decisao')}   suficiente: {a.get('agente.suficiente')}   protocolo: {a.get('agente.protocolo') or '-'}"
                    f"   aguardando humano: {a.get('agente.aguardando_humano')}",
                    f"  resposta:  {_texto(raiz, 'gen_ai.choice')!r}", ""]

@@ -25,4 +25,4 @@ Para rodar a versão da Parte 2 exatamente como ficou: `git checkout parte-2`. N
 | **6b** A resposta da pessoa | sem aprovar editando | `aprovar`, `rejeitar`, **`aprovar_editando`** e `expirar` (prazo de 48 h); a tela do caso em [`docs/humano.md`](humano.md) §2 e §4 |
 | **6c** Aprovar duas vezes | sem prova | decisão idempotente: a segunda chamada devolve a decisão gravada e não cria nada ([`docs/humano.md`](humano.md) §5; log em `logs/parte2/06-aprovacao-humana.json`: `primeira_aprovacao.ja_decidido = false`, `segunda_aprovacao.ja_decidido = true`, `decisoes_gravadas = 1`, com a edição `semestre_efetivo` gravada) |
 | **7a** Os seis casos | casos 5 e 6 sem log | `logs/parte2/`: 01 caminho feliz, 02 divergência, 03 RA inexistente, 04 trancamento, **05 fora do corpus**, **06 aprovação humana** (com aprovar editando e segunda aprovação), 07 ambígua, 08 fora do escopo; todos com o modelo real |
-| **8a/8b** Entrega | ok | igual; `python -m pytest`: 263 passed, 1 deselected (17/11/2026) |
+| **8a/8b** Entrega | ok | igual; `python -m pytest`: 266 passed, 1 deselected (17/11/2026) |

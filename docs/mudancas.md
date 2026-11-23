@@ -159,3 +159,11 @@ Erick Sousa rotulou à mão as 20 saídas da ficha (`evals/rotulagem/para_rotula
 
 Erick, responsável de risco, respondeu sobre os três riscos propostos para aceite (`docs/seguranca.md` §4): **ASI09 não aceito, ASI04 não aceito, ASI03 não aceito**. A resposta veio depois de ele ser informado de que o site está publicado e aberto. Os três seguem abertos, sem tratamento aceito; `seguranca.md` §4 lista o que trataria cada um. L15 fechada (havia decisão a registrar; agora há).
 
+## 12. Rodada A completa e comparação A × B (23/11/2026)
+
+A rodada A terminou (37/37; `evals/resultados/2026-11-11-A-r1`). Comparação pareada contra a regra assinada (`docs/evals.md` §4.3, `docs/evidencias/comparacao-parte3.txt`): média 86% nas duas; identidade 0% → 100% (R1 cumprida); trancamento e recusa sem queda (R2); nenhuma escrita indevida em B (R4); **R3 violada**: pendência −20 (`pe01`) e Regimento −40 (`rg01`, `rg05`). **Veredito: B não é promovida.** A B rodou com o prompt v3 e as funções novas, e não com o prompt v2 que a regra previa: a queda não foi isolada. SLO registrado em `observabilidade.md` §5 (94,1%, violado); decisão real reconstruída no *model card* §11; L28 fechada. O `comparar` passou a aceitar o caminho do dataset gravado no Windows. No Windows, a limpeza da cópia temporária do código (git worktree) falhou depois da rodada, sem afetar os resultados.
+
+## 13. L29 corrigida no código (23/11/2026)
+
+Depois das duas rodadas: `telemetria.registrar_validacao` grava na raiz do trace o evento `agente.validacao.reprovada` a cada reprovação do validador (desfecho `devolveu` ou `contingencia`, número de problemas; os problemas e o rascunho só com `AGENTE_TRACE_CONTEUDO` ligado); `evals.reconstruir` mostra o motivo. 3 testes; **266 passed, 1 deselected**. Falta rodar `rg03`/`re05` de novo com o modelo real.
+

@@ -6,7 +6,7 @@ Arquivo de entrada para o Claude Code numa máquina nova. Escrito em **12/11/202
 
 1. Leia este arquivo, depois [`CONTINUIDADE.md`](CONTINUIDADE.md) (pendências, com comandos) e [`docs/mudancas.md`](docs/mudancas.md) (histórico e defeitos achados).
 2. `git log --oneline -15` e `git status`: confira que o repositório está em dia com o GitHub.
-3. Monte o ambiente (seção 2) e rode os testes (seção 3). Esperado: **263 passed, 1 deselected**.
+3. Monte o ambiente (seção 2) e rode os testes (seção 3). Esperado: **266 passed, 1 deselected**.
 4. **Antes de gastar cota do modelo, pergunte ao usuário o que ele quer fazer.** A cota é pequena (seção 4) e a gasta de um dia não volta.
 5. Responda **em português**. O usuário escreve rápido e com erros de digitação; entenda a intenção.
 
@@ -38,7 +38,7 @@ python src/dados.py                     # recria dados/academico.db (não está 
 
 ```bash
 OPENAI_API_KEY=x PYTHONDONTWRITEBYTECODE=1 python -m pytest -q -p no:cacheprovider
-# esperado: 263 passed, 1 deselected
+# esperado: 266 passed, 1 deselected
 ```
 
 `OPENAI_API_KEY=x` é necessário: com a variável **vazia** a coleta dos testes quebra. O teste deselecionado é o `eval`, que usa o modelo real. O "modelo" dos testes é roteirizado: faz de propósito o que um modelo ruim faria, e o teste prova que o **código** barra.
@@ -61,7 +61,7 @@ Outros comandos úteis: `python conferir_grafo.py` (mostra os 15 nós e 24 arest
 
 | Rodada | Pasta | Estado |
 |---|---|---|
-| **A** (código da Parte 2, **sem** o controle de identidade; `--ref parte-2` = commit `706c599`) | `evals/resultados/2026-11-11-A-r1` | **3 de 37** (só identidade). Resultado: **0 de 3**; o sistema sem o controle emitiu a declaração de outra aluna |
+| **A** (código da Parte 2, **sem** o controle de identidade; `--ref parte-2` = commit `706c599`) | `evals/resultados/2026-11-11-A-r1` | **37 de 37, completa** (23/11): **86%**; identidade **0 de 3** (emitiu a declaração de outra aluna) |
 | **B** (código atual, `b9351a8`) | `evals/resultados/2026-11-16-B-r1` | **37 de 37, completa** (16 e 17/11): **86% aprovados**; reprovados pe01, pe02, rg01, rg03, rg05; SLI 94,1%, SLO violado (`docs/evidencias/rodada-B-2026-11-16.txt`). A pasta `2026-11-11-B-r1` é o registro do código anterior |
 
 O runner é **retomável**: pula o que já está em `execucoes.jsonl`. A pasta B está **versionada** justamente para a outra máquina continuar de onde parou.
@@ -71,12 +71,11 @@ O runner é **retomável**: pula o que já está em `execucoes.jsonl`. A pasta B
 ## 6. O que falta, em ordem
 
 1. ~~Refazer a rodada B~~: **feita em 16 e 17/11** (`evals/resultados/2026-11-16-B-r1`, 37/37).
-2. **Completar a rodada A** (34 casos, ~170 mil tokens, **em outro dia**; se der 429, retome no dia seguinte):
-   `python -m evals.rodar --rotulo A --run 1 --ref 706c599 --pasta evals/resultados/2026-11-11-A-r1`
-3. Com as duas completas: `python -m evals.comparar evals/resultados/2026-11-11-A-r1 evals/resultados/2026-11-16-B-r1 --dataset evals/dataset/golden_v1.2.0.json --salvar docs/evidencias/comparacao-parte3.txt` e depois `python -m evals.atualizar_docs --a ...A-r1 --b evals/resultados/2026-11-16-B-r1 --traces evals/resultados/2026-11-16-B-r1/traces.jsonl --slo 0.95`. **Leia** o resultado contra a regra assinada (`evals/resultados/assinatura-regra-p3.txt`). Resultado ruim é resultado: **não ajuste a regra depois**. Os blocos **PENDENTE** de `docs/evals.md` §4.3 e `docs/observabilidade.md` §4 só são preenchidos pelo `atualizar_docs`, **nunca à mão**.
-4. Reconstruir uma decisão **real** pelo trace e trocar o exemplo de teste de `docs/model-card.md` §11: `python -m evals.reconstruir evals/resultados/2026-11-16-B-r1/traces.jsonl --conversa <id>`. Registrar o SLO em `docs/observabilidade.md` §5, **mesmo que viole**.
-5. **L29** (só **depois** das duas rodadas, para não mudar o código sob teste no meio da comparação): registrar no trace os `problemas` de `validar_resposta` (`src/triagem/nos.py`, nó `validar_resposta`) e o rascunho reprovado (este só com `AGENTE_TRACE_CONTEUDO` ligado), com teste; depois rodar `re05` e `rg03` de novo (~15 mil tokens). Hipótese **não confirmada** para `rg03`: o Art. 8º §3º remete ao Art. 9º §1º, que a busca não devolveu, e o validador reprova artigo citado que a ferramenta não devolveu.
-6. **Reveja os slides** (seção 7) quando a rodada A fechar: os slides 21 e 22 já têm a B completa; os slides 18 e 31 trazem números parciais, rotulados como tais ("[Atualizar…]" nas notas).
+2. ~~Completar a rodada A~~: **feita em 23/11** (37/37).
+3. ~~Comparação A × B~~: **feita em 23/11** (`docs/evals.md` §4.3, `docs/evidencias/comparacao-parte3.txt`). **Veredito pela regra assinada: B NÃO é promovida** (R1, R2, R4 cumpridas; **R3 violada**: pendência −20, Regimento −40). Ressalva registrada: a B rodou com o prompt v3, não o v2 que a regra previa. **Não ajuste a regra.**
+4. ~~SLO e reconstrução~~: SLO registrado em `docs/observabilidade.md` §5 (94,1%, violado); decisão real (`tr05`) reconstruída no *model card* §11.
+5. **L29: corrigida no código em 23/11** (`telemetria.registrar_validacao`, evento `agente.validacao.reprovada`; o `evals.reconstruir` mostra o motivo). **Falta** (cota, ~15 mil tokens) rodar de novo o `rg03` e o `re05` com trace e ler a causa: `python -m evals.rodar --rotulo B --run 2 --casos rg03,re05 --pasta evals/resultados/<data>-L29`, depois `python -m evals.reconstruir <pasta>/traces.jsonl --conversa eval-B-r2-rg03`. Hipótese **não confirmada** para `rg03`: o Art. 8º §3º remete ao Art. 9º §1º, que a busca não devolveu.
+6. ~~Slides~~: atualizados em 23/11 com A e B completas (18, 21, 31).
 
 ### O que só o grupo pode fazer (**não preencha por eles**)
 
@@ -125,7 +124,7 @@ O runner é **retomável**: pula o que já está em `execucoes.jsonl`. A pasta B
 | `src/mcp_secretaria.py`, `src/assistente_coordenacao.py` | servidor MCP só leitura e o 2º agente (parecer para a coordenação): `python src/coordenacao.py preparar CASO-3001` |
 | `src/prompts/` | prompts versionados (`triagem-v3.*` é o atual; `coordenacao-v1.txt` é o do 2º agente) |
 | `evals/` | `rodar.py`, `comparar.py`, `metricas.py`, `atualizar_docs.py`, `reconstruir.py`, `rotulagem.py`; dataset em `evals/dataset/`; resultados em `evals/resultados/` |
-| `tests/` | 263 testes offline (`test_controles.py` tenta a ação indevida de cada controle) |
+| `tests/` | 266 testes offline (`test_controles.py` tenta a ação indevida de cada controle) |
 | `docs/model-card.md` | **o documento central**: autoridade, riscos, lacunas L01–L29, §11 reconstrução de decisão |
 | `docs/` | `grafo.md`, `arquitetura.md`, `io.md`, `prompts.md`, `rag.md`, `memoria.md`, `humano.md`, `evals.md`, `observabilidade.md`, `seguranca.md`, `mudancas.md`, `empacotamento.md` |
 | `exercicios/` | exercícios 7 a 15 da disciplina (RAG, memória, LangGraph, MCP, suíte, riscos, observabilidade) |

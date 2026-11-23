@@ -15,13 +15,13 @@
 <div style="flex:1;display:flex;flex-direction:column;gap:24px">
 <table style="font-size:32px;color:#101B2D">
 <tr><th style="width:30%;text-align:left">Rodada</th><th style="width:30%;text-align:left">Casos</th><th style="width:40%;text-align:left">Estado</th></tr>
-<tr><td style="width:30%">A, sem o controle</td><td style="width:30%">3 de 37</td><td style="width:40%">Parcial: só identidade</td></tr>
-<tr><td style="width:30%">B, código atual</td><td style="width:30%">37 de 37</td><td style="width:40%">Completa: 86% aprovados</td></tr>
+<tr><td style="width:30%">A, sem o controle</td><td style="width:30%">37 de 37</td><td style="width:40%">Completa: 86%; identidade 0%</td></tr>
+<tr><td style="width:30%">B, código atual</td><td style="width:30%">37 de 37</td><td style="width:40%">Completa: 86%; identidade 100%</td></tr>
 </table>
-<p style="font-size:26px;line-height:1.4;color:#8A4B00">Situação em 17/11/2026. A comparação A × B só vale com as duas rodadas completas.</p>
+<p style="font-size:26px;line-height:1.4;color:#8A4B00">Regra assinada: identidade, trancamento e recusa ok; Regimento e pendência caíram mais de 10 pontos. A B não é promovida.</p>
 </div>
 </div>
 <p style="position:absolute;left:128px;bottom:64px;width:1000px;font-size:24px;color:#5B6676">Secretaria Acadêmica Agente</p>
 <p style="position:absolute;right:128px;bottom:64px;width:200px;text-align:right;font-size:24px;color:#5B6676">21 / 32</p>
-<aside>Como avaliamos. A suíte tem 37 casos no dataset versão 1.2.0, rodados com o modelo real. A regra de promoção, isto é, o critério para aceitar a versão B no lugar da A, foi assinada antes de a B existir. Isso impede ajustar o critério depois de ver o resultado. Sobre o juiz de IA: o Erick rotulou 20 saídas à mão, e o juiz concordou com ele em 75% dos casos, abaixo da meta de 85% declarada antes; por isso o juiz não é adotado. Sobre as rodadas: a B, no código atual, está completa, 37 de 37, com 86% de aprovação, ou seja, 32 casos. Os 5 reprovados são 2 de pendência financeira e 3 de dúvida do Regimento, nenhum de segurança. A A, sem o controle de identidade, tem só os 3 casos de identidade, porque a cota gratuita do provedor, 200 mil tokens por dia, não cabe as duas rodadas no mesmo dia. [Atualizar a linha da A quando ela terminar.]</aside>
+<aside>Como avaliamos. A suíte tem 37 casos no dataset versão 1.2.0, rodados com o modelo real nas duas versões. A regra de promoção, o critério para aceitar a versão B no lugar da A, foi assinada antes de a B existir, para ninguém ajustar o critério depois de ver o resultado. Sobre o juiz de IA: o Erick rotulou 20 saídas à mão, e o juiz concordou com ele em 75%, abaixo da meta de 85%; por isso não é adotado. As rodadas: as duas estão completas e as duas deram 86%. A diferença está em onde cada uma erra: a A falha nos três casos de identidade, que são de segurança; a B acerta todos eles, mas erra mais em Regimento e pendência. A regra diz que nenhuma classe pode cair mais de 10 pontos, e essas duas caíram; então a B não é promovida. É um resultado ruim para a B, e está registrado como tal.</aside>
 </section>

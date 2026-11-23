@@ -251,3 +251,43 @@ def test_a_contingencia_aparece_na_raiz_do_trace_so_no_turno_em_que_ocorreu(sist
     assert raizes[0].attributes["agente.contingencia"] is True and raizes[0].attributes["agente.termino"] == "respondeu"
     assert raizes[0].status.status_code.name != "ERROR"          # não deu erro nenhum: é a falha silenciosa
     assert raizes[1].attributes["agente.contingencia"] is False   # o turno seguinte não herda
+
+
+def _contingencia(modelo):
+    modelo([resposta([chamada("buscar_aluno", ra="20231045")]),
+            resposta([chamada("emitir_documento", ra="20231045", tipo_documento="declaracao_matricula")]),
+            resposta(content="Emitida. Protocolo: DOC-9999."),    # inventado
+            resposta(content="Emitida de novo. Protocolo: DOC-8888.")])
+
+
+def test_o_motivo_da_reprovacao_fica_no_trace(sistema, modelo, traces):
+    """L29: o MOTIVO de cada reprovação do validador e o rascunho reprovado entram no
+    trace, nas duas tentativas; antes, só o nome do nó ficava."""
+    _contingencia(modelo)
+    sistema.conversar("t1", "Declaração, RA 20231045.")
+    raiz = por_nome(traces, "invoke_agent")[0]
+    reprovacoes = [e.attributes for e in raiz.events if e.name == "agente.validacao.reprovada"]
+    assert [r["agente.validacao.desfecho"] for r in reprovacoes] == ["devolveu", "contingencia"]
+    assert "DOC-9999" in reprovacoes[0]["agente.validacao.problemas"]
+    assert "DOC-9999" in reprovacoes[0]["gen_ai.message.content"]          # o rascunho reprovado
+    assert "DOC-8888" in reprovacoes[1]["gen_ai.message.content"]
+
+
+def test_com_conteudo_desligado_o_motivo_nao_vaza(sistema, modelo, traces, monkeypatch):
+    monkeypatch.setenv("AGENTE_TRACE_CONTEUDO", "0")
+    _contingencia(modelo)
+    sistema.conversar("t1", "Declaração, RA 20231045.")
+    reprovacoes = [e.attributes for e in por_nome(traces, "invoke_agent")[0].events
+                   if e.name == "agente.validacao.reprovada"]
+    assert len(reprovacoes) == 2 and all(r["agente.validacao.n_problemas"] >= 1 for r in reprovacoes)
+    assert all("agente.validacao.problemas" not in r and "gen_ai.message.content" not in r for r in reprovacoes)
+
+
+def test_a_reconstrucao_mostra_por_que_o_validador_reprovou(sistema, modelo, traces, tmp_path):
+    _contingencia(modelo)
+    sistema.conversar("t1", "Declaração, RA 20231045.")
+    arquivo = tmp_path / "t.jsonl"
+    arquivo.write_text("\n".join(json.dumps(telemetria.span_para_dict(s)) for s in traces.get_finished_spans()), encoding="utf-8")
+    saida = __import__("subprocess").run([__import__("sys").executable, "-m", "evals.reconstruir", str(arquivo), "--conversa", "t1"],
+                                         capture_output=True, text=True).stdout
+    assert "validador: REPROVOU (devolveu)" in saida and "DOC-9999" in saida
