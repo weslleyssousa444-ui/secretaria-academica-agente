@@ -143,7 +143,20 @@ Três controles **fora do prompt**, cada um com testes que **tentam a ação ind
 
 A pós-condição do trancamento (L02), a validação do texto, o erro de ferramenta como dado e a idempotência das escritas são controles fora do prompt com teste (`docs/model-card.md`, `docs/grafo.md`). Não entram na contagem dos três acima porque são da Parte 2.
 
-## 4. Os riscos propostos para aceite (não aceitos em 17/11/2026)
+## 4. O risco aceito, e os riscos propostos e não aceitos
+
+### Risco aceito: `temperature = 0` não garante a mesma saída (23/11/2026)
+
+| | |
+|---|---|
+| **Risco** | a mesma entrada pode produzir respostas diferentes em execuções diferentes, mesmo com `temperature = 0` ([`src/triagem/nos.py`](../src/triagem/nos.py), chamada ao modelo). Quem tentar reproduzir uma conversa para auditá-la pode não obter o mesmo texto |
+| **Medido** | Exercício 11 ([`exercicios/aula-11-suite-do-case.md`](../exercicios/aula-11-suite-do-case.md)): duas execuções do mesmo dataset; **11 de 24** respostas mudaram de redação, **nenhuma** decisão nem estado do banco mudou. A Parte 3 tem **uma** repetição por versão, então o ruído das rodadas A, B e C **não foi medido** |
+| **Por que foi aceito** | é limitação do provedor: a Groq não oferece decodificação determinística, e a alternativa (trocar de provedor ou rodar modelo local) muda o modelo aprovado (ASI10) e invalida a comparação entre as rodadas |
+| **O que o limita hoje** | o que o agente **decide** não depende da redação: as escritas passam pelas pós-condições em código (`garantir_trancamento`, controle de identidade, idempotência) e o validador confere protocolo, prazo e artigo em código; a auditoria se faz pelo **trace** da execução que aconteceu (§11 do *model card*), não pela repetição dela |
+| **Reavaliar se** | uma segunda repetição da suíte mostrar **decisão** (não só texto) mudando entre execuções; a comparação entre duas versões ficar dentro do ruído medido; ou o sistema passar a operar com dado real |
+| **Quem decidiu** | **Weslley Soares de Sousa, 23/11/2026**, integrante do grupo. O responsável de risco designado é **Erick**; esta aceitação **ainda não foi confirmada por ele** |
+
+### Os riscos propostos e não aceitos (Erick, 17/11/2026)
 
 ### ASI09: invenção de canal ou passo, proposto e **não aceito** (Erick, 17/11/2026)
 

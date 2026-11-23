@@ -82,7 +82,7 @@ O runner é **retomável**: pula o que já está em `execucoes.jsonl`. A pasta B
 ### O que só o grupo pode fazer (**não preencha por eles**)
 
 - **Rótulo humano do juiz: feito.** Erick Sousa rotulou as 20 saídas em 16/11 (`evals/rotulagem/para_rotular.csv`); os rótulos do Claude (`rotulos_claude.csv`, IA) ficam como segunda leitura (13 de 20 iguais, `humano_vs_claude.csv`). **Juiz medido em 16/11:** 75% de concordância e 25% de recall contra o rótulo humano (limiar 85%/80%): **não adotado** (`docs/evidencias/juiz-x-humano.txt`, `evals/rotulagem/desacordos.csv`). Não ajuste o limiar; se for melhorar, mude a rubrica e meça de novo.
-- **Riscos: Erick decidiu em 17/11/2026: ASI09, ASI04 e ASI03 NÃO aceitos** (`docs/seguranca.md` §4, `docs/model-card.md` §9). Seguem abertos; o que os trataria está listado em `seguranca.md` §4. **Não apresente nenhum deles como "aceito".** Tratar é decisão do grupo.
+- **Riscos: Erick decidiu em 17/11/2026: ASI09, ASI04 e ASI03 NÃO aceitos** (`docs/seguranca.md` §4, `docs/model-card.md` §9). Seguem abertos; o que os trataria está listado em `seguranca.md` §4. **Não apresente nenhum deles como "aceito".** Tratar é decisão do grupo. **Risco aceito:** `temperature=0` não garante a mesma saída, aceito por **Weslley em 23/11/2026**; a confirmação do Erick está pendente (`seguranca.md` §4).
 - ~~Prazo de guarda do trace~~: **decidido por Weslley em 13/11 (90 dias) e implementado** (`src/triagem/retencao.py`); L26 fechada.
 
 ### Decisões do usuário (não reabrir sem ele pedir)
