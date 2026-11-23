@@ -81,7 +81,12 @@ def validar_resposta(texto: str, passos: list[dict],
                      passos_do_turno: list[dict] | None = None) -> list[str]:
     """Lista de problemas; vazia quando a resposta passa."""
     problemas: list[str] = []
-    if consultou_regimento_com_artigo(passos_do_turno if passos_do_turno is not None else passos) \
+    do_turno = passos_do_turno if passos_do_turno is not None else passos
+    # pe01 (rodada B): a marcação é da resposta a uma DÚVIDA. Se o turno emitiu ou escalou,
+    # a resposta é o desfecho da ação (protocolo, prazo), e exigir a marcação a reprovava.
+    agiu = any(p["ferramenta"] in ("emitir_documento", "escalar_para_humano", "emitir_boleto")
+               and p.get("erro") is None and p.get("resultado") for p in do_turno)
+    if consultou_regimento_com_artigo(do_turno) and not agiu \
             and separar_suficiencia(texto)[1] is None:
         problemas.append("falta a linha final [SUFICIENTE: sim] ou [SUFICIENTE: não]")
 
@@ -90,6 +95,11 @@ def validar_resposta(texto: str, passos: list[dict],
         problemas.append(f"protocolo(s) que nenhuma ferramenta devolveu: {sorted(inventados)}")
 
     devolvidos = artigos_devolvidos(passos)
+    # rg03 (rodada B): um artigo devolvido pode REMETER a outro ("no prazo do Art. 9º §1º").
+    # Repetir a remissão é fiel ao texto devolvido; inventar um artigo que nem o texto cita, não.
+    devolvidos = devolvidos + [m for p in passos
+                               if p["ferramenta"] == "consultar_regimento" and p.get("resultado")
+                               for t in p["resultado"].get("trechos", []) for m in _ARTIGO.findall(t["texto"])]
     citados_brutos = {normalizar_artigo(m) for m in _ARTIGO.findall(texto)}
     sem_lastro = [c for c in citados_brutos
                   if not any(normalizar_artigo(d).startswith(c) for d in devolvidos)]

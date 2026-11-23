@@ -6,7 +6,7 @@ Arquivo de entrada para o Claude Code numa máquina nova. Escrito em **12/11/202
 
 1. Leia este arquivo, depois [`CONTINUIDADE.md`](CONTINUIDADE.md) (pendências, com comandos) e [`docs/mudancas.md`](docs/mudancas.md) (histórico e defeitos achados).
 2. `git log --oneline -15` e `git status`: confira que o repositório está em dia com o GitHub.
-3. Monte o ambiente (seção 2) e rode os testes (seção 3). Esperado: **266 passed, 1 deselected**.
+3. Monte o ambiente (seção 2) e rode os testes (seção 3). Esperado: **282 passed, 1 deselected**.
 4. **Antes de gastar cota do modelo, pergunte ao usuário o que ele quer fazer.** A cota é pequena (seção 4) e a gasta de um dia não volta.
 5. Responda **em português**. O usuário escreve rápido e com erros de digitação; entenda a intenção.
 
@@ -38,7 +38,7 @@ python src/dados.py                     # recria dados/academico.db (não está 
 
 ```bash
 OPENAI_API_KEY=x PYTHONDONTWRITEBYTECODE=1 python -m pytest -q -p no:cacheprovider
-# esperado: 266 passed, 1 deselected
+# esperado: 282 passed, 1 deselected
 ```
 
 `OPENAI_API_KEY=x` é necessário: com a variável **vazia** a coleta dos testes quebra. O teste deselecionado é o `eval`, que usa o modelo real. O "modelo" dos testes é roteirizado: faz de propósito o que um modelo ruim faria, e o teste prova que o **código** barra.
@@ -76,6 +76,7 @@ O runner é **retomável**: pula o que já está em `execucoes.jsonl`. A pasta B
 4. ~~SLO e reconstrução~~: SLO registrado em `docs/observabilidade.md` §5 (94,1%, violado); decisão real (`tr05`) reconstruída no *model card* §11.
 5. **L29: corrigida no código em 23/11** (`telemetria.registrar_validacao`, evento `agente.validacao.reprovada`; o `evals.reconstruir` mostra o motivo). **Falta** (cota, ~15 mil tokens) rodar de novo o `rg03` e o `re05` com trace e ler a causa: `python -m evals.rodar --rotulo B --run 2 --casos rg03,re05 --pasta evals/resultados/<data>-L29`, depois `python -m evals.reconstruir <pasta>/traces.jsonl --conversa eval-B-r2-rg03`. Hipótese **não confirmada** para `rg03`: o Art. 8º §3º remete ao Art. 9º §1º, que a busca não devolveu.
 6. ~~Slides~~: atualizados em 23/11 com A e B completas (18, 21, 31).
+7. **Versão C (23/11): rodar.** O código atual corrige 4 dos 5 erros da B (`docs/mudancas.md` §14, `tests/test_correcoes_rodada_b.py`); a regra C × B foi **assinada antes** (`evals/regra_de_promocao_c.json`). Falta (≈1 dia de cota): `python -m evals.rodar --rotulo C --run 1 --pasta evals/resultados/2026-11-23-C-r1` e `python -m evals.comparar evals/resultados/2026-11-16-B-r1 evals/resultados/2026-11-23-C-r1 --salvar docs/evidencias/comparacao-B-C.txt`. Leia contra a regra; **não a ajuste**.
 
 ### O que só o grupo pode fazer (**não preencha por eles**)
 
@@ -124,7 +125,7 @@ O runner é **retomável**: pula o que já está em `execucoes.jsonl`. A pasta B
 | `src/mcp_secretaria.py`, `src/assistente_coordenacao.py` | servidor MCP só leitura e o 2º agente (parecer para a coordenação): `python src/coordenacao.py preparar CASO-3001` |
 | `src/prompts/` | prompts versionados (`triagem-v3.*` é o atual; `coordenacao-v1.txt` é o do 2º agente) |
 | `evals/` | `rodar.py`, `comparar.py`, `metricas.py`, `atualizar_docs.py`, `reconstruir.py`, `rotulagem.py`; dataset em `evals/dataset/`; resultados em `evals/resultados/` |
-| `tests/` | 266 testes offline (`test_controles.py` tenta a ação indevida de cada controle) |
+| `tests/` | 282 testes offline (`test_controles.py` tenta a ação indevida de cada controle) |
 | `docs/model-card.md` | **o documento central**: autoridade, riscos, lacunas L01–L29, §11 reconstrução de decisão |
 | `docs/` | `grafo.md`, `arquitetura.md`, `io.md`, `prompts.md`, `rag.md`, `memoria.md`, `humano.md`, `evals.md`, `observabilidade.md`, `seguranca.md`, `mudancas.md`, `empacotamento.md` |
 | `exercicios/` | exercícios 7 a 15 da disciplina (RAG, memória, LangGraph, MCP, suíte, riscos, observabilidade) |

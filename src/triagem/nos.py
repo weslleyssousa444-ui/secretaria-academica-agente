@@ -179,6 +179,54 @@ def mensagem_de_ferramenta(passo: dict, id_chamada: str) -> dict:
             "content": json.dumps(conteudo, ensure_ascii=False)}
 
 
+# rg01 (rodada B): uma DÚVIDA sobre a regra ("Quem decide o trancamento?") tinha a
+# palavra "trancamento" e era classificada como pedido. Dúvida é pergunta sem RA, sem
+# pedido em primeira pessoa e sem dado pessoal ("minhas notas" é pedido, não dúvida).
+_RA = re.compile(r"\b\d{8}\b")
+_PEDIDO_PESSOAL = re.compile(
+    r"\b(quero|queria|preciso|gostaria|solicito|minha|minhas|meu|meus|me (?:manda|envia|d[aá]))\b",
+    re.IGNORECASE)
+# Divergência é o aluno ALEGAR pagamento contra o sistema (docs/case.md §2.12).
+_ALEGA_PAGAMENTO = re.compile(r"\b(paguei|pago|pagamento feito|quitei|quitado|comprovante)\b", re.IGNORECASE)
+_SEGUNDA_VIA_HISTORICO = re.compile(r"hist[óo]rico", re.IGNORECASE)
+
+
+def classificar_texto(texto: str) -> str:
+    if _SAUDACAO.match(texto):
+        return "saudacao"
+    if texto.strip().endswith("?") and not _RA.search(texto) and not _PEDIDO_PESSOAL.search(texto):
+        return "duvida"
+    if agente.PEDIDO_DE_TRANCAMENTO.search(texto):
+        return "trancamento"
+    return "outro"
+
+
+def _textos_do_aluno(estado: dict) -> list[str]:
+    return [m.get("content") or "" for m in estado.get("mensagens", []) if m.get("role") == "user"]
+
+
+def alegou_pagamento(estado: dict) -> bool:
+    return any(_ALEGA_PAGAMENTO.search(t) for t in _textos_do_aluno(estado))
+
+
+def pendencia_devida(estado: dict) -> str | None:
+    """pe02 (rodada B): o aluno pediu a segunda via do histórico, o financeiro mostrou
+    mensalidade em aberto, ele NÃO alegou pagamento, e o turno não emitiu nem escalou
+    (o modelo pediu comprovante que o aluno nunca disse ter). Pelo Art. 4º, é pendência:
+    escala. Devolve o RA. Com alegação de pagamento é divergência, e o agente conduz."""
+    if alegou_pagamento(estado) or not any(_SEGUNDA_VIA_HISTORICO.search(t) for t in _textos_do_aluno(estado)):
+        return None
+    turno = estado.get("passos", [])[estado.get("inicio_do_turno", 0):]
+    if any(p["ferramenta"] in ("escalar_para_humano", "emitir_documento", "emitir_boleto")
+           and p["erro"] is None for p in turno):
+        return None
+    fin = next((p["resultado"] for p in reversed(turno)
+                if p["ferramenta"] == "consultar_financeiro" and p["erro"] is None and p.get("resultado")), None)
+    if not fin or not fin.get("mensalidades_em_aberto"):
+        return None
+    return fin["ra"]
+
+
 def trancamento_devido(estado: dict) -> str | None:
     """Pós-condição L02 (docs/model-card.md): o aluno pediu trancamento, o RA
     foi confirmado por `buscar_aluno` e nenhum caso de trancamento foi aberto.
@@ -233,13 +281,7 @@ class Nos:
 
     # 2b. CLASSIFICAR — regra em código (degrau mais barato, docs/grafo.md §2.3).
     def classificar_pedido(self, estado: dict) -> dict:
-        texto = _ultima_do_usuario(estado)
-        if _SAUDACAO.match(texto):
-            tipo = "saudacao"
-        elif agente.PEDIDO_DE_TRANCAMENTO.search(texto):
-            tipo = "trancamento"
-        else:
-            tipo = "outro"
+        tipo = classificar_texto(_ultima_do_usuario(estado))
         return {"tipo_pedido": tipo, "eventos": [f"classificar_pedido:{tipo}"]}
 
     # 3. ROTEAR — junção dos dois ramos paralelos; a aresta condicional decide.
@@ -330,12 +372,22 @@ class Nos:
 
     # 6. GARANTIR TRANCAMENTO — código. Pós-condição L02 (portão).
     def garantir_trancamento(self, estado: dict) -> dict:
+        # Pós-condições em código: o que o modelo não pode deixar de fazer. O nome do
+        # nó ficou (o grafo conferido tem 15 nós); desde 23/11 ele cobre também a
+        # pendência da segunda via do histórico (pe02).
         ra = trancamento_devido(estado)
-        if not ra:
+        evento = "garantir_trancamento:escalou_pelo_codigo"
+        if ra:
+            argumentos = {"ra": ra, "tipo_pedido": "trancamento_matricula",
+                          "motivo": "trancamento (aberto pelo código: o agente respondeu sem escalar)",
+                          "chave": f"{ra}:trancamento_matricula:trancamento"}
+        elif (ra := pendencia_devida(estado)):
+            argumentos = {"ra": ra, "tipo_pedido": "segunda_via_historico",
+                          "motivo": "pendência financeira: mensalidade em aberto (aberto pelo código: o agente respondeu sem escalar)",
+                          "chave": f"{ra}:segunda_via_historico:pendencia"}
+            evento = "garantir_pendencia:escalou_pelo_codigo"
+        else:
             return {"eventos": ["garantir_trancamento:ok"]}
-        argumentos = {"ra": ra, "tipo_pedido": "trancamento_matricula",
-                      "motivo": "trancamento (aberto pelo código: o agente respondeu sem escalar)",
-                      "chave": f"{ra}:trancamento_matricula:trancamento"}
         id_chamada = f"codigo-{len(estado.get('passos', []))}"
         # A escrita feita PELO CÓDIGO também é uma chamada de ferramenta no trace,
         # marcada com a origem: sem isso, reconstruir a decisão pelo trace não
@@ -352,13 +404,18 @@ class Nos:
                         "name": "escalar_para_humano",
                         "arguments": json.dumps(argumentos, ensure_ascii=False)}}]},
                 mensagem_de_ferramenta(passo, id_chamada)],
-            "passos": [passo], "eventos": ["garantir_trancamento:escalou_pelo_codigo"]}
+            "passos": [passo], "eventos": [evento]}
 
     # 7. VALIDAR — código. O "avaliador" do avaliador-otimizador.
     def validar_resposta(self, estado: dict) -> dict:
         turno = estado.get("passos", [])[estado.get("inicio_do_turno", 0):]
         problemas = validacao.validar_resposta(
             _ultima_do_assistente(estado), estado.get("passos", []), turno)
+        if estado.get("tipo_pedido") == "duvida" and not any(
+                p["ferramenta"] == "consultar_regimento" for p in turno):
+            # rg01: dúvida de regra respondida de memória (e com o órgão errado).
+            problemas.append("é uma dúvida sobre regra e a resposta não consultou o Regimento: "
+                             "chame consultar_regimento e responda só com o artigo devolvido")
         if not problemas:
             return {"eventos": ["validar:ok"]}
         devolve = estado.get("correcoes", 0) < 1
@@ -389,6 +446,8 @@ class Nos:
         decisao = contrato.decisao_da_trajetoria(turno)
         if decisao == "responder_regimento" and declarada is False:
             decisao = "sem_acao"  # o agente disse que o Regimento não responde: é recusa
+        if decisao == "escalar_divergencia" and not alegou_pagamento(estado):
+            decisao = "escalar_pendencia"  # pe01: sem alegação de pagamento não há divergência
         objeto = contrato.SaidaTriagem(
             resultado=texto or TEXTO_SEM_CONCLUSAO, decisao=decisao,
             fonte=contrato.fontes_da_trajetoria(turno, citados if declarada else []),

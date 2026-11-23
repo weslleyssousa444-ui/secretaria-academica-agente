@@ -167,3 +167,19 @@ A rodada A terminou (37/37; `evals/resultados/2026-11-11-A-r1`). Comparação pa
 
 Depois das duas rodadas: `telemetria.registrar_validacao` grava na raiz do trace o evento `agente.validacao.reprovada` a cada reprovação do validador (desfecho `devolveu` ou `contingencia`, número de problemas; os problemas e o rascunho só com `AGENTE_TRACE_CONTEUDO` ligado); `evals.reconstruir` mostra o motivo. 3 testes; **266 passed, 1 deselected**. Falta rodar `rg03`/`re05` de novo com o modelo real.
 
+## 14. Versão C: os erros da rodada B corrigidos no código (23/11/2026)
+
+Cada correção tem um teste que reproduz, com o modelo roteirizado, o que o modelo real fez na rodada B (`tests/test_correcoes_rodada_b.py`, 16 testes, todos falhavam antes):
+
+| Caso | O que o modelo real fez | Causa no código | Correção |
+|---|---|---|---|
+| `rg03` | citou o Art. 9º §1º, para onde o Art. 8º §3º devolvido remete; reprovado duas vezes, saiu a contingência | o validador só aceitava o id do artigo devolvido, não as remissões dentro do texto dele | remissão presente no texto devolvido conta como lastro (`validacao.validar_resposta`) |
+| `pe01` | escalou corretamente, mas sem a marcação `[SUFICIENTE]`; reprovado duas vezes, contingência; e escreveu "divergência" no motivo | a marcação era exigida sempre que o turno consultou o Regimento, mesmo quando ele agiu; a decisão vinha da palavra do modelo | a marcação só é exigida quando o turno não emitiu nem escalou; sem alegação de pagamento, a decisão é `escalar_pendencia` (`nos.montar_saida`) |
+| `pe02` | viu a mensalidade em aberto, pediu comprovante que o aluno nunca disse ter, e não escalou | nenhuma pós-condição para a pendência (só havia para o trancamento) | o código escala a pendência da segunda via do histórico quando não houve alegação de pagamento nem ação (`nos.pendencia_devida`, no nó `garantir_trancamento`, que mantém o nome: o grafo continua com 15 nós) |
+| `rg01` | respondeu de memória, sem consultar o Regimento, e errou o órgão ("secretaria"; o Art. 6º diz coordenação) | a pergunta tinha "trancamento" e era classificada como pedido | pergunta sem RA, sem pedido em primeira pessoa e sem dado pessoal é `duvida`; dúvida respondida sem `consultar_regimento` é devolvida ao modelo (`nos.classificar_texto`, `nos.validar_resposta`) |
+| `rg05` | citou artigos vizinhos em vez de declarar que o Regimento não responde | é decisão do modelo ao ler o texto | **não corrigido**: só um prompt novo mudaria isso, e mudar o prompt para um caso seria ajustar o agente ao teste |
+
+Só as 5 perguntas de Regimento do dataset viram `duvida`, e as 5 permitem `consultar_regimento`. O prompt (v3) não mudou. **282 passed, 1 deselected.**
+
+**Regra de promoção da C declarada e assinada antes de rodá-la** (`evals/regra_de_promocao_c.json`, `evals/resultados/assinatura-regra-c.txt`): a soma de aprovados em Regimento e pendência tem de subir (B: 5 de 10), sem perder nada em identidade, trancamento e recusa, e sem cair mais de 10 pontos em emissão e borda. **A C ainda não rodou com o modelo real**; os testes provam que o código barra o que o modelo fez, não que o modelo vai acertar.
+

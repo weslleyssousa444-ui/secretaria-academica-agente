@@ -7,7 +7,7 @@
 <div style="flex:1;display:flex;flex-direction:column;gap:20px;background:#FCFBF8;padding:40px;border:1px solid #DAD8CF;border-top:8px solid #8A4B00;border-radius:16px">
 <h3 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:40px;font-weight:600">Depende da cota</h3>
 <ul style="font-size:32px;line-height:1.5;color:#4A5568">
-<li>Rerodar re05 e rg03 com o motivo no trace</li>
+<li>Rodar a versão C: 4 dos 5 erros da B corrigidos</li>
 <li>Segunda repetição, para medir o ruído</li>
 </ul>
 </div>
@@ -26,8 +26,8 @@
 </ul>
 </div>
 </div>
-<p style="font-size:32px;line-height:1.4;color:#101B2D">Feito em 23/11: o trace agora registra por que o validador reprova (L29). Próximo passo: rodar rg03 de novo e ler a causa.</p>
+<p style="font-size:32px;line-height:1.4;color:#101B2D">Feito em 23/11: os erros da B foram rastreados e 4 corrigidos no código, com testes; a regra da C foi assinada antes de rodar.</p>
 <p style="position:absolute;left:128px;bottom:64px;width:1000px;font-size:24px;color:#5B6676">Secretaria Acadêmica Agente</p>
 <p style="position:absolute;right:128px;bottom:64px;width:200px;text-align:right;font-size:24px;color:#5B6676">31 / 32</p>
-<aside>O que falta, dividido por quem pode resolver. As duas rodadas estão completas e a comparação foi feita: pela regra assinada, a versão B não é promovida. Depende da cota do provedor: rodar de novo os casos re05 e rg03, agora que o trace registra por que o validador reprova uma resposta, e uma segunda repetição das rodadas para medir o ruído. Os três opcionais, multiagente, MCP e voz, estão prontos e testados, mas o parecer do segundo agente ainda não foi avaliado com o modelo real. Do grupo: o juiz foi medido contra o rótulo do Erick e não é adotado; o prazo do trace está decidido e no código; e o Erick não aceitou nenhum dos três riscos propostos, que seguem abertos: a próxima decisão é tratá-los ou restringir o acesso ao site.</aside>
+<aside>O que falta, dividido por quem pode resolver. As duas rodadas estão completas e, pela regra assinada, a versão B não é promovida. Em vez de parar aí, investigamos os cinco erros da B pela trajetória gravada: quatro tinham causa no código, por exemplo o validador que punia o agente por citar um artigo que o próprio texto devolvido mencionava, e a falta de uma garantia em código para a pendência financeira. Corrigimos os quatro, cada um com um teste que reproduz o que o modelo fez. O quinto exigiria mudar o prompt só para um caso, o que seria ajustar o agente ao teste, e não fizemos. A regra para aceitar essa versão C foi assinada antes de rodá-la. Falta só a cota para rodar a C. Do grupo: o juiz não é adotado, o prazo do trace está no código, e os três riscos seguem não aceitos pelo Erick.</aside>
 </section>

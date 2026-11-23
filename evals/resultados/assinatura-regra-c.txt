@@ -1,0 +1,3 @@
+regra_de_promocao_c.json   sha256 8778c67600408afd2845cc101a3e9b55a06e85ac010f0eefdd35e2bcefd46ccb
+golden_v1.2.0.json         sha256 8db018d935b413a769f0fd3e58644922373adfb4c984a67405d8bb392d999d24
+declarada em 2026-11-23T04:23:32Z, antes de qualquer execução da versão C (nenhuma rodada C existe no repositório neste commit).

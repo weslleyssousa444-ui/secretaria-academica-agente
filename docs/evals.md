@@ -168,6 +168,17 @@ O que a leitura precisa dizer junto, porque muda o que o número significa:
 O que destravaria a promoção, sem mexer na regra: rodar a B com o prompt v2 (isolando os controles) ou corrigir `rg01`, `rg05` e `pe01` e repetir as duas rodadas; e medir o ruído com uma segunda repetição.
 
 
+### 4.3b A versão C (correções dos erros da B), declarada antes de rodar
+
+Os 5 casos que a B errou foram investigados pela trajetória gravada; 4 tinham causa no código e foram corrigidos com teste (`docs/mudancas.md` §14). A regra de promoção da C contra a B foi **declarada e assinada antes de qualquer execução da C** ([`evals/regra_de_promocao_c.json`](../evals/regra_de_promocao_c.json), sha256 em [`evals/resultados/assinatura-regra-c.txt`](../evals/resultados/assinatura-regra-c.txt)): Regimento + pendência têm de passar de 5 para mais de 5 aprovados em 10, sem queda em identidade, trancamento e recusa, e com no máximo 10 pontos de queda em emissão e borda. Para rodar (≈1 dia de cota):
+
+```bash
+python -m evals.rodar --rotulo C --run 1 --pasta evals/resultados/2026-11-23-C-r1
+python -m evals.comparar evals/resultados/2026-11-16-B-r1 evals/resultados/2026-11-23-C-r1 --salvar docs/evidencias/comparacao-B-C.txt
+```
+
+**Resultado: PENDENTE** (a C não rodou com o modelo real).
+
 ### 4.4 Como completar (precisa da chave da Groq e da cota)
 
 Cada rodada completa custa **~170 mil tokens** (estimado: o Exercício 11 gastou ~110 mil por 24 casos) e **~35 minutos** (a pausa preventiva mantém o runner abaixo do teto de tokens por minuto). Como cada uma ocupa **quase a cota diária inteira**, são **dois dias**, e **nada mais deve usar o `qwen` no mesmo dia**:
