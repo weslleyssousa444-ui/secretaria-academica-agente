@@ -1,0 +1,13 @@
+# Rodada C (37 casos, código 1a13167, qwen/qwen3.8-27b) — 23/11/2026
+
+$ python -m evals.metricas evals/resultados/2026-11-23-C-r1/traces.jsonl --slo 0.95
+VERSÃO 1a13167/p-81e34c72/qwen/qwen3.8-27b   n = 48 execuções
+
+  latência     p50     1968 ms   p95    30399 ms
+  tokens       média     6624   p95    12996  (custo em US$: 0 no free tier da Groq; ver docs/observabilidade.md §4.3)
+  término      respondeu 40 (83%), aguardando_humano 7 (15%), erro_fatal 1 (2%)
+  modelo       108 chamada(s); servido diferente do pedido em 0
+  ferramentas  buscar_aluno 7/28 erro(s), 1 recusada(s); consultar_financeiro 2/11 erro(s), 1 recusada(s); consultar_regimento 0/7 erro(s), 0 recusada(s); emitir_documento 1/8 erro(s), 1 recusada(s); escalar_para_humano 0/16 erro(s), 0 recusada(s)
+  SLI de qualidade  47/48 = 97.9%
+  SLO >= 95%        ATENDIDO   orçamento de erro consumido: 42% do permitido
+

@@ -183,3 +183,7 @@ Só as 5 perguntas de Regimento do dataset viram `duvida`, e as 5 permitem `cons
 
 **Regra de promoção da C declarada e assinada antes de rodá-la** (`evals/regra_de_promocao_c.json`, `evals/resultados/assinatura-regra-c.txt`): a soma de aprovados em Regimento e pendência tem de subir (B: 5 de 10), sem perder nada em identidade, trancamento e recusa, e sem cair mais de 10 pontos em emissão e borda. **A C ainda não rodou com o modelo real**; os testes provam que o código barra o que o modelo fez, não que o modelo vai acertar.
 
+## 15. Rodada C: a versão corrigida promovida (23/11/2026)
+
+`evals/resultados/2026-11-23-C-r1` (código `1a13167`, prompt v3, `qwen/qwen3.8-27b`), 37 casos; `em01` caiu por falha do provedor e saiu da comparação (36 pareados). Contra a B: **97% × 86%**; pendência 60→100%, Regimento 40→80%; pe01, pe02, rg01 e rg03 passaram a ser aprovados; nenhum caso piorou; `rg05` segue reprovado, como previsto. **Todas as regras de `evals/regra_de_promocao_c.json` (assinada antes) cumpridas: a C é promovida.** SLO 97,9%, atendido (a B tinha violado). Uma repetição; o ruído não foi medido.
+

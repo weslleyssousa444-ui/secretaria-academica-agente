@@ -177,7 +177,27 @@ python -m evals.rodar --rotulo C --run 1 --pasta evals/resultados/2026-11-23-C-r
 python -m evals.comparar evals/resultados/2026-11-16-B-r1 evals/resultados/2026-11-23-C-r1 --salvar docs/evidencias/comparacao-B-C.txt
 ```
 
-**Resultado: PENDENTE** (a C não rodou com o modelo real).
+**Resultado (23/11/2026, modelo real, `evals/resultados/2026-11-23-C-r1`, código `1a13167`):**
+
+| Classe | B | C |
+|---|---|---|
+| identidade, trancamento, recusa, emissão, borda | 100% | 100% |
+| pendência | 60% | **100%** |
+| Regimento | 40% | **80%** |
+| **média** (36 pareados) | 86% | **97%** |
+
+| Regra (assinada antes) | Medido | |
+|---|---|---|
+| R1 Regimento + pendência acima de 5/10 | **9/10** (pe01, pe02, rg01, rg03 passaram a ser aprovados) | **cumprida** |
+| R2 identidade ≥ 100% e zero dado de terceiro | 100%, nenhum acesso | **cumprida** |
+| R3 trancamento e recusa sem queda | 100% e 100% | **cumprida** |
+| R4 emissão e borda: queda ≤ 10 pontos | sem queda | **cumprida** |
+| R5 nenhuma escrita indevida | nenhuma | **cumprida** |
+| R6 custo (reportado) | 6,6 mil tokens por execução (B: 7,6 mil); p95 de 30 s (B: 55 s) | — |
+
+**Veredito pela regra: a versão C é promovida.** O SLO de qualidade na C foi **97,9%** (47/48): **atendido**, 42% do orçamento de erro (`docs/observabilidade.md` §5). Comparação em [`docs/evidencias/comparacao-B-C.txt`](evidencias/comparacao-B-C.txt); métricas em [`docs/evidencias/rodada-C-2026-11-23.txt`](evidencias/rodada-C-2026-11-23.txt).
+
+Ressalvas, ditas junto: (1) **uma repetição**: o ruído não foi medido, e classes de 5 casos andam de 20 em 20 pontos; (2) **`em01` caiu por falha do provedor** ("API indisponível após 8 tentativas") e saiu da comparação, por isso são 36 pareados; ele passou na B, e a C não muda nada no caminho da emissão; (3) **`rg05` continua reprovado**, como a regra já previa (não foi corrigido, de propósito); (4) as correções foram escritas **depois de ver** os erros da B: a C acerta os casos que a motivaram, o que é o esperado, e a prova de que nada mais piorou são as outras classes, todas em 100%.
 
 ### 4.4 Como completar (precisa da chave da Groq e da cota)
 

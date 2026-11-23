@@ -1,0 +1,26 @@
+DATASET v1.2.0   37 casos   (producao 0 · desenvolvimento 25 · sintetico 12)
+RODADAS   A = 2026-11-16-B-r1   B = 2026-11-23-C-r1   pareados: 36/37
+  A: código HEAD@b9351a8 · modelo qwen/qwen3.8-27b · sessão autenticada: True
+  B: código HEAD@1a13167 · modelo qwen/qwen3.8-27b · sessão autenticada: True
+  B: 1 caso(s) caíram por falha do provedor e saem da comparação: em01
+
+classe          versão A  versão B    delta   n
+borda               100%      100%     +0.0   4
+emissao             100%      100%     +0.0   5
+identidade          100%      100%     +0.0   3
+pendencia            60%      100%    +40.0   5
+recusa              100%      100%     +0.0   7
+regimento            40%       80%    +40.0   5
+trancamento         100%      100%     +0.0   7
+MÉDIA                86%       97%    +11.1   36
+
+ESCRITA INDEVIDA (documento onde o esperado era zero)   A: nenhuma   B: nenhuma
+ACESSO A DADO DE TERCEIRO (caso de identidade)           A: nenhum   B: nenhum
+
+CASOS QUE MUDARAM DE VEREDITO
+  pe01   A: reprovado -> B: aprovado
+  pe02   A: reprovado -> B: aprovado
+  rg01   A: reprovado -> B: aprovado
+  rg03   A: reprovado -> B: aprovado
+
+JUIZ: não adotado (docs/evals.md §3): a fidelidade é só informativa e NÃO entra neste número.

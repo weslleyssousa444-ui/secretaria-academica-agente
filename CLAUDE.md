@@ -62,7 +62,8 @@ Outros comandos úteis: `python conferir_grafo.py` (mostra os 15 nós e 24 arest
 | Rodada | Pasta | Estado |
 |---|---|---|
 | **A** (código da Parte 2, **sem** o controle de identidade; `--ref parte-2` = commit `706c599`) | `evals/resultados/2026-11-11-A-r1` | **37 de 37, completa** (23/11): **86%**; identidade **0 de 3** (emitiu a declaração de outra aluna) |
-| **B** (código atual, `b9351a8`) | `evals/resultados/2026-11-16-B-r1` | **37 de 37, completa** (16 e 17/11): **86% aprovados**; reprovados pe01, pe02, rg01, rg03, rg05; SLI 94,1%, SLO violado (`docs/evidencias/rodada-B-2026-11-16.txt`). A pasta `2026-11-11-B-r1` é o registro do código anterior |
+| **B** (código `b9351a8`) | `evals/resultados/2026-11-16-B-r1` | **37 de 37, completa** (16 e 17/11): **86% aprovados**; reprovados pe01, pe02, rg01, rg03, rg05; SLI 94,1%, SLO violado (`docs/evidencias/rodada-B-2026-11-16.txt`). A pasta `2026-11-11-B-r1` é o registro do código anterior |
+| **C** (código atual, `1a13167`: B + correções) | `evals/resultados/2026-11-23-C-r1` | **37 casos** (23/11; `em01` caiu por falha do provedor): **97%**, regra C × B cumprida, **promovida**; SLO 97,9% atendido |
 
 O runner é **retomável**: pula o que já está em `execucoes.jsonl`. A pasta B está **versionada** justamente para a outra máquina continuar de onde parou.
 
@@ -76,7 +77,7 @@ O runner é **retomável**: pula o que já está em `execucoes.jsonl`. A pasta B
 4. ~~SLO e reconstrução~~: SLO registrado em `docs/observabilidade.md` §5 (94,1%, violado); decisão real (`tr05`) reconstruída no *model card* §11.
 5. **L29: corrigida no código em 23/11** (`telemetria.registrar_validacao`, evento `agente.validacao.reprovada`; o `evals.reconstruir` mostra o motivo). **Falta** (cota, ~15 mil tokens) rodar de novo o `rg03` e o `re05` com trace e ler a causa: `python -m evals.rodar --rotulo B --run 2 --casos rg03,re05 --pasta evals/resultados/<data>-L29`, depois `python -m evals.reconstruir <pasta>/traces.jsonl --conversa eval-B-r2-rg03`. Hipótese **não confirmada** para `rg03`: o Art. 8º §3º remete ao Art. 9º §1º, que a busca não devolveu.
 6. ~~Slides~~: atualizados em 23/11 com A e B completas (18, 21, 31).
-7. **Versão C (23/11): rodar.** O código atual corrige 4 dos 5 erros da B (`docs/mudancas.md` §14, `tests/test_correcoes_rodada_b.py`); a regra C × B foi **assinada antes** (`evals/regra_de_promocao_c.json`). Falta (≈1 dia de cota): `python -m evals.rodar --rotulo C --run 1 --pasta evals/resultados/2026-11-23-C-r1` e `python -m evals.comparar evals/resultados/2026-11-16-B-r1 evals/resultados/2026-11-23-C-r1 --salvar docs/evidencias/comparacao-B-C.txt`. Leia contra a regra; **não a ajuste**.
+7. ~~Versão C~~: **rodada e promovida em 23/11** (`evals/resultados/2026-11-23-C-r1`): **97% × 86% da B**, todas as regras assinadas cumpridas, SLO 97,9% atendido (`docs/evals.md` §4.3b). Pendências opcionais: repetir o `em01` (falha do provedor; o runner o refaz sozinho com o mesmo comando) e uma segunda repetição para medir ruído.
 
 ### O que só o grupo pode fazer (**não preencha por eles**)
 

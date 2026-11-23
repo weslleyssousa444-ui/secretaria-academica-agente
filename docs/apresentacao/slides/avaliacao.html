@@ -16,12 +16,13 @@
 <table style="font-size:32px;color:#101B2D">
 <tr><th style="width:30%;text-align:left">Rodada</th><th style="width:30%;text-align:left">Casos</th><th style="width:40%;text-align:left">Estado</th></tr>
 <tr><td style="width:30%">A, sem o controle</td><td style="width:30%">37 de 37</td><td style="width:40%">Completa: 86%; identidade 0%</td></tr>
-<tr><td style="width:30%">B, código atual</td><td style="width:30%">37 de 37</td><td style="width:40%">Completa: 86%; identidade 100%</td></tr>
+<tr><td style="width:30%">B, com o controle</td><td style="width:30%">37 de 37</td><td style="width:40%">86%; não promovida</td></tr>
+<tr><td style="width:30%"><b>C, erros corrigidos</b></td><td style="width:30%">37 de 37</td><td style="width:40%"><b>97%; promovida</b></td></tr>
 </table>
-<p style="font-size:26px;line-height:1.4;color:#8A4B00">Regra assinada: identidade, trancamento e recusa ok; Regimento e pendência caíram mais de 10 pontos. A B não é promovida.</p>
+<p style="font-size:26px;line-height:1.4;color:#8A4B00">A B caiu em Regimento e pendência; corrigimos as causas, assinamos a regra da C antes de rodá-la, e a C cumpriu todas.</p>
 </div>
 </div>
 <p style="position:absolute;left:128px;bottom:64px;width:1000px;font-size:24px;color:#5B6676">Secretaria Acadêmica Agente</p>
 <p style="position:absolute;right:128px;bottom:64px;width:200px;text-align:right;font-size:24px;color:#5B6676">21 / 32</p>
-<aside>Como avaliamos. A suíte tem 37 casos no dataset versão 1.2.0, rodados com o modelo real nas duas versões. A regra de promoção, o critério para aceitar a versão B no lugar da A, foi assinada antes de a B existir, para ninguém ajustar o critério depois de ver o resultado. Sobre o juiz de IA: o Erick rotulou 20 saídas à mão, e o juiz concordou com ele em 75%, abaixo da meta de 85%; por isso não é adotado. As rodadas: as duas estão completas e as duas deram 86%. A diferença está em onde cada uma erra: a A falha nos três casos de identidade, que são de segurança; a B acerta todos eles, mas erra mais em Regimento e pendência. A regra diz que nenhuma classe pode cair mais de 10 pontos, e essas duas caíram; então a B não é promovida. É um resultado ruim para a B, e está registrado como tal.</aside>
+<aside>Como avaliamos. A suíte tem 37 casos, rodados com o modelo real. A regra para aceitar cada versão nova foi assinada antes de rodá-la, para ninguém ajustar o critério depois de ver o resultado. A versão A, sem o controle de identidade, deu 86% e falhou em todos os casos de segurança. A B, com o controle, acertou a segurança, mas caiu em Regimento e pendência; pela regra, não foi promovida. Em vez de parar aí, rastreamos os cinco erros da B pela trajetória gravada, achamos quatro causas no código, corrigimos com testes e assinamos a regra da versão C antes de rodá-la. A C deu 97%: pendência foi de 60 para 100%, Regimento de 40 para 80%, e nenhuma classe piorou. Pela regra, a C é promovida. Ressalvas: uma repetição só, então o ruído não foi medido, e um caso caiu por falha do provedor. O juiz de IA continua não adotado: concordou 75% com o rótulo humano do Erick, abaixo da meta.</aside>
 </section>
