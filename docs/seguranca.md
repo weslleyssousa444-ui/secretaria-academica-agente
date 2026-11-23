@@ -154,7 +154,7 @@ A pós-condição do trancamento (L02), a validação do texto, o erro de ferram
 | **Por que foi aceito** | é limitação do provedor: a Groq não oferece decodificação determinística, e a alternativa (trocar de provedor ou rodar modelo local) muda o modelo aprovado (ASI10) e invalida a comparação entre as rodadas |
 | **O que o limita hoje** | o que o agente **decide** não depende da redação: as escritas passam pelas pós-condições em código (`garantir_trancamento`, controle de identidade, idempotência) e o validador confere protocolo, prazo e artigo em código; a auditoria se faz pelo **trace** da execução que aconteceu (§11 do *model card*), não pela repetição dela |
 | **Reavaliar se** | uma segunda repetição da suíte mostrar **decisão** (não só texto) mudando entre execuções; a comparação entre duas versões ficar dentro do ruído medido; ou o sistema passar a operar com dado real |
-| **Quem decidiu** | **Weslley Soares de Sousa, 23/11/2026**, integrante do grupo. O responsável de risco designado é **Erick**; esta aceitação **ainda não foi confirmada por ele** |
+| **Quem decidiu** | **Erick (responsável de risco), 23/11/2026**, com Weslley Soares de Sousa. A decisão foi comunicada por Weslley na sessão de trabalho, com Erick presente |
 
 ### Os riscos propostos e não aceitos (Erick, 17/11/2026)
 
