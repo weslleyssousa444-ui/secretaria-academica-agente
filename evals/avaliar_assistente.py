@@ -73,7 +73,7 @@ async def avaliar(pasta: Path, cliente=None, casos=CASOS) -> dict:
     import agente
     import assistente_coordenacao as ac
     import dados
-    from triagem import humano
+    from triagem import handoff, humano
 
     pasta.mkdir(parents=True, exist_ok=True)
     arq = pasta / "execucoes.jsonl"
@@ -83,6 +83,8 @@ async def avaliar(pasta: Path, cliente=None, casos=CASOS) -> dict:
             continue
         r = agente.escalar_para_humano(ra, "trancamento", motivo, f"{ra}:trancamento:avaliacao")
         humano.registrar_espera(f"avaliacao-{ra}", r["protocolo"], ra)
+        handoff.gravar(handoff.montar(r["protocolo"], f"avaliacao-{ra}", ra, [
+            {"ferramenta": "escalar_para_humano", "argumentos": {"ra": ra}, "resultado": r, "erro": None}]))
         if cliente is None:
             async with ac.sessao_stdio() as sessao:
                 res = await ac.preparar_parecer(r["protocolo"], sessao)

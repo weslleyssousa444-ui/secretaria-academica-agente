@@ -173,6 +173,15 @@ def inicializar(forcar: bool = False) -> None:
             prazo_ate TEXT NOT NULL,
             estado TEXT NOT NULL DEFAULT 'aguardando'
         );
+        -- Contrato de handoff entre os dois agentes (src/triagem/handoff.py,
+        -- docs/multiagente.md): o que o agente do aluno passa ao assistente da
+        -- coordenação. `chave` é gerada pelo código coordenador, do conteúdo.
+        CREATE TABLE IF NOT EXISTS handoffs (
+            chave TEXT PRIMARY KEY,
+            protocolo TEXT UNIQUE NOT NULL,
+            conteudo TEXT NOT NULL,
+            criado_em TEXT NOT NULL
+        );
         -- Funções de 13/11/2026: histórico acadêmico, mensalidades em aberto,
         -- boletos (segunda via) e o código de verificação de cada documento.
         CREATE TABLE IF NOT EXISTS disciplinas_cursadas (

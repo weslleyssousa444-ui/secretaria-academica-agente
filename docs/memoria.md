@@ -87,7 +87,7 @@ A situação financeira muda com o tempo. `semantica.gravar` troca o valor e gua
 
 **O que a remoção NÃO cobre, e fica aberto:**
 
-- **As tabelas do sistema acadêmico** (`documentos_emitidos`, `casos_pendentes`, `aprovacoes`, `decisoes_humanas`): são o **registro do que a secretaria fez**, e não memória do agente. Apagar um documento emitido ou um caso decidido é uma decisão de retenção da secretaria, e não deste sistema.
+- **As tabelas do sistema acadêmico** (`documentos_emitidos`, `casos_pendentes`, `aprovacoes`, `decisoes_humanas` e, desde 23/11/2026, `handoffs`, o contrato que o agente do aluno passa ao assistente da coordenação): são o **registro do que a secretaria fez**, e não memória do agente. Apagar um documento emitido ou um caso decidido é uma decisão de retenção da secretaria, e não deste sistema.
 - **Os logs versionados no repositório** (`logs/*.json`, evidência de entregas já avaliadas): tensão entre LGPD e auditabilidade acadêmica, declarada no model card (`L06`). Os dados são sintéticos.
 - **O trace** (Parte 3): ainda não existe; quando existir, entra nesta lista.
 - **A operação em si:** `remover_titular` é uma função, não um endpoint. Um endpoint de remoção sem autenticação própria seria um furo maior que a lacuna.

@@ -19,7 +19,7 @@ from langgraph.types import interrupt
 
 import agente
 from agente import ErroFatal, ErroRecuperavel, Orcamento
-from triagem import humano, janela, saida as contrato, telemetria, validacao
+from triagem import handoff, humano, janela, saida as contrato, telemetria, validacao
 from triagem.memoria import Memoria
 from triagem import servicos
 from triagem.regimento import consultar_regimento
@@ -473,6 +473,9 @@ class Nos:
                    if p["ferramenta"] == "escalar_para_humano"
                    and (p["resultado"] or {}).get("protocolo") == protocolo), None)
         humano.registrar_espera(estado.get("thread_id", "?"), protocolo, ra)
+        # O código coordenador monta e grava o contrato de handoff para o
+        # assistente da coordenação (docs/multiagente.md). Idempotente pela chave.
+        handoff.gravar(handoff.montar(protocolo, estado.get("thread_id", "?"), ra, estado.get("passos", [])))
         return {"eventos": ["registrar_espera"]}
 
     # 11. APROVAÇÃO — O HUMANO DECIDE. O nó roda de novo na retomada: nada

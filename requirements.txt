@@ -1,15 +1,22 @@
+# O sistema entregue (Partes 1 a 3), com todas as versões fixadas: o modelo
+# pela biblioteca `openai`, o framework (LangGraph), o OpenTelemetry e o SDK do
+# MCP. É o mesmo conjunto de `requirements-agente.txt` (o que a imagem Docker
+# instala); `tests/test_requisitos.py` falha se os dois divergirem.
+#
+#   pip install -r requirements.txt          # o sistema
+#   pip install -r requirements-dev.txt      # o sistema + os testes
+#
+# As dependências dos Exercícios 7 e 8 (torch, sentence-transformers, ~2 GB),
+# que o sistema não usa, estão em `requirements-exercicios.txt`.
+
 openai==2.48.0
 python-dotenv==1.2.1
-
-# Exercício 7 (RAG): embedding local, sem custo e sem rate limit — a Groq
-# não tem endpoint de embeddings nesta conta (docs/modelos.md §3.5,
-# exercicios/aula-07-resposta-que-cita.md §1).
-numpy==2.0.2
-sentence-transformers==5.1.2
-torch==2.8.0
-
-# Exercício 12 (governança): testes de autoridade, offline, sem chave de API.
-# pytest 9.x exige Python >= 3.10; no 3.9 (o python3 padrão do macOS) a última
-# é a 8.4.2 — a suíte roda igual nas duas.
-pytest==9.1.1; python_version >= "3.10"
-pytest==8.4.2; python_version < "3.10"
+fastapi==0.143.3
+uvicorn==0.54.0
+pydantic==2.14.3
+langgraph==1.2.12
+langgraph-checkpoint-sqlite==3.1.1
+opentelemetry-api==1.45.2
+opentelemetry-sdk==1.45.2
+opentelemetry-semantic-conventions==0.66b2
+mcp==1.30.0

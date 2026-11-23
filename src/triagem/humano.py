@@ -23,6 +23,7 @@ from typing import Literal
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 import dados
+from triagem import handoff
 
 PRAZO_HORAS = 48  # o mesmo prazo que o agente promete ao aluno (prompts/triagem-v2)
 CAMPOS_EDITAVEIS = ("semestre_efetivo", "observacao")
@@ -105,6 +106,9 @@ def tela_da_aprovacao(protocolo: str) -> dict:
                          "da secretaria com prioridade."),
         "respostas_aceitas": ["aprovar", "rejeitar", "aprovar_editando"],
         "campos_editaveis": list(CAMPOS_EDITAVEIS),
+        # O contrato que o agente do aluno passou adiante (src/triagem/handoff.py);
+        # None num caso aberto fora do grafo.
+        "handoff": handoff.carregar(protocolo),
     }
 
 

@@ -23,7 +23,13 @@
 #      devolveu, fonte só de ferramenta que respondeu, nenhuma recomendação;
 #   4. reprovado duas vezes, o parecer sai montado pelo código a partir dos
 #      retornos (origem "contingencia"), como no agente do aluno;
-#   5. no máximo MAX_PASSOS chamadas ao modelo.
+#   5. no máximo MAX_PASSOS chamadas ao modelo;
+#   6. o caso só é preparado se trouxer o CONTRATO DE HANDOFF do agente do aluno
+#      (src/triagem/handoff.py) válido e do mesmo protocolo e RA; a chave de
+#      idempotência dele vai no parecer e no trace.
+#
+# Trace: uma raiz `invoke_agent assistente-coordenacao` por preparação, com
+# `chat <modelo>` e `execute_tool <ferramenta>` embaixo, como o agente do aluno.
 
 from __future__ import annotations
 
@@ -36,9 +42,12 @@ from pathlib import Path
 from pydantic import BaseModel, Field, ValidationError
 
 import agente
+from triagem import telemetria
+from triagem.handoff import Handoff
 from triagem.modelos import liberado_pelo_ambiente, verificar_modelo
 
 PROMPT = Path(__file__).parent / "prompts" / "coordenacao-v1.txt"
+NOME_AGENTE = "assistente-coordenacao"
 MAX_PASSOS = 8
 TENTATIVAS_DE_PARECER = 2
 FERRAMENTAS_COM_RA = {"buscar_aluno", "consultar_financeiro", "consultar_historico"}
@@ -139,20 +148,69 @@ def parecer_por_codigo(caso: dict, retornos: list[dict]) -> Parecer:
                    artigos=artigos, pontos_de_atencao=pontos)
 
 
+def conferir_handoff(caso: dict) -> tuple[Handoff | None, str | None]:
+    """O contrato que o agente do aluno passou: tem de existir, validar contra o
+    schema e falar do mesmo caso (protocolo e RA)."""
+    bruto = caso.get("handoff")
+    if not bruto:
+        return None, "caso sem contrato de handoff do agente do aluno"
+    try:
+        h = Handoff.model_validate(bruto)
+    except ValidationError as e:
+        return None, f"contrato de handoff inválido: {str(e)[:200]}"
+    if h.protocolo != caso["protocolo"] or h.ra != (caso.get("aluno") or {}).get("ra"):
+        return None, "contrato de handoff não é deste caso (protocolo ou RA diferente)"
+    return h, None
+
+
+async def _chamar(sessao, nome: str, args: dict, retornos: list[dict], id_chamada: str = "codigo") -> dict:
+    with telemetria.execucao_de_ferramenta(nome, id_chamada) as span:
+        retorno = _conteudo(await sessao.call_tool(nome, args))
+        erro = retorno.get("erro") if isinstance(retorno, dict) else None
+        telemetria.registrar_ferramenta(span, {"argumentos": args, "resultado": retorno,
+                                               "erro": str(erro) if erro else None}, recusada=False)
+    retornos.append({"ferramenta": nome, "argumentos": args, "retorno": retorno})
+    return retorno
+
+
 async def preparar_parecer(protocolo: str, sessao, cliente=None, modelo: str | None = None) -> dict:
     """Prepara o parecer de UM caso, falando com o sistema só pela sessão MCP."""
     cliente = cliente or agente.client
     modelo = modelo or agente.MODELO
     aprovado = verificar_modelo(modelo, liberado_pelo_ambiente())
+    prompt = PROMPT.read_text(encoding="utf-8")
+    versao = telemetria.versao_do_sistema(modelo, prompt)
+    with telemetria.invocar_agente(protocolo, versao, agente_nome=NOME_AGENTE,
+                                   **{"agente.modelo_aprovado": aprovado}) as raiz:
+        r = await _preparar(protocolo, sessao, cliente, modelo, aprovado, prompt)
+        raiz.set_attributes({
+            "agente.termino": r.get("termino", "respondeu"),
+            "agente.origem": r.get("origem") or "",
+            "agente.handoff.chave": r.get("handoff_chave") or "",
+            "agente.chamadas_modelo": r.get("chamadas_ao_modelo", 0),
+            "agente.tokens_gastos": r.get("tokens", 0),
+            "agente.ferramentas_do_turno": r.get("ferramentas", []),
+            "agente.recusas": len(r.get("recusas", [])),
+        })
+        if r.get("parecer"):
+            telemetria.evento_de_conteudo(raiz, "gen_ai.choice", json.dumps(r["parecer"], ensure_ascii=False))
+        return r
 
-    pendentes = _conteudo(await sessao.call_tool("casos_aguardando_coordenacao", {}))
+
+async def _preparar(protocolo, sessao, cliente, modelo, aprovado, prompt) -> dict:
+    with telemetria.execucao_de_ferramenta("casos_aguardando_coordenacao", "codigo"):
+        pendentes = _conteudo(await sessao.call_tool("casos_aguardando_coordenacao", {}))
     caso = next((c for c in pendentes.get("casos", []) if c["protocolo"] == protocolo), None)
     if caso is None:
-        return {"protocolo": protocolo, "erro": "caso não está aguardando a coordenação", "parecer": None}
+        return {"protocolo": protocolo, "erro": "caso não está aguardando a coordenação", "parecer": None,
+                "termino": "recusado_caso"}
+    contrato, motivo = conferir_handoff(caso)
+    if contrato is None:
+        return {"protocolo": protocolo, "erro": motivo, "parecer": None, "termino": "recusado_handoff"}
     ra_caso = (caso.get("aluno") or {}).get("ra")
 
     ferramentas = _ferramentas_openai(await sessao.list_tools())
-    mensagens = [{"role": "system", "content": PROMPT.read_text(encoding="utf-8")},
+    mensagens = [{"role": "system", "content": prompt},
                  {"role": "user", "content": "Caso a preparar (tela da coordenação):\n"
                                              + json.dumps(caso, ensure_ascii=False)}]
     retornos: list[dict] = [{"ferramenta": "casos_aguardando_coordenacao", "argumentos": {}, "retorno": caso}]
@@ -160,7 +218,9 @@ async def preparar_parecer(protocolo: str, sessao, cliente=None, modelo: str | N
     parecer = None
     while passos < MAX_PASSOS and tentativas < TENTATIVAS_DE_PARECER:
         passos += 1
-        r = cliente.chat.completions.create(model=modelo, temperature=0, messages=mensagens, tools=ferramentas)
+        with telemetria.chamada_ao_modelo(modelo, 0) as span:
+            r = cliente.chat.completions.create(model=modelo, temperature=0, messages=mensagens, tools=ferramentas)
+            telemetria.registrar_resposta_do_modelo(span, r)
         tokens += getattr(getattr(r, "usage", None), "total_tokens", 0) or 0
         msg = r.choices[0].message
         if msg.tool_calls:
@@ -175,9 +235,11 @@ async def preparar_parecer(protocolo: str, sessao, cliente=None, modelo: str | N
                 if c.function.name in FERRAMENTAS_COM_RA and str(args.get("ra")) != ra_caso:
                     retorno = {"erro": "recusado: o assistente só consulta o RA do caso", "ra_do_caso": ra_caso}
                     recusas.append({"ferramenta": c.function.name, "argumentos": args})
+                    with telemetria.execucao_de_ferramenta(c.function.name, c.id) as span:
+                        telemetria.registrar_ferramenta(span, {"argumentos": args, "resultado": retorno,
+                                                               "erro": retorno["erro"]}, recusada=True)
                 else:
-                    retorno = _conteudo(await sessao.call_tool(c.function.name, args))
-                    retornos.append({"ferramenta": c.function.name, "argumentos": args, "retorno": retorno})
+                    retorno = await _chamar(sessao, c.function.name, args, retornos, c.id)
                 mensagens.append({"role": "tool", "tool_call_id": c.id,
                                   "content": json.dumps(retorno, ensure_ascii=False)})
             continue
@@ -185,21 +247,21 @@ async def preparar_parecer(protocolo: str, sessao, cliente=None, modelo: str | N
         parecer, problemas = validar_parecer(msg.content, caso, retornos)
         if parecer:
             break
+        telemetria.registrar_validacao(problemas, msg.content or "", "corrigir" if tentativas < TENTATIVAS_DE_PARECER else "contingencia")
         mensagens += [{"role": "assistant", "content": msg.content or ""},
                       {"role": "user", "content": "O parecer foi recusado pelo código: " + "; ".join(problemas)
                                                   + ". Corrija e responda só com o JSON."}]
     origem = "modelo"
     if parecer is None:
         if not any(r["ferramenta"] == "consultar_regimento" for r in retornos):
-            retorno = _conteudo(await sessao.call_tool("consultar_regimento", {"pergunta": "trancamento de matrícula"}))
-            retornos.append({"ferramenta": "consultar_regimento", "argumentos": {}, "retorno": retorno})
+            await _chamar(sessao, "consultar_regimento", {"pergunta": "trancamento de matrícula"}, retornos)
         if not any(r["ferramenta"] == "consultar_financeiro" for r in retornos) and ra_caso:
-            retorno = _conteudo(await sessao.call_tool("consultar_financeiro", {"ra": ra_caso}))
-            retornos.append({"ferramenta": "consultar_financeiro", "argumentos": {"ra": ra_caso}, "retorno": retorno})
+            await _chamar(sessao, "consultar_financeiro", {"ra": ra_caso}, retornos)
         parecer, origem = parecer_por_codigo(caso, retornos), "contingencia"
     return {"protocolo": protocolo, "origem": origem, "parecer": parecer.model_dump(),
             "decisao": "cabe à coordenação (Art. 6º)", "problemas_da_ultima_tentativa": problemas,
             "ferramentas": [r["ferramenta"] for r in retornos], "recusas": recusas,
+            "handoff_chave": contrato.chave_idempotencia, "termino": "respondeu",
             "chamadas_ao_modelo": passos, "tokens": tokens, "modelo": modelo, "modelo_aprovado": aprovado}
 
 

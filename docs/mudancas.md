@@ -187,3 +187,21 @@ Só as 5 perguntas de Regimento do dataset viram `duvida`, e as 5 permitem `cons
 
 `evals/resultados/2026-11-23-C-r1` (código `1a13167`, prompt v3, `qwen/qwen3.8-27b`), 37 casos; `em01` caiu por falha do provedor e saiu da comparação (36 pareados). Contra a B: **97% × 86%**; pendência 60→100%, Regimento 40→80%; pe01, pe02, rg01 e rg03 passaram a ser aprovados; nenhum caso piorou; `rg05` segue reprovado, como previsto. **Todas as regras de `evals/regra_de_promocao_c.json` (assinada antes) cumpridas: a C é promovida.** SLO 97,9%, atendido (a B tinha violado). Uma repetição; o ruído não foi medido.
 
+
+## 16. Contrato de handoff, trace do 2º agente e o que a revisão contra o enunciado achou (23/11/2026)
+
+Revisão do repositório contra os enunciados das três partes. O que faltava e o que mudou:
+
+| O que faltava | O que mudou | Evidência |
+|---|---|---|
+| §5.1: contrato de *handoff* como *schema* no código, com a chave de idempotência gerada pelo coordenador | `src/triagem/handoff.py` (`Handoff`: objetivo, decisões e razões, escritas com identificador, erros, fatos numéricos, chave do conteúdo); o nó `registrar_espera` grava o contrato (tabela `handoffs`, `INSERT OR IGNORE`); o assistente recusa caso sem handoff ou com handoff de outro caso, antes de chamar o modelo | `tests/test_handoff.py` (8) |
+| §5.1 e §4.2: um `invoke_agent` por agente | o assistente abre `invoke_agent assistente-coordenacao`, com `chat` e `execute_tool` embaixo e a chave do handoff na raiz; `telemetria.invocar_agente` recebe o nome do agente | `test_cada_agente_tem_a_sua_raiz_no_trace` |
+| §5.1: ASI07 avaliado | `seguranca.md` dizia "não se aplica: há um agente", falso desde 13/11; agora tem quadro (impacto 2), e os canais incluem o outro agente e a voz | `docs/seguranca.md` §1 e §2 |
+| §5.1 a §5.3: um documento por frente opcional | `docs/multiagente.md`, `docs/mcp.md`, `docs/multimidia.md`; o arquivo único virou índice | — |
+| §6 e Parte 2 §10: `requirements.txt` com o sistema fixado | o `requirements.txt` da raiz tinha só as dependências dos Exercícios 7 e 8; agora é o do sistema (LangGraph, OpenTelemetry, MCP), igual a `requirements-agente.txt`; o antigo virou `requirements-exercicios.txt` | `tests/test_requisitos.py` (2) |
+| §3.3: risco aceito | nenhum risco estava aceito; Erick aceitou `temperature=0` em 23/11 | `docs/seguranca.md` §4 |
+| números velhos | `seguranca.md` §6 listava 5 commits para `-S "OPENAI_API_KEY="` (são 9, todos marcadores) e dizia vazia a busca por `gsk_` (três commits citam o prefixo; a busca pelo formato de uma chave é que volta vazia); três documentos citavam o recall de 60% do juiz (Exercício 11, rótulos de IA) e não o de 25% contra o rótulo humano; `prompts.md` chamava o ASI09 de "risco aceito" | — |
+
+**A versão C não foi rodada de novo.** O que mudou no agente do aluno é só o nó `registrar_espera` gravar o handoff, depois da decisão do modelo e fora do contexto dele; a tela da coordenação ganhou o campo `handoff`. Nada do que o modelo vê mudou, mas o commit é outro, e os números da C são do código `1a13167`.
+
+**O que continua faltando:** o *golden dataset* não tem caso com mídia (`docs/multimidia.md` §5), e o assistente da coordenação segue sem medição com o modelo real. **292 passed, 1 deselected.**

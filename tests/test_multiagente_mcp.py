@@ -15,7 +15,7 @@ import agente
 import assistente_coordenacao as ac
 import mcp_secretaria
 from conftest import ModeloRoteirizado, chamada, resposta
-from triagem import humano
+from triagem import handoff, humano
 
 RA_CASO = "20229012"      # Bruno Castro, ativo, em dia (dados sintéticos)
 RA_OUTRO = "20230198"     # Marina Alves, com débito
@@ -35,6 +35,8 @@ def caso(banco):
     r = agente.escalar_para_humano(RA_CASO, "trancamento", "aluno pediu trancamento do semestre",
                                    f"{RA_CASO}:trancamento:teste")
     humano.registrar_espera("thread-teste", r["protocolo"], RA_CASO)
+    handoff.gravar(handoff.montar(r["protocolo"], "thread-teste", RA_CASO, [
+        {"ferramenta": "escalar_para_humano", "argumentos": {"ra": RA_CASO}, "resultado": r, "erro": None}]))
     return r["protocolo"]
 
 

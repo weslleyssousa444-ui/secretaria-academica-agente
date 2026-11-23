@@ -9,7 +9,7 @@
 Cada campo traz **a afirmação** e **a evidência**. Os tipos de evidência são:
 
 - `arquivo:linha`, com link para o trecho exato no repositório (as linhas foram **calculadas por script** sobre o commit-base, não digitadas);
-- `teste::nome`: um teste em [`tests/`](../tests/) que roda offline, sem chave de API (`python -m pytest -q`; **282 passed, 1 deselected** em 13/11/2026; eram 210 em 11/11/2026, Python 3.11.18);
+- `teste::nome`: um teste em [`tests/`](../tests/) que roda offline, sem chave de API (`python -m pytest -q`; **292 passed, 1 deselected** em 23/11/2026; eram 210 em 11/11/2026, Python 3.11.18);
 - `log`: o registro de uma execução real com o modelo real em [`logs/parte2/`](../logs/parte2/) ou [`evals/resultados/`](../evals/resultados/);
 - `saída de comando`: arquivo em [`docs/evidencias/`](evidencias/), com o comando e a saída copiados. **Os de [`autoridade-efetiva.txt`](evidencias/autoridade-efetiva.txt), [`inventario-dados-pessoais.txt`](evidencias/inventario-dados-pessoais.txt) e [`historico-git.txt`](evidencias/historico-git.txt) são de 16/10/2026 e descrevem o agente da Parte 1**: valem como história, não como retrato do sistema atual (L26).
 
@@ -148,7 +148,7 @@ O que o sistema pode fazer, e **onde cada limite é aplicado** (ausência de fer
 | Memória (episódica, semântica, procedural) | leitura e escrita **só com `ra_autenticado`**; política escrita em código | arquivos em `TRIAGEM_MEMORIA_DIR` | [`src/triagem/memoria.py:162`](../src/triagem/memoria.py#L162); [`docs/memoria.md`](memoria.md) |
 | Coordenação | decide casos pausados (token); grava em `decisoes_humanas` | `aprovacoes`, `decisoes_humanas` | [`src/triagem/humano.py:111-141`](../src/triagem/humano.py#L111-L141); [`src/dados.py:113-128`](../src/dados.py#L113-L128) |
 | Servidor MCP `secretaria-academica` (13/11/2026) | **só leitura**: as 4 consultas e os casos aguardando; nenhuma escrita publicada | `alunos`, `financeiro`, `disciplinas_cursadas`, índice do Regimento, `aprovacoes` | [`src/mcp_secretaria.py`](../src/mcp_secretaria.py); `teste::test_mcp_nao_publica_escrita` |
-| Assistente da coordenação (2º agente, 13/11/2026) | lê pelo MCP **só o RA do caso**; monta um parecer **sem recomendar**; não escreve | o que o servidor MCP publica | [`src/assistente_coordenacao.py`](../src/assistente_coordenacao.py); [`docs/multiagente-mcp-multimidia.md`](multiagente-mcp-multimidia.md) |
+| Assistente da coordenação (2º agente, 13/11/2026) | lê pelo MCP **só o RA do caso**; só trabalha sobre caso com **contrato de handoff** válido e do mesmo caso (23/11/2026); monta um parecer **sem recomendar**; não escreve | o que o servidor MCP publica | [`src/assistente_coordenacao.py`](../src/assistente_coordenacao.py); [`docs/multiagente-mcp-multimidia.md`](multiagente-mcp-multimidia.md) |
 
 ## 5. Modelo e provedor
 
@@ -199,7 +199,7 @@ A avaliação do sistema entregue está em [`docs/evals.md`](evals.md); aqui, s�
 | **Rodada C** (código `1a13167`, 23/11/2026): os 4 defeitos que a B revelou, corrigidos no código com teste; **97% contra 86% da B** (pendência 60→100%, Regimento 40→80%, o resto em 100%), nenhum acesso a dado de terceiro, nenhuma escrita indevida. **Regra C × B, assinada antes de rodar: todas cumpridas: a C é promovida.** SLO 97,9%, atendido. | [`docs/evals.md` §4.3b](evals.md); [`docs/evidencias/comparacao-B-C.txt`](evidencias/comparacao-B-C.txt) |
 | **Juiz de fidelidade: NÃO adotado.** No Exercício 11 a rubrica final deu 89% de concordância e **60% de recall** da classe "não fiel" no *hold-out* (limiar: 85% e 80%). **Os rótulos daquela validação são de uma IA, não de pessoas.** As 20 saídas da ficha foram **rotuladas à mão por Erick Sousa** em 16/11/2026 (16 fiéis, 4 não fiéis, com nota), e antes pelo Claude (13/7, rótulo de IA): concordam em 13 de 20, e os desacordos mostram que a rubrica é lida de jeitos diferentes ([`docs/evals.md` §3](evals.md)). Juiz × humano, medido em 16/11/2026: **concordância 75%, recall de "não fiel" 25%** (limiar 85% e 80%): **não adotado** ([`docs/evidencias/juiz-x-humano.txt`](evidencias/juiz-x-humano.txt), [`docs/evals.md` §3](evals.md)). | [`docs/evals.md` §3](evals.md); [`evals/rotulagem/LEIA-ME.md`](../evals/rotulagem/LEIA-ME.md); `tests/test_rotulagem.py`. **LACUNA L24** |
 | **Uma repetição por caso**: o ruído do provedor **não foi medido** para este sistema; com 37 casos, um caso vale ~2,7 pontos. | [`docs/evals.md` §3, §4.5](evals.md) |
-| Testes offline: **282 passed, 1 deselected** (13/11/2026; 18 do servidor MCP e do 2º agente, 7 da guarda do trace, 3 do motivo da reprovação no trace (L29), 16 das correções da versão C) (o deselecionado é o `eval`, que usa o modelo real). Os que **tentam a ação indevida** de cada controle estão em `tests/test_controles.py` (16 funções), o trace em `tests/test_telemetria.py` (18) e o grafo, a pausa e a decisão em `tests/test_triagem.py` (39). | `python -m pytest -q`; [`docs/evidencias/pytest.txt`](evidencias/pytest.txt) (regenerado em 13/11/2026) |
+| Testes offline: **292 passed, 1 deselected** (23/11/2026; 8 do contrato de handoff e do trace do 2º agente, 2 do `requirements.txt`, 18 do servidor MCP e do 2º agente, 7 da guarda do trace, 3 do motivo da reprovação no trace (L29), 16 das correções da versão C) (o deselecionado é o `eval`, que usa o modelo real). Os que **tentam a ação indevida** de cada controle estão em `tests/test_controles.py` (16 funções), o trace em `tests/test_telemetria.py` (18) e o grafo, a pausa e a decisão em `tests/test_triagem.py` (39). | `python -m pytest -q`; [`docs/evidencias/pytest.txt`](evidencias/pytest.txt) (regenerado em 23/11/2026) |
 | 8 execuções reais da Parte 2 com o modelo real, fora da suíte. | [`logs/parte2/`](../logs/parte2/) |
 
 ## 8. Limites conhecidos
@@ -304,7 +304,10 @@ O histórico completo, com os defeitos achados em cada etapa, está em [`docs/mu
 | `57d5fa1` | 11/11/2026 | **Parte 3:** regra de promoção assinada antes da versão B, juiz, ficha de rotulagem, `seguranca.md` | *não registrado* |
 | `2b1be33` … `45371ad` | 13/11/2026 | Site publicado (Render + Hostinger); boleto, notas e documento imprimível (prompt v3, 7 ferramentas); liberação de modelo para correção; apresentação | Weslley (pedido direto) |
 | `db00614` … `59d6dca` | 13/11/2026 | Vídeo; ficha de rotulagem; **opcionais:** servidor MCP, assistente da coordenação, voz no site; medição e simulação do 2º agente | Weslley (pedido direto) |
-| *este commit* | 13/11/2026 | Guarda de 90 dias do trace e dos registros, remoção por titular no trace (L26); rótulos do juiz pelo Claude (L24) | Weslley (decisão do prazo) |
+| `6518c08` | 13/11/2026 | Guarda de 90 dias do trace e dos registros, remoção por titular no trace (L26); rótulos do juiz pelo Claude (L24) | Weslley (decisão do prazo) |
+| `03e6fde` … `b66e65f` | 13 a 23/11/2026 | Rótulo humano e juiz medido; riscos decididos pelo Erick; rodadas A, B e C completas; versão C promovida (`docs/mudancas.md` §9 a §15) | Weslley |
+| `f5bd4b2`, `efe9108` | 23/11/2026 | Risco aceito: `temperature=0` (Erick) | Weslley |
+| *este commit* | 23/11/2026 | Contrato de handoff entre os dois agentes e trace do 2º agente; ASI07 avaliado; `docs/multiagente.md`, `mcp.md`, `multimidia.md`; `requirements.txt` do sistema (`docs/mudancas.md` §16) | Weslley |
 
 Todos os commits têm um único autor e **nenhum passou por *pull request* nem revisão**. **Os commits da Parte 2 e da Parte 3 até `dd1415b` foram enviados ao GitHub com autorização do usuário; commits posteriores podem estar só locais (`git log origin/master..HEAD`).** Uma mudança de autoridade ou de destino do dado, como a troca de provedor em `4a41964`, ou os controles de `51c278b`, entrou sem aprovação registrada. **LACUNA L21.**
 

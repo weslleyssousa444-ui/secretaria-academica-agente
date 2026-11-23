@@ -158,11 +158,13 @@ def versao_do_sistema(modelo: str, prompt: str) -> str:
 # ------------------------------------------------------------------ os spans
 
 @contextmanager
-def invocar_agente(thread_id: str, versao: str, *, retomada: bool = False, **atributos):
-    """A raiz: `invoke_agent triagem-secretaria`."""
-    with tracer().start_as_current_span(f"invoke_agent {NOME_AGENTE}") as span:
+def invocar_agente(thread_id: str, versao: str, *, retomada: bool = False,
+                   agente_nome: str = NOME_AGENTE, **atributos):
+    """A raiz: `invoke_agent <agente>`. Um por agente (Parte 3, §5.1): o agente
+    do aluno é `triagem-secretaria`; o assistente da coordenação abre a sua."""
+    with tracer().start_as_current_span(f"invoke_agent {agente_nome}") as span:
         span.set_attributes({
-            "gen_ai.operation.name": "invoke_agent", "gen_ai.agent.name": NOME_AGENTE,
+            "gen_ai.operation.name": "invoke_agent", "gen_ai.agent.name": agente_nome,
             "gen_ai.provider.name": PROVEDOR, "gen_ai.conversation.id": thread_id,
             "agente.versao": versao, "agente.retomada": retomada, **atributos})
         try:
@@ -245,7 +247,8 @@ def chamada_ao_modelo(modelo: str, temperatura: float):
 
 def registrar_resposta_do_modelo(span, resposta, omitidos: int = 0) -> None:
     uso = resposta.usage
-    atributos = {"gen_ai.usage.input_tokens": uso.prompt_tokens, "gen_ai.usage.output_tokens": uso.completion_tokens,
+    atributos = {"gen_ai.usage.input_tokens": getattr(uso, "prompt_tokens", 0) or 0,
+                 "gen_ai.usage.output_tokens": getattr(uso, "completion_tokens", 0) or 0,
                  "agente.janela.omitidos": omitidos}
     servido = getattr(resposta, "model", None)  # o modelo SERVIDO pode diferir do pedido
     if servido:
